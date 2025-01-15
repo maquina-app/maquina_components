@@ -1,0 +1,15 @@
+fix: true # default: false
+parallel: true # default: false
+format: progress # default: Standard::Formatter
+ruby_version: 3.4.1 # default: RUBY_VERSION
+default_ignores: false # default: true
+
+ignore: # default: []
+  - "config/environments/**/*"
+  - "config/application.rb"
+  - "config/boot.rb"
+  - "config/puma.rb"
+  - "node_modules/**/*"
+  - "db/schema.rb"
+  - "packages/**/*"
+  - "tmp/**/*"
