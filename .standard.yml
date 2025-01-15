@@ -9,7 +9,6 @@ ignore: # default: []
   - "config/application.rb"
   - "config/boot.rb"
   - "config/puma.rb"
-  - "node_modules/**/*"
   - "db/schema.rb"
-  - "packages/**/*"
+  - "test/dummy/**/*"
   - "tmp/**/*"
