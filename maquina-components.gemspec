@@ -1,7 +1,7 @@
 require_relative "lib/maquina_components/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "maquina_components"
+  spec.name = "maquina-components"
   spec.version = MaquinaComponents::VERSION
   spec.authors = ["Mario Alberto Chávez"]
   spec.email = ["mario.chavez@gmail.com"]
