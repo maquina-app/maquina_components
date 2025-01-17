@@ -2,17 +2,15 @@
 
 Modern UI components for Ruby on Rails, powered by TailwindCSS and Stimulus
 
-# Maquina Components
-
-Modern UI components for Ruby on Rails, powered by TailwindCSS and Stimulus
-
 ![Dashboard Example](/imgs/home.png)
 
 ![Form Example](/imgs/new.png)
 
 ## Overview
 
-Maquina Components provides a collection of ready-to-use UI components for Ruby on Rails applications. Built with ERB, TailwindCSS 4.0, and Stimulus, it offers a modern and maintainable approach to building beautiful user interfaces without the complexity of JavaScript frameworks.
+Maquina Components provides a collection of ready-to-use UI components for Ruby on Rails applications. Built with ERB,
+TailwindCSS 4.0, and Stimulus, it offers a modern and maintainable approach to building beautiful user interfaces
+without the complexity of JavaScript frameworks.
 
 ### Key Features
 

@@ -1,0 +1,10 @@
+<%# locals: (custom_classes: "") -%>
+
+<div
+  class="<%= class_names(
+  "rounded-xl border border-border bg-card text-card-foreground shadow",
+  custom_classes
+) %>"
+>
+  <%= yield %>
+</div>

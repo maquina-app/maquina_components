@@ -1,0 +1,30 @@
+<aside
+  class="group peer hidden md:block text-sidebar-foreground"
+  data-controller="sidebars"
+  data-state="expanded"
+  data-collapsible=""
+  id="sidebar"
+>
+  <!-- Mobile overlay -->
+  <div
+    class="
+      inset-0 bg-black/80 lg:hidden transition-opacity duration-300 hidden
+    "
+    data-sidebar-target="overlay"
+    data-action="click->sidebar#toggleMobile"
+  >
+  </div>
+  <!-- Sidebar container -->
+  <div
+    class="
+      duration-200 fixed inset-y-0 z-10 h-svh w-(--sidebar-width)
+      transition-[left,right,width] ease-linear md:flex left-0 border-r
+      border-sidebar-border group-data-[collapsible=icon]:w-[--sidebar-width-icon]
+    "
+    data-sidebar-target="container"
+  >
+    <div class=" flex h-full w-full flex-col bg-sidebar">
+      <%= yield %>
+    </div>
+  </div>
+</aside>

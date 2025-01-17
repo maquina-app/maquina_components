@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    maquina-components (0.1.1)
+    maquina-components (0.1.2)
       rails (>= 8.0.0)
 
 GEM
@@ -121,7 +121,21 @@ GEM
       timeout
     net-smtp (0.5.0)
     nio4r (2.7.4)
+    nokogiri (1.18.1-aarch64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.18.1-aarch64-linux-musl)
+      racc (~> 1.4)
+    nokogiri (1.18.1-arm-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.18.1-arm-linux-musl)
+      racc (~> 1.4)
     nokogiri (1.18.1-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.18.1-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.18.1-x86_64-linux-gnu)
+      racc (~> 1.4)
+    nokogiri (1.18.1-x86_64-linux-musl)
       racc (~> 1.4)
     parallel (1.26.3)
     parser (3.3.6.0)
