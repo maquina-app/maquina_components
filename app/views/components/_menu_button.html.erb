@@ -1,0 +1,44 @@
+<%# locals: (title:, subtitle: nil, icon: nil, text_icon: nil) %>
+
+<ul class="flex w-full min-w-0 flex-col gap-1">
+  <li class="group/menu-item relative" data-controller="menu-button">
+    <button
+      data-state="closed"
+      class="
+        peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2
+        text-left outline-none ring-sidebar-ring transition-[width,height,padding]
+        focus-visible:ring-2 active:bg-sidebar-accent
+        active:text-sidebar-accent-foreground disabled:pointer-events-none
+        disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50
+        data-[state=open]:bg-sidebar-accent
+        data-[state=open]text-sidebar-accent-foreground
+        group-data-[collapsible=icon]:!size-8 [&>span:last-child]:truncate
+        [&>svg]:size-4 [&>svg]:shrink-0 hover:bg-sidebar-accent
+        hover:text-sidebar-accent-foreground h-12 text-sm
+        group-data-[collapsible=icon]:!p-0
+      ", data-action="menu-button#toggle", data-menu-button-target="button" }
+    >
+      <div
+        class="
+          flex aspect-square size-8 items-center justify-center rounded-lg
+          bg-sidebar-primary text-sidebar-primary-foreground
+        "
+      >
+        <% if icon.present? %>
+          <!-- Here goes the icon -->
+        <% elsif text_icon.present? %>
+          <%= text_icon %>
+        <% end %>
+      </div>
+      <div class="grid flex-1 text-left text-sm leading-tight">
+        <span class="truncate font-semibold"><%= title %></span>
+        <% if subtitle.present? %>
+          <span class="truncate text-xs"><%= subtitle %></span>
+        <% end %>
+      </div>
+      <%= icon_for(:chevron_up_down, class: "ml-auto") %>
+    </button>
+
+    <%= yield %>
+  </li>
+</ul>

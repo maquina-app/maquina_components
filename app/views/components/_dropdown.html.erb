@@ -1,0 +1,25 @@
+<div
+  data-menu-button-target="content"
+  class="
+    absolute z-10 overflow-hidden border border-border p-1 text-popover-foreground
+    min-w-56 max-w-56 content-fit shadow-md bottom-full rounded-lg hidden
+    peer-data-[state=closed]/menu-button:animate-out
+    peer-data-[state=closed]/menu-button:fade-out-0
+    peer-data-[state=open]/menu-button:fade-in-0
+    peer-data-[state=closed]/menu-button:zoom-out-95
+    peer-data-[state=open]/menu-button:zoom-in-95
+    peer-data-[side=bottom]/menu-button:slide-in-from-top-2
+    peer-data-[side=left]/menu-button:slide-in-from-right-2
+    peer-data-[side=right]/menu-button:slide-in-from-left-2
+    peer-data-[side=top]/menu-button:slide-in-from-bottom-2
+  "
+  role="menu"
+  aria-orientation="vertical"
+  aria-labelledby="menu-button"
+  tabindex="-1"
+>
+  <%= yield %>
+</div>
+<!--
+<div role="separator" aria-orientation="horizontal" class="separator"></div>
+-->

@@ -1,3 +1,156 @@
+/* Base animation utilities */
+@utility animate-in {
+  animation-duration: var(--duration-normal);
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: forwards;
+}
+
+@utility animate-out {
+  animation-duration: var(--duration-normal);
+  animation-timing-function: var(--ease-in);
+  animation-fill-mode: forwards;
+}
+
+/* Fade animations */
+@keyframes fade-in-0 {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out-0 {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@utility fade-in-0 {
+  animation-name: fade-in-0;
+}
+
+@utility fade-out-0 {
+  animation-name: fade-out-0;
+}
+
+/* Zoom animations */
+@keyframes zoom-in-95 {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-out-95 {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+@utility zoom-in-95 {
+  animation-name: zoom-in-95;
+}
+
+@utility zoom-out-95 {
+  animation-name: zoom-out-95;
+}
+
+/* Slide animations with specific measurements */
+@keyframes slide-in-from-top-2 {
+  from {
+    transform: translateY(-0.5rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom-2 {
+  from {
+    transform: translateY(0.5rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-left-2 {
+  from {
+    transform: translateX(-0.5rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-right-2 {
+  from {
+    transform: translateX(0.5rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@utility slide-in-from-top-2 {
+  animation-name: slide-in-from-top-2;
+}
+
+@utility slide-in-from-bottom-2 {
+  animation-name: slide-in-from-bottom-2;
+}
+
+@utility slide-in-from-left-2 {
+  animation-name: slide-in-from-left-2;
+}
+
+@utility slide-in-from-right-2 {
+  animation-name: slide-in-from-right-2;
+}
+
+/* Duration modifiers */
+@utility duration-fast {
+  animation-duration: var(--duration-fast);
+}
+
+@utility duration-normal {
+  animation-duration: var(--duration-normal);
+}
+
+@utility duration-slow {
+  animation-duration: var(--duration-slow);
+}
+
 @utility button-base {
   display: inline-flex;
   align-items: center;
@@ -96,4 +249,12 @@
 
 .button-destructive {
   @apply button-base bg-destructive text-destructive shadow-sm hover:bg-destructive/90;
+}
+
+.separator {
+  @apply -mx-1 my-1 h-px bg-muted;
+}
+
+.dropdown-menu-item {
+  @apply relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0;
 }
