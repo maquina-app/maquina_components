@@ -14,3 +14,9 @@ gem "standard", require: false
 # gem "debug", ">= 1.0.0"
 
 gem "importmap-rails", "~> 2.1"
+gem "propshaft", "~> 1.1"
+gem "tailwindcss-rails", "~> 4.4"
+
+# Hotwire
+gem "turbo-rails"
+gem "stimulus-rails"

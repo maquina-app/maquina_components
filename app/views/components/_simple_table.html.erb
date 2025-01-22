@@ -1,0 +1,49 @@
+<%# locals: (collection:, columns:, caption: nil, variant: nil, table_variant: nil, empty_message: "No data available", row_id: nil, html_options: {}) %>
+<%= render "components/table", variant: variant, table_variant: table_variant, **html_options do %>
+  <% if caption.present? %>
+    <%= render "components/table/caption" do %><%= caption %><% end %>
+  <% end %>
+
+  <%= render "components/table/header" do %>
+    <%= render "components/table/row" do %>
+      <% columns.each do |column| %>
+        <%= render "components/table/head", css_classes: table_alignment_class(column[:align]) do %>
+          <%= column[:label] %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render "components/table/body" do %>
+    <% if collection.empty? %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", colspan: columns.size, data: { empty: "true" } do %>
+          <%= empty_message %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <% collection.each do |item| %>
+        <%
+          row_options = {}
+          row_options[:id] = "row-#{item.public_send(row_id)}" if row_id && item.respond_to?(row_id)
+        %>
+        <%= render "components/table/row", **row_options do %>
+          <% columns.each do |column| %>
+            <%
+              value = if column[:key].is_a?(Proc)
+                column[:key].call(item)
+              elsif item.is_a?(Hash)
+                item[column[:key]] || item[column[:key].to_s]
+              elsif item.respond_to?(column[:key])
+                item.public_send(column[:key])
+              end
+            %>
+            <%= render "components/table/cell", css_classes: table_alignment_class(column[:align]) do %>
+              <%= value %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

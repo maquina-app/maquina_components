@@ -1,11 +1,12 @@
-<%# locals: (title: nil) %>
-<% if notice || alert %>
-  <div
-    role="alert"
-    class="<%= class_names('relative w-full rounded-lg border px-4 py-3 text-sm mx-auto mb-4 [&>svg]:size-4 [&>svg+div]:translate-y-(-3px) [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg~*]:pl-7 max-w-lg', '[&>svg]:text-foreground bg-background text-foreground': notice.present?, 'border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive': alert.present?) %>"
-  >
-    <%= icon_for(notice.present? ? :check : :circle_alert) %>
-    <h5 class="mb-1 font-medium leading-none tracking-tight"><%= title || (notice.present? ? "Éxito" : "Error") %></h5>
-    <div class="text-sm [&_p]:leading-relaxed"><%= notice %></div>
-  </div>
+<%# locals: (variant: :default, icon: nil, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :alert,
+    variant: variant,
+    has_icon: icon.present? || nil
+  ).compact %>
+
+<%= content_tag :div, role: :alert, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= icon_for(icon) if icon.present? %>
+
+  <div><%= yield %></div>
 <% end %>

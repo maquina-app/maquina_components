@@ -1,0 +1,57 @@
+<%# locals: (href: nil, label: nil, disabled: false, show_label: true, css_classes: "", **html_options) %>
+<% is_disabled = disabled || href.nil?
+  display_label = label || t("maquina_components.pagination.next", default: "Next")
+  merged_data = (html_options.delete(:data) || {}).merge("pagination-part": "next") %>
+
+<% if is_disabled %>
+  <span
+    class="<%= css_classes.presence %>"
+    data-pagination-part="next"
+    aria-disabled="true"
+    <%= tag.attributes(html_options.except(:data)) %>
+  >
+    <% if show_label %>
+      <span><%= display_label %></span>
+    <% end %>
+
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  </span>
+<% else %>
+  <%= link_to href,
+        class: css_classes.presence,
+        data: merged_data,
+        "aria-label": display_label,
+        **html_options do %>
+    <% if show_label %>
+      <span><%= display_label %></span>
+    <% end %>
+
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  <% end %>
+<% end %>

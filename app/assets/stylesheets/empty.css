@@ -1,0 +1,133 @@
+/* ===== Empty Component Styles ===== */
+/*
+ * Empty state component for displaying placeholder content when no data exists.
+ * Uses data attributes for styling to avoid inline utility classes.
+ * Fully compatible with dark mode via CSS variables.
+ *
+ * Structure:
+ * - empty (root container)
+ *   - header (groups media + text)
+ *     - media (icon or avatar)
+ *     - title (heading)
+ *     - description (explanatory text)
+ *   - content (action buttons/links)
+ */
+
+/* ===== Root Container ===== */
+[data-component="empty"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  @apply px-6 py-12;
+}
+
+/* ===== Size Variants ===== */
+[data-component="empty"][data-size="compact"] {
+  @apply px-6 py-8;
+}
+
+/* ===== Visual Variants ===== */
+[data-component="empty"][data-variant="default"] {
+  /* No additional styles for default */
+}
+
+[data-component="empty"][data-variant="outline"] {
+  @apply rounded-lg;
+  border: 1px dashed var(--border);
+}
+
+/* ===== Header ===== */
+[data-empty-part="header"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  @apply gap-2;
+}
+
+/* ===== Media (Icon/Avatar Container) ===== */
+[data-empty-part="media"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  @apply mb-2;
+}
+
+/* Icon variant */
+[data-empty-part="media"][data-variant="icon"] {
+  @apply opacity-60;
+}
+
+[data-empty-part="media"][data-variant="icon"] svg {
+  @apply size-12;
+}
+
+/* Compact size adjustments */
+[data-component="empty"][data-size="compact"] [data-empty-part="media"][data-variant="icon"] svg {
+  @apply size-8;
+}
+
+/* Avatar variant */
+[data-empty-part="media"][data-variant="avatar"] {
+  @apply size-16 rounded-full overflow-hidden;
+  background-color: var(--muted);
+}
+
+[data-empty-part="media"][data-variant="avatar"] img {
+  @apply size-full object-cover;
+}
+
+/* ===== Title ===== */
+[data-empty-part="title"] {
+  color: var(--foreground);
+  @apply text-base font-medium;
+}
+
+/* Compact size */
+[data-component="empty"][data-size="compact"] [data-empty-part="title"] {
+  @apply text-sm;
+}
+
+/* ===== Description ===== */
+[data-empty-part="description"] {
+  color: var(--muted-foreground);
+  @apply text-sm mt-1 max-w-md;
+}
+
+/* Links in description */
+[data-empty-part="description"] a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+[data-empty-part="description"] a:hover {
+  @apply opacity-80;
+}
+
+/* ===== Content (Actions) ===== */
+[data-empty-part="content"] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  @apply mt-6 gap-3;
+}
+
+/* Compact size */
+[data-component="empty"][data-size="compact"] [data-empty-part="content"] {
+  @apply mt-4;
+}
+
+/* Flex container for multiple buttons */
+[data-empty-part="content"] > .flex {
+  @apply gap-2;
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */

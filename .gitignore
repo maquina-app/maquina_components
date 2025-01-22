@@ -8,3 +8,12 @@
 /test/dummy/log/*.log
 /test/dummy/storage/
 /test/dummy/tmp/
+/test/dummy/app/assets/builds/
+
+.DS_Store
+
+# Claude Code local files
+CLAUDE.md
+AGENTS.md
+.claude/
+/references/

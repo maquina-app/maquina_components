@@ -1,0 +1,12 @@
+<%# locals: (css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "dropdown-menu-part": "group"
+  ) %>
+
+<%= content_tag :div,
+      role: "group",
+      class: css_classes.presence,
+      data: merged_data,
+      **html_options do %>
+  <%= yield %>
+<% end %>

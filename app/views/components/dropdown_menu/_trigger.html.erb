@@ -1,0 +1,24 @@
+<%# locals: (variant: :outline, size: :default, as_child: false, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "dropdown-menu-target": "trigger",
+    action: "dropdown-menu#toggle"
+  ) %>
+
+<% if as_child %>
+  <%= yield %>
+<% else %>
+  <% button_data = merged_data.merge(
+      component: "button",
+      variant: variant,
+      size: size
+    ) %>
+  <%= content_tag :button,
+        type: "button",
+        class: css_classes.presence,
+        data: button_data,
+        aria: { haspopup: "menu", expanded: "false" },
+        **html_options do %>
+    <%= yield %>
+    <%= icon_for :chevron_down, data: { "dropdown-menu-target": "chevron" } %>
+  <% end %>
+<% end %>

@@ -1,0 +1,145 @@
+/* ===== Badge Component Styles ===== */
+/* 
+ * Badge component for status indicators, tags, counts, and labels.
+ * Uses data attributes for styling to avoid inline utility classes.
+ * Fully compatible with dark mode and supports icons.
+ */
+
+/* ===== Base Badge Styles ===== */
+[data-component="badge"] {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  @apply gap-1 rounded-md border border-transparent font-medium leading-none;
+  
+  /* Transitions */
+  @apply transition-[background-color,border-color,color,opacity] duration-150;
+}
+
+/* ===== Icon Support ===== */
+[data-component="badge"] svg {
+  /* Scales with font size using em */
+  width: 0.875em;
+  height: 0.875em;
+  @apply shrink-0 pointer-events-none;
+}
+
+/* ===== Size Variants ===== */
+
+/* Small size - compact badges for inline use */
+[data-component="badge"][data-size="sm"] {
+  @apply text-xs px-2 py-0.5 h-5;
+}
+
+/* Medium size - default, balanced size */
+[data-component="badge"][data-size="md"] {
+  @apply text-sm px-2.5 py-1 h-6;
+}
+
+/* Large size - prominent badges */
+[data-component="badge"][data-size="lg"] {
+  @apply text-sm px-3 py-1.5 h-7;
+}
+
+/* ===== Visual Variants ===== */
+
+/* Default variant - muted appearance */
+[data-component="badge"][data-variant="default"] {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+[data-component="badge"][data-variant="default"]:hover {
+  @apply opacity-90;
+}
+
+/* Primary variant - brand color */
+[data-component="badge"][data-variant="primary"] {
+  background-color: var(--primary-color);
+  color: var(--primary-foreground-color);
+}
+
+[data-component="badge"][data-variant="primary"]:hover {
+  @apply opacity-90;
+}
+
+/* Secondary variant - subtle appearance */
+[data-component="badge"][data-variant="secondary"] {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+[data-component="badge"][data-variant="secondary"]:hover {
+  @apply opacity-90;
+}
+
+/* Destructive variant - errors, deletions */
+[data-component="badge"][data-variant="destructive"] {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+[data-component="badge"][data-variant="destructive"]:hover {
+  @apply opacity-90;
+}
+
+/* Success variant - positive status */
+[data-component="badge"][data-variant="success"] {
+  background-color: var(--success);
+  color: var(--success-foreground);
+}
+
+[data-component="badge"][data-variant="success"]:hover {
+  @apply opacity-90;
+}
+
+/* Warning variant - caution status */
+[data-component="badge"][data-variant="warning"] {
+  background-color: var(--warning);
+  color: var(--warning-foreground);
+}
+
+[data-component="badge"][data-variant="warning"]:hover {
+  @apply opacity-90;
+}
+
+/* Outline variant - transparent with border */
+[data-component="badge"][data-variant="outline"] {
+  @apply bg-transparent;
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+[data-component="badge"][data-variant="outline"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* ===== Interactive States (when used as link/button) ===== */
+
+/* Focus state for keyboard navigation */
+a[data-component="badge"]:focus-visible,
+button[data-component="badge"]:focus-visible {
+  @apply outline-none;
+  box-shadow: 0 0 0 2px var(--background),
+              0 0 0 4px var(--border);
+}
+
+/* Active/pressed state */
+a[data-component="badge"]:active,
+button[data-component="badge"]:active {
+  @apply scale-[0.98];
+}
+
+/* Disabled state (if used as button) */
+button[data-component="badge"]:disabled {
+  @apply opacity-50 cursor-not-allowed pointer-events-none;
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */

@@ -1,27 +1,277 @@
 <!DOCTYPE html>
-<html>
+
+<html
+  class="<%= dark_mode_class %>"
+  data-theme="<%= color_theme unless color_theme == 'neutral' %>"
+>
   <head>
     <title><%= content_for(:title) || "Dummy" %></title>
+
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag "application" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <script>
+      // Prevent flash of wrong theme on page load
+      // This runs before the page renders to set the correct theme immediately
+      (function() {
+        // Dark/Light mode
+        const preference = document.cookie.match(/theme_preference=([^;]+)/)?.[1];
+        const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const shouldBeDark = preference === "dark" || (preference !== "light" && systemDark);
+        if (shouldBeDark) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+        
+        // Color theme
+        const colorTheme = document.cookie.match(/color_theme=([^;]+)/)?.[1];
+        if (colorTheme && colorTheme !== "neutral") {
+          document.documentElement.setAttribute("data-theme", colorTheme);
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+      })();
+    </script>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="overflow-hidden bg-background font-sans antialiased">
+    <%= render "components/sidebar/provider", default_open: demo_sidebar_open?, variant: :inset do %>
+      <%= render "components/sidebar", state: demo_sidebar_state, variant: :inset do %>
+        <%= render "components/sidebar/header" do %>
+          <div class="sidebar-logo">
+            <%= render "components/menu_button", submenu: false, icon: "maquina.svg", icon_classes: "sidebar-logo-img" do %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%= render "components/sidebar/content" do %>
+          <%# Quick Actions Group %>
+          <%= render "components/sidebar/group", title: "" do %>
+            <div class="group/menu-item w-full text-sm flex gap-2">
+              <button class="sidebar-primary-button">
+                <%= icon_for :circle_plus, class: "size-4" %>
+                <span>Quick Create</span>
+              </button>
+
+              <button class="sidebar-outline-button">
+                <%= icon_for :mail, class: "size-4" %>
+                <span class="sr-only">Inbox</span>
+              </button>
+            </div>
+          <% end %>
+
+          <%# Main Navigation %>
+          <%= render "components/sidebar/group", title: "Navigation" do %>
+            <%= render "components/sidebar/menu" do %>
+              <%= render "components/sidebar/menu_item" do %>
+                <%= render "components/sidebar/menu_button",
+                  url: root_path,
+                  icon_name: :layout_dashboard,
+                  title: "Dashboard",
+                  active: current_page?(root_path) %>
+              <% end %>
+
+              <%= render "components/sidebar/menu_item" do %>
+                <%= render "components/sidebar/menu_button",
+                  url: "#",
+                  icon_name: :inbox,
+                  title: "Inbox",
+                  active: false %>
+              <% end %>
+
+              <%= render "components/sidebar/menu_item" do %>
+                <%= render "components/sidebar/menu_button",
+                  url: "#",
+                  icon_name: :calendar,
+                  title: "Calendar",
+                  active: false %>
+              <% end %>
+
+              <%= render "components/sidebar/menu_item" do %>
+                <%= render "components/sidebar/menu_button",
+                  url: "#",
+                  icon_name: :search,
+                  title: "Search",
+                  active: false %>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <%# Projects Group %>
+          <%= render "components/sidebar/group", title: "Projects" do %>
+            <%= render "components/sidebar/menu" do %>
+              <%= render "components/sidebar/menu_item" do %>
+                <%= render "components/sidebar/menu_button",
+                  url: "#",
+                  icon_name: :folder,
+                  title: "Design System",
+                  active: false %>
+              <% end %>
+
+              <%= render "components/sidebar/menu_item" do %>
+                <%= render "components/sidebar/menu_button",
+                  url: "#",
+                  icon_name: :folder,
+                  title: "Marketing Site",
+                  active: false %>
+              <% end %>
+
+              <%= render "components/sidebar/menu_item" do %>
+                <%= render "components/sidebar/menu_button",
+                  url: "#",
+                  icon_name: :folder,
+                  title: "Mobile App",
+                  active: false %>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <%# Settings Group %>
+          <%= render "components/sidebar/group", title: "Settings" do %>
+            <%= render "components/sidebar/menu" do %>
+              <%= render "components/sidebar/menu_item" do %>
+                <%= render "components/sidebar/menu_button",
+                  url: "#",
+                  icon_name: :settings,
+                  title: "Settings",
+                  active: false %>
+              <% end %>
+
+              <%= render "components/sidebar/menu_item" do %>
+                <%= render "components/sidebar/menu_button",
+                  url: "#",
+                  icon_name: :help_circle,
+                  title: "Help & Support",
+                  active: false %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= render "components/sidebar/footer" do %>
+          <%= render "components/sidebar/menu" do %>
+            <%= render "components/sidebar/menu_item" do %>
+              <%= render "components/sidebar/menu_link",
+                url: "#",
+                text_icon: "JD",
+                title: "John Doe",
+                subtitle: "john@example.com" %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= render "components/sidebar/inset" do %>
+        <%= render "components/header" do %>
+          <%= render "components/sidebar/trigger", icon_name: :left_panel, css_classes: "size-7" %>
+          <%= render "components/separator", orientation: :vertical %>
+
+          <% if content_for?(:header) %>
+            <%= yield :header %>
+          <% end %>
+
+          <%# Spacer to push items to the right %>
+          <div class="flex-1"></div>
+
+          <%# Theme Color Switcher %>
+          <div data-controller="theme-color" class="flex items-center">
+            <div class="flex items-center gap-1 rounded-md border border-border p-1">
+              <% %w[neutral green rose blue].each do |theme| %>
+                <button
+                  type="button"
+                  data-theme-color-target="item"
+                  data-theme-color-value="<%= theme %>"
+                  data-action="click->theme-color#select"
+                  data-state="<%= color_theme == theme ? 'on' : 'off' %>"
+                  aria-pressed="<%= color_theme == theme %>"
+                  class="
+                    inline-flex items-center justify-center
+                    size-7 rounded
+                    hover:bg-accent
+                    transition-colors
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                    data-[state=on]:bg-accent
+                  "
+                  title="<%= theme.capitalize %> theme"
+                >
+                  <span class="theme-color-swatch" data-color="<%= theme %>"></span>
+                  <span class="sr-only"><%= theme.capitalize %> theme</span>
+                </button>
+              <% end %>
+            </div>
+          </div>
+
+          <%# Theme toggle button %>
+          <div data-controller="theme">
+            <button
+              type="button"
+              data-action="click->theme#toggle"
+              class="
+                inline-flex items-center justify-center
+                size-8 rounded-md
+                text-muted-foreground hover:text-foreground hover:bg-accent
+                transition-colors
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+              "
+              title="Toggle theme"
+            >
+              <span
+                data-theme-target="icon"
+                data-theme-icon="sun"
+                class="<%= theme_preference == 'light' ? '' : 'hidden' %>"
+              >
+                <%= icon_for :sun, class: "size-4" %>
+              </span>
+
+              <span
+                data-theme-target="icon"
+                data-theme-icon="moon"
+                class="<%= theme_preference == 'dark' ? '' : 'hidden' %>"
+              >
+                <%= icon_for :moon, class: "size-4" %>
+              </span>
+
+              <span
+                data-theme-target="icon"
+                data-theme-icon="monitor"
+                class="<%= theme_preference.nil? ? '' : 'hidden' %>"
+              >
+                <%= icon_for :monitor, class: "size-4" %>
+              </span>
+
+              <span class="sr-only">Toggle theme</span>
+            </button>
+          </div>
+
+          <%# GitHub link in header %>
+          <a
+            href="https://github.com/maquina-app/maquina_components"
+            target="_blank"
+            class="
+              text-sm text-muted-foreground hover:text-foreground
+              transition-colors
+            "
+          >
+            GitHub
+          </a>
+        <% end %>
+
+        <div class="flex-1 overflow-y-auto p-4"><%= yield %></div>
+      <% end %>
+    <% end %>
   </body>
 </html>

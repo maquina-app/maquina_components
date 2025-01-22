@@ -1,0 +1,179 @@
+/* ==========================================================================
+   maquina_components Theme Variables
+   
+   These CSS variables follow the shadcn/ui theming convention.
+   Customize these values to match your design system.
+   
+   Documentation: https://github.com/maquina-app/maquina_components
+   ========================================================================== */
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Layout */
+  --header-height: calc(var(--spacing) * 12 + 1px);
+  --sidebar-width: calc(var(--spacing) * 72);
+  --sidebar-width-icon: 3rem;
+
+  /* Core Colors */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+
+  /* Card */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+
+  /* Popover */
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+
+  /* Primary - Main brand color */
+  --primary: oklch(0.645 0.246 16);
+  --primary-foreground: oklch(0.969 0.015 12);
+
+  /* Secondary */
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+
+  /* Muted - Subtle backgrounds */
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+
+  /* Accent - Hover states */
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+
+  /* Success - Success states */
+  --success: oklch(0.92 0.04 168);
+  --success-foreground: oklch(0.35 0.08 168);
+
+  /* Warning - Warning states */
+  --warning: oklch(0.93 0.04 55);
+  --warning-foreground: oklch(0.4 0.08 50);
+
+  /* Destructive - Error/danger states */
+  --destructive: oklch(0.92 0.05 8);
+  --destructive-foreground: oklch(0.4 0.12 8);
+
+  /* Borders & Inputs */
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.645 0.246 16);
+
+  /* Charts (optional) */
+  --chart-1: oklch(0.645 0.246 16);
+  --chart-2: oklch(0.65 0.09 168);
+  --chart-3: oklch(0.72 0.09 55);
+  --chart-4: oklch(0.58 0.18 17);
+  --chart-5: oklch(0.5 0.13 8);
+
+  /* Sidebar */
+  --sidebar: oklch(0.96 0 0);
+  --sidebar-foreground: oklch(0.2 0 0);
+  --sidebar-primary: oklch(0.645 0.246 16);
+  --sidebar-primary-foreground: oklch(0.969 0.015 12);
+  --sidebar-accent: oklch(0.9 0 0);
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border: oklch(0.88 0 0);
+  --sidebar-ring: oklch(0.645 0.246 16);
+
+  /* Dark Mode */
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+
+    --popover: oklch(0.269 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+
+    --primary: oklch(0.712 0.194 13);
+    --primary-foreground: oklch(0.15 0.052 13);
+
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+
+    --accent: oklch(0.371 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+
+    --success: oklch(0.32 0.06 168);
+    --success-foreground: oklch(0.82 0.06 168);
+
+    --warning: oklch(0.36 0.06 55);
+    --warning-foreground: oklch(0.86 0.06 55);
+
+    --destructive: oklch(0.34 0.07 8);
+    --destructive-foreground: oklch(0.88 0.06 8);
+
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.455 0.188 13);
+
+    --chart-1: oklch(0.712 0.194 13);
+    --chart-2: oklch(0.72 0.09 168);
+    --chart-3: oklch(0.78 0.09 55);
+    --chart-4: oklch(0.645 0.246 16);
+    --chart-5: oklch(0.58 0.13 8);
+
+    --sidebar: oklch(0.14 0 0);
+    --sidebar-foreground: oklch(0.9 0 0);
+    --sidebar-primary: oklch(0.712 0.194 13);
+    --sidebar-primary-foreground: oklch(0.15 0.052 13);
+    --sidebar-accent: oklch(0.22 0 0);
+    --sidebar-accent-foreground: oklch(0.95 0 0);
+    --sidebar-border: oklch(1 0 0 / 12%);
+    --sidebar-ring: oklch(0.455 0.188 13);
+  }
+}
+
+/* Tailwind Theme Bindings
+   These make the CSS variables available as Tailwind utilities:
+   bg-primary, text-muted-foreground, border-sidebar, etc. */
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-ring-destructive: var(--destructive);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Global border color */
+* {
+  border-color: var(--color-border);
+}

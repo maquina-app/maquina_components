@@ -1,0 +1,10 @@
+<%# locals: (variant: :default, size: :md, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :badge,
+    variant: variant,
+    size: size
+  ) %>
+
+<%= content_tag :span, class: css_classes, data: merged_data, **html_options do %>
+  <%= yield %>
+<% end %>

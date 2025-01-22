@@ -1,0 +1,248 @@
+/* ===== Dropdown Menu Component Styles ===== */
+/*
+ * Dropdown menu component for displaying actions triggered by a button.
+ * Uses data attributes for styling to avoid inline utility classes.
+ * Fully compatible with dark mode via CSS variables.
+ *
+ * Structure:
+ * - dropdown-menu (root with Stimulus controller)
+ *   - trigger (button that opens menu)
+ *   - content (positioned menu container)
+ *     - label (section heading)
+ *     - group (logical grouping)
+ *     - item (clickable action)
+ *     - separator (divider)
+ *     - shortcut (keyboard hint)
+ */
+
+/* ===== Root Container ===== */
+[data-component="dropdown-menu"] {
+  position: relative;
+  display: inline-block;
+}
+
+/* ===== Trigger Button ===== */
+/* Trigger uses button component styles via data-component="button" */
+/* Additional dropdown-specific styles */
+[data-component="dropdown-menu"] [data-dropdown-menu-target="trigger"] {
+  @apply gap-2;
+}
+
+/* Chevron icon rotation when open */
+[data-component="dropdown-menu"] [data-dropdown-menu-target="chevron"] {
+  @apply size-4 shrink-0 opacity-50 transition-transform duration-200;
+}
+
+[data-component="dropdown-menu"][data-state="open"] [data-dropdown-menu-target="chevron"] {
+  transform: rotate(180deg);
+}
+
+/* ===== Content Container ===== */
+[data-dropdown-menu-part="content"] {
+  position: absolute;
+  z-index: 50;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--popover, var(--background));
+  color: var(--popover-foreground, var(--foreground));
+  @apply min-w-[8rem] rounded-md border p-1 shadow-md;
+  border-color: var(--border);
+
+  /* Animation setup */
+  @apply transition-all duration-150 ease-out;
+}
+
+/* Visible state */
+[data-dropdown-menu-part="content"][data-state="open"] {
+  display: flex;
+}
+
+/* Animation states */
+[data-dropdown-menu-part="content"][data-state="open"] {
+  animation: dropdown-menu-in 150ms ease-out;
+}
+
+[data-dropdown-menu-part="content"][data-state="closing"] {
+  display: flex;
+  animation: dropdown-menu-out 100ms ease-in forwards;
+}
+
+@keyframes dropdown-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes dropdown-menu-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+}
+
+/* ===== Width Variants ===== */
+[data-dropdown-menu-part="content"][data-width="default"] {
+  @apply min-w-[8rem];
+}
+
+[data-dropdown-menu-part="content"][data-width="sm"] {
+  @apply w-40;
+}
+
+[data-dropdown-menu-part="content"][data-width="md"] {
+  @apply w-56;
+}
+
+[data-dropdown-menu-part="content"][data-width="lg"] {
+  @apply w-72;
+}
+
+/* ===== Alignment ===== */
+[data-dropdown-menu-part="content"][data-align="start"] {
+  left: 0;
+}
+
+[data-dropdown-menu-part="content"][data-align="center"] {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+[data-dropdown-menu-part="content"][data-align="center"][data-state="open"] {
+  animation: dropdown-menu-in-center 150ms ease-out;
+}
+
+@keyframes dropdown-menu-in-center {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0);
+  }
+}
+
+[data-dropdown-menu-part="content"][data-align="end"] {
+  right: 0;
+}
+
+/* ===== Side Positioning ===== */
+[data-dropdown-menu-part="content"][data-side="bottom"] {
+  top: 100%;
+  @apply mt-1;
+}
+
+[data-dropdown-menu-part="content"][data-side="top"] {
+  bottom: 100%;
+  @apply mb-1;
+}
+
+[data-dropdown-menu-part="content"][data-side="left"] {
+  right: 100%;
+  top: 0;
+  @apply mr-1;
+}
+
+[data-dropdown-menu-part="content"][data-side="right"] {
+  left: 100%;
+  top: 0;
+  @apply ml-1;
+}
+
+/* ===== Menu Item ===== */
+[data-dropdown-menu-part="item"] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: default;
+  user-select: none;
+  color: var(--popover-foreground, var(--foreground));
+  @apply gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors;
+}
+
+/* Reset link styles */
+a[data-dropdown-menu-part="item"] {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Hover state */
+[data-dropdown-menu-part="item"]:hover:not([disabled]):not([aria-disabled="true"]) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  cursor: pointer;
+}
+
+/* Focus state (keyboard navigation) */
+[data-dropdown-menu-part="item"]:focus {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Disabled state */
+[data-dropdown-menu-part="item"][disabled],
+[data-dropdown-menu-part="item"][aria-disabled="true"] {
+  @apply opacity-50 cursor-not-allowed pointer-events-none;
+}
+
+/* Destructive variant */
+[data-dropdown-menu-part="item"][data-variant="destructive"] {
+  color: var(--destructive);
+}
+
+[data-dropdown-menu-part="item"][data-variant="destructive"]:hover:not([disabled]):not([aria-disabled="true"]),
+[data-dropdown-menu-part="item"][data-variant="destructive"]:focus {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+/* Icon support */
+[data-dropdown-menu-part="item"] svg {
+  @apply size-4 shrink-0 pointer-events-none;
+}
+
+/* ===== Label ===== */
+[data-dropdown-menu-part="label"] {
+  @apply px-2 py-1.5 text-sm font-semibold;
+  color: var(--foreground);
+}
+
+/* Inset variant (aligns with items that have icons) */
+[data-dropdown-menu-part="label"][data-inset="true"] {
+  @apply pl-8;
+}
+
+/* ===== Separator ===== */
+[data-dropdown-menu-part="separator"] {
+  @apply -mx-1 my-1 h-px;
+  background-color: var(--muted);
+}
+
+/* ===== Group ===== */
+[data-dropdown-menu-part="group"] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Shortcut ===== */
+[data-dropdown-menu-part="shortcut"] {
+  @apply ml-auto text-xs tracking-widest;
+  color: var(--muted-foreground);
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */

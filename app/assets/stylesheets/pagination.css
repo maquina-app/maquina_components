@@ -1,0 +1,154 @@
+/* ===== Pagination Component Styles ===== */
+/*
+ * Navigation for paginated content following shadcn/ui patterns.
+ * Uses data attributes for styling to avoid inline utility classes.
+ * Fully compatible with dark mode via CSS variables.
+ *
+ * Structure:
+ * - pagination (nav root)
+ *   - content (ul list)
+ *     - item (li wrapper)
+ *       - link / previous / next / ellipsis
+ */
+
+/* ===== Root Container ===== */
+[data-component="pagination"] {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  @apply mx-auto;
+}
+
+/* ===== Content List ===== */
+[data-pagination-part="content"] {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  @apply gap-1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ===== Item Wrapper ===== */
+[data-pagination-part="item"] {
+  /* No specific styles needed, just a wrapper */
+}
+
+/* ===== Shared Button/Link Base Styles ===== */
+[data-pagination-part="link"],
+[data-pagination-part="previous"],
+[data-pagination-part="next"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  @apply rounded-md text-sm font-medium;
+  @apply transition-colors duration-150;
+  
+  /* Size */
+  @apply h-9 min-w-9 px-3;
+  
+  /* Colors - ghost style */
+  background-color: transparent;
+  color: var(--foreground);
+  
+  /* Remove default link/button styles */
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ===== Page Number Links ===== */
+[data-pagination-part="link"]:hover:not([aria-disabled="true"]) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+[data-pagination-part="link"][data-active="true"] {
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+[data-pagination-part="link"][data-active="true"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* ===== Previous/Next Navigation ===== */
+[data-pagination-part="previous"],
+[data-pagination-part="next"] {
+  @apply gap-1 px-2.5;
+}
+
+[data-pagination-part="previous"]:hover:not([aria-disabled="true"]),
+[data-pagination-part="next"]:hover:not([aria-disabled="true"]) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Hide labels on small screens */
+@media (max-width: 640px) {
+  [data-pagination-part="previous"] span,
+  [data-pagination-part="next"] span {
+    @apply sr-only;
+  }
+  
+  [data-pagination-part="previous"],
+  [data-pagination-part="next"] {
+    @apply px-2;
+  }
+}
+
+/* ===== Ellipsis ===== */
+[data-pagination-part="ellipsis"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @apply h-9 w-9;
+  color: var(--muted-foreground);
+}
+
+/* ===== Disabled State ===== */
+[data-pagination-part="link"][aria-disabled="true"],
+[data-pagination-part="previous"][aria-disabled="true"],
+[data-pagination-part="next"][aria-disabled="true"] {
+  @apply opacity-50 pointer-events-none cursor-not-allowed;
+}
+
+/* ===== Focus Visible ===== */
+[data-pagination-part="link"]:focus-visible,
+[data-pagination-part="previous"]:focus-visible,
+[data-pagination-part="next"]:focus-visible {
+  @apply outline-none;
+  box-shadow: 0 0 0 2px var(--background),
+              0 0 0 4px var(--ring);
+}
+
+/* ===== Icon Sizing ===== */
+[data-pagination-part="previous"] svg,
+[data-pagination-part="next"] svg,
+[data-pagination-part="ellipsis"] svg {
+  @apply size-4 shrink-0;
+}
+
+/* ===== Screen Reader Only ===== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */

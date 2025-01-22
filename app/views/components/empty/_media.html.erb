@@ -1,0 +1,13 @@
+<%# locals: (icon: nil, variant: :icon, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "empty-part": "media",
+    variant: variant
+  ) %>
+
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
+  <% if icon.present? && respond_to?(:icon_for) %>
+    <%= icon_for(icon) %>
+  <% elsif block_given? %>
+    <%= yield %>
+  <% end %>
+<% end %>

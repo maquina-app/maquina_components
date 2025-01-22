@@ -1,0 +1,11 @@
+<%# locals: (css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "dropdown-menu-part": "separator"
+  ) %>
+
+<%= content_tag :div, nil,
+      role: "separator",
+      aria: { orientation: "horizontal" },
+      class: css_classes.presence,
+      data: merged_data,
+      **html_options %>

@@ -1,0 +1,8 @@
+<%# locals: (css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    breadcrumb_part: :item
+  ) %>
+
+<%= content_tag :li, class: css_classes, data: merged_data, **html_options do %>
+  <%= yield %>
+<% end %>

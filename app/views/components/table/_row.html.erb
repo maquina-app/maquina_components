@@ -1,0 +1,8 @@
+<%# locals: (css_classes: "", selected: false, **html_options) %>
+<%
+  merged_data = (html_options.delete(:data) || {}).merge(table_part: :row)
+  merged_data[:state] = :selected if selected
+%>
+<%= content_tag :tr, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= yield %>
+<% end %>

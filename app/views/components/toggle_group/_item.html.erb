@@ -1,0 +1,19 @@
+<%# locals: (value:, pressed: false, disabled: false, aria_label: nil, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "toggle-group-part": "item",
+    "toggle-group-target": "item",
+    value: value,
+    state: pressed ? "on" : "off",
+    action: "click->toggle-group#toggle keydown->toggle-group#handleKeydown"
+  ) %>
+
+<%= content_tag :button,
+      type: "button",
+      class: css_classes.presence,
+      data: merged_data,
+      disabled: disabled,
+      "aria-pressed": pressed,
+      "aria-label": aria_label,
+      **html_options do %>
+  <%= yield %>
+<% end %>

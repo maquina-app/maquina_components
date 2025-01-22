@@ -1,0 +1,128 @@
+/* ===== Card Component Styles ===== */
+/*
+ * Card component for grouping related content with header, body, and footer.
+ * Uses data attributes for styling to maintain consistency with other components.
+ * Fully compatible with dark mode via CSS variables.
+ */
+
+/* ===== Base Card Styles ===== */
+[data-component="card"] {
+  display: flex;
+  flex-direction: column;
+  
+  /* Border & Radius */
+  @apply rounded-xl border shadow;
+  border-color: var(--border);
+  
+  /* Colors */
+  background-color: var(--card);
+  color: var(--card-foreground);
+}
+
+/* ===== Card Header ===== */
+[data-component="card"] [data-card-part="header"] {
+  display: flex;
+  flex-direction: column;
+  @apply gap-1.5 p-6;
+}
+
+/* Header with row layout (when using action) */
+[data-component="card"] [data-card-part="header"][data-layout="row"] {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  @apply gap-4;
+}
+
+/* ===== Card Title ===== */
+[data-component="card"] [data-card-part="title"] {
+  @apply text-lg font-semibold leading-none tracking-tight;
+}
+
+/* Small title variant (for compact headers) */
+[data-component="card"] [data-card-part="title"][data-size="sm"] {
+  @apply text-sm font-medium;
+}
+
+/* ===== Card Description ===== */
+[data-component="card"] [data-card-part="description"] {
+  @apply text-sm;
+  color: var(--muted-foreground);
+}
+
+/* ===== Card Action ===== */
+[data-component="card"] [data-card-part="action"] {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  @apply gap-2;
+}
+
+/* ===== Card Content ===== */
+[data-component="card"] [data-card-part="content"] {
+  @apply p-6 pt-0;
+}
+
+/* Content with top padding (when no header) */
+[data-component="card"] [data-card-part="content"][data-spacing="full"] {
+  @apply pt-6;
+}
+
+/* ===== Card Footer ===== */
+[data-component="card"] [data-card-part="footer"] {
+  display: flex;
+  align-items: center;
+  @apply p-6 pt-0;
+}
+
+/* Footer with top padding (when no content) */
+[data-component="card"] [data-card-part="footer"][data-spacing="full"] {
+  @apply pt-6;
+}
+
+/* Footer alignment variants */
+[data-component="card"] [data-card-part="footer"][data-align="between"] {
+  justify-content: space-between;
+}
+
+[data-component="card"] [data-card-part="footer"][data-align="end"] {
+  justify-content: flex-end;
+}
+
+[data-component="card"] [data-card-part="footer"][data-align="center"] {
+  justify-content: center;
+}
+
+/* ===== Icon Support ===== */
+[data-component="card"] [data-card-part="header"] svg,
+[data-component="card"] [data-card-part="action"] svg {
+  @apply size-4 shrink-0;
+  color: var(--muted-foreground);
+}
+
+/* ===== Interactive Card (when used as link/button) ===== */
+a[data-component="card"],
+button[data-component="card"] {
+  text-decoration: none;
+  cursor: pointer;
+  @apply transition-[border-color,box-shadow] duration-150;
+}
+
+a[data-component="card"]:hover,
+button[data-component="card"]:hover {
+  border-color: var(--accent);
+}
+
+a[data-component="card"]:focus-visible,
+button[data-component="card"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background),
+              0 0 0 4px var(--border);
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */

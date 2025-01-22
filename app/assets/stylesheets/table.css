@@ -1,0 +1,205 @@
+/* ===== Table Component ===== */
+/* Based on shadcn/ui table with data-component and data-table-part selectors */
+/* Uses theme variables for colors, @apply for spacing/typography */
+
+/* ===== Container ===== */
+[data-table-part="container"] {
+  position: relative;
+  width: 100%;
+  min-width: 100%;
+  overflow-x: auto;
+}
+
+/* Bordered variant */
+[data-table-part="container"][data-variant="bordered"] {
+  border: 1px solid var(--border);
+  @apply rounded-lg overflow-hidden;
+}
+
+/* ===== Table ===== */
+[data-component="table"] {
+  width: 100%;
+  min-width: 100%;
+  caption-side: bottom;
+  border-collapse: collapse;
+  @apply text-sm;
+}
+
+/* ===== Caption ===== */
+[data-table-part="caption"] {
+  color: var(--muted-foreground);
+  @apply mt-4 text-sm;
+}
+
+/* ===== Header ===== */
+[data-table-part="header"] {
+  border-bottom: 1px solid var(--border);
+}
+
+[data-table-part="header"][data-sticky="true"] {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--muted);
+}
+
+/* Header rows always have border */
+[data-table-part="header"] [data-table-part="row"] {
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===== Body ===== */
+/* Remove border from last row in body */
+[data-table-part="body"] [data-table-part="row"]:last-child {
+  border-bottom: 0;
+}
+
+/* ===== Footer ===== */
+[data-table-part="footer"] {
+  background-color: color-mix(in oklch, var(--muted) 50%, transparent);
+  font-weight: 500;
+  border-top: 1px solid var(--border);
+}
+
+/* Remove border from last row in footer */
+[data-table-part="footer"] [data-table-part="row"]:last-child {
+  border-bottom: 0;
+}
+
+/* ===== Row ===== */
+[data-table-part="row"] {
+  border-bottom: 1px solid var(--border);
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  @apply duration-150;
+}
+
+[data-table-part="row"]:hover {
+  background-color: color-mix(in oklch, var(--muted) 50%, transparent);
+}
+
+[data-table-part="row"][data-state="selected"] {
+  background-color: var(--muted);
+}
+
+/* ===== Head Cell ===== */
+[data-table-part="head"] {
+  color: var(--foreground);
+  text-align: left;
+  vertical-align: middle;
+  @apply h-10 px-4 py-2.5 font-medium whitespace-nowrap text-xs uppercase tracking-wider;
+}
+
+/* First column - extra left padding */
+[data-table-part="head"]:first-child {
+  @apply pl-6;
+}
+
+/* Last column - extra right padding */
+[data-table-part="head"]:last-child {
+  @apply pr-6;
+}
+
+/* Checkbox alignment in header */
+[data-table-part="head"]:has([role="checkbox"]) {
+  @apply pr-0;
+}
+
+[data-table-part="head"] > [role="checkbox"] {
+  @apply translate-y-0.5;
+}
+
+/* ===== Body Cell ===== */
+[data-table-part="cell"] {
+  vertical-align: middle;
+  @apply px-4 py-3 whitespace-nowrap;
+}
+
+/* First column - extra left padding */
+[data-table-part="cell"]:first-child {
+  @apply pl-6;
+}
+
+/* Last column - extra right padding */
+[data-table-part="cell"]:last-child {
+  @apply pr-6;
+}
+
+/* Checkbox alignment in cells */
+[data-table-part="cell"]:has([role="checkbox"]) {
+  @apply pr-0;
+}
+
+[data-table-part="cell"] > [role="checkbox"] {
+  @apply translate-y-0.5;
+}
+
+/* ===== Utility Classes for Cells ===== */
+/* These can be applied via css_classes parameter */
+
+/* Right-aligned text (for amounts, numbers) */
+[data-table-part="head"].text-right,
+[data-table-part="cell"].text-right {
+  text-align: right;
+}
+
+/* Center-aligned text */
+[data-table-part="head"].text-center,
+[data-table-part="cell"].text-center {
+  text-align: center;
+}
+
+/* Fixed width columns */
+[data-table-part="head"].w-checkbox,
+[data-table-part="cell"].w-checkbox {
+  @apply w-10;
+}
+
+[data-table-part="head"].w-actions,
+[data-table-part="cell"].w-actions {
+  @apply w-12;
+}
+
+/* Font weight for emphasis */
+[data-table-part="cell"].font-medium {
+  @apply font-medium;
+}
+
+/* ===== Striped Variant ===== */
+/* Apply data-variant="striped" to the table element */
+[data-component="table"][data-variant="striped"] [data-table-part="body"] [data-table-part="row"]:nth-child(even) {
+  background-color: color-mix(in oklch, var(--muted) 30%, transparent);
+}
+
+[data-component="table"][data-variant="striped"] [data-table-part="body"] [data-table-part="row"]:nth-child(even):hover {
+  background-color: color-mix(in oklch, var(--muted) 50%, transparent);
+}
+
+/* ===== Empty State ===== */
+[data-table-part="cell"][data-empty="true"] {
+  color: var(--muted-foreground);
+  text-align: center;
+  @apply py-8;
+}
+
+/* ===== Responsive: Compact on mobile ===== */
+@media (max-width: 640px) {
+  [data-table-part="head"],
+  [data-table-part="cell"] {
+    @apply px-2 py-2;
+  }
+
+  [data-table-part="head"]:first-child,
+  [data-table-part="cell"]:first-child {
+    @apply pl-4;
+  }
+
+  [data-table-part="head"]:last-child,
+  [data-table-part="cell"]:last-child {
+    @apply pr-4;
+  }
+
+  [data-table-part="head"] {
+    @apply h-8;
+  }
+}

@@ -1,0 +1,9 @@
+<%# locals: (css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    breadcrumb_part: :ellipsis
+  ) %>
+
+<%= content_tag :span, role: "presentation", class: css_classes, data: merged_data, **html_options do %>
+  <%= icon_for(:ellipsis) %>
+  <span class="sr-only">More</span>
+<% end %>

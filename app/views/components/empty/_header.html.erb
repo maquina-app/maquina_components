@@ -1,0 +1,8 @@
+<%# locals: (css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "empty-part": "header"
+  ) %>
+
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= yield %>
+<% end %>

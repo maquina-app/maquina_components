@@ -1,0 +1,23 @@
+<%# locals: (href:, active: false, disabled: false, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "pagination-part": "link",
+    active: active
+  ) %>
+
+<% if disabled %>
+  <%= content_tag :span,
+        class: css_classes.presence,
+        data: merged_data,
+        "aria-disabled": "true",
+        **html_options do %>
+    <%= yield %>
+  <% end %>
+<% else %>
+  <%= link_to href,
+        class: css_classes.presence,
+        data: merged_data,
+        "aria-current": (active ? "page" : nil),
+        **html_options do %>
+    <%= yield %>
+  <% end %>
+<% end %>

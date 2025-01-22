@@ -1,0 +1,38 @@
+<%# locals: (cards: [], columns: 3, container_class: "", action: nil, action_position: "end") -%>
+
+<div
+  class="<%= class_names("flex flex-col lg:flex-row lg:items-center gap-4": action.present?) %>"
+>
+  <% if action.present? && action_position == "start" %>
+    <div class="flex justify-center lg:justify-start">
+      <%= action %>
+    </div>
+  <% end %>
+
+  <div
+    class="<%= class_names(
+    "grid gap-4", 
+    "grid-cols-1",
+    "sm:grid-cols-#{columns}",
+    container_class,
+    "flex-1": action.present?
+  ) %>"
+  >
+    <% cards.each do |card| %>
+      <%= render "components/stats_card",
+      title: card[:title],
+      value: card[:value],
+      icon: card[:icon],
+      icon_class: card[:icon_class] || "",
+      subtitle: card[:subtitle],
+      value_class: card[:value_class] || "",
+      container_class: card[:container_class] || "" %>
+    <% end %>
+  </div>
+
+  <% if action.present? && action_position == "end" %>
+    <div class="flex justify-center lg:justify-end">
+      <%= action %>
+    </div>
+  <% end %>
+</div>

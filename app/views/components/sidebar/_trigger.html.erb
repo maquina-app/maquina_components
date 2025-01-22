@@ -1,0 +1,12 @@
+<%# locals: (icon_name:, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    sidebar_part: :trigger,
+    controller: "sidebar-trigger",
+    action: "click->sidebar-trigger#triggerClick",
+    sidebar_trigger_sidebar_outlet: "[data-outlet='sidebar']"
+  ) %>
+
+<%= button_tag type: :button, class: css_classes, data: merged_data, **html_options do %>
+  <%= icon_for(icon_name) %>
+  <span class="sr-only">Toggle Sidebar</span>
+<% end %>

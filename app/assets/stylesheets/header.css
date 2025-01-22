@@ -1,0 +1,61 @@
+/* ===== Header Component Styles ===== */
+/*
+ * Page header component for use with sidebar layouts.
+ * Provides a consistent header with proper height and alignment.
+ */
+
+/* ===== Base Styles ===== */
+[data-component="header"] {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: var(--header-height, 3.5rem);
+  border-bottom: 1px solid var(--border);
+  background-color: var(--background);
+}
+
+/* Inner container */
+[data-component="header"] [data-header-part="inner"] {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  @apply gap-1 px-4 lg:gap-2 lg:px-6;
+}
+
+/* ===== Inset Variant (rounded top corners) ===== */
+/*
+ * When header is inside sidebar/inset, add rounded top corners
+ * to match the inset content area styling.
+ */
+[data-sidebar-part="inset"] [data-component="header"] {
+  @apply rounded-t-xl;
+}
+
+/* ===== Header Elements ===== */
+
+/* Separator between trigger and content */
+[data-component="header"] [data-component="separator"][data-orientation="vertical"] {
+  height: 1rem;
+  @apply mx-2;
+}
+
+/* Title text */
+[data-component="header"] [data-header-part="title"] {
+  @apply text-sm font-medium;
+  color: var(--foreground);
+}
+
+/* Actions container (right side) */
+[data-component="header"] [data-header-part="actions"] {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  @apply gap-2;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+  [data-component="header"] [data-header-part="inner"] {
+    @apply gap-1 px-4;
+  }
+}

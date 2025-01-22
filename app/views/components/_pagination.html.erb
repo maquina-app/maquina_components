@@ -1,34 +1,13 @@
-<%# locals: (pagy:, route_helper:, param: nil, data: {turbo_action: :replace}) %>
-<nav class="mx-auto flex w-full justify-center mt-4">
-  <ul class="flex flex-row items-center gap-1">
-    <li>
-      <% if pagy.prev.present? %>
-        <%= link_to "Previo",
-        paginated_path(route_helper, pagy, pagy.prev, param),
-        class: "button-ghost",
-        data: data %>
-      <% else %>
-        <button class="button-ghost" disabled>Previo</button>
-      <% end %>
-    </li>
-    <% pagy.series.each do |page| %>
-      <li>
-        <%= link_to page,
-        paginated_path(route_helper, pagy, page, param),
-        class: class_names("button-ghost", "button-outline": page.is_a?(String)),
-        data: data %>
-      </li>
-    <% end %>
+<%# locals: (css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :pagination
+  ) %>
 
-    <li>
-      <% if pagy.next.present? %>
-        <%= link_to "Siguiente",
-        paginated_path(route_helper, pagy, pagy.next, param),
-        class: "button-ghost",
-        data: data %>
-      <% else %>
-        <button class="button-ghost" disabled>Siguiente</button>
-      <% end %>
-    </li>
-  </ul>
-</nav>
+<%= content_tag :nav,
+      role: "navigation",
+      "aria-label": html_options.delete(:"aria-label") || "Pagination",
+      class: css_classes.presence,
+      data: merged_data,
+      **html_options do %>
+  <%= yield %>
+<% end %>

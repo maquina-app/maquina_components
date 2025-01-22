@@ -1,0 +1,17 @@
+<%# locals: (icon: :chevron_right, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    breadcrumb_part: :separator
+  ) %>
+
+<li
+  role="presentation"
+  aria-hidden="true"
+  class="<%= css_classes %>"
+  <%= tag.attributes(data: merged_data, **html_options) %>
+>
+  <% if icon == :custom %>
+    <%= yield %>
+  <% else %>
+    <%= icon_for(icon) %>
+  <% end %>
+</li>

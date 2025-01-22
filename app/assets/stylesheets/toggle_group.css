@@ -1,0 +1,151 @@
+/* ===== Toggle Group Component Styles ===== */
+/*
+ * A group of two-state buttons that can be toggled on or off.
+ * Uses data attributes for styling to avoid inline utility classes.
+ * Fully compatible with dark mode via CSS variables.
+ *
+ * Structure:
+ * - toggle-group (root container)
+ *   - item (toggle button)
+ */
+
+/* ===== Root Container ===== */
+[data-component="toggle-group"] {
+  display: inline-flex;
+  align-items: center;
+  @apply gap-1 rounded-md;
+}
+
+/* Group disabled state */
+[data-component="toggle-group"][aria-disabled="true"] {
+  @apply opacity-50 pointer-events-none;
+}
+
+/* ===== Toggle Item Base ===== */
+[data-toggle-group-part="item"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  @apply gap-2 rounded-md text-sm font-medium;
+  @apply transition-colors duration-150;
+  
+  /* Default size */
+  @apply h-9 px-3;
+  
+  /* Remove default button styles */
+  border: none;
+  cursor: pointer;
+  
+  /* Default variant colors */
+  background-color: transparent;
+  color: var(--muted-foreground);
+}
+
+/* ===== Size Variants ===== */
+
+/* Small */
+[data-component="toggle-group"][data-size="sm"] [data-toggle-group-part="item"] {
+  @apply h-8 px-2.5 text-xs;
+}
+
+/* Large */
+[data-component="toggle-group"][data-size="lg"] [data-toggle-group-part="item"] {
+  @apply h-10 px-4;
+}
+
+/* ===== Visual Variants ===== */
+
+/* Default variant */
+[data-component="toggle-group"][data-variant="default"] [data-toggle-group-part="item"] {
+  background-color: transparent;
+}
+
+[data-component="toggle-group"][data-variant="default"] [data-toggle-group-part="item"]:hover:not(:disabled) {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+[data-component="toggle-group"][data-variant="default"] [data-toggle-group-part="item"][data-state="on"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Outline variant */
+[data-component="toggle-group"][data-variant="outline"] {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  @apply gap-0;
+}
+
+[data-component="toggle-group"][data-variant="outline"] [data-toggle-group-part="item"] {
+  @apply rounded-none;
+  border-right: 1px solid var(--border);
+}
+
+[data-component="toggle-group"][data-variant="outline"] [data-toggle-group-part="item"]:first-child {
+  @apply rounded-l-md;
+}
+
+[data-component="toggle-group"][data-variant="outline"] [data-toggle-group-part="item"]:last-child {
+  @apply rounded-r-md;
+  border-right: none;
+}
+
+[data-component="toggle-group"][data-variant="outline"] [data-toggle-group-part="item"]:hover:not(:disabled) {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+[data-component="toggle-group"][data-variant="outline"] [data-toggle-group-part="item"][data-state="on"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* ===== Interactive States ===== */
+
+/* Hover */
+[data-toggle-group-part="item"]:hover:not(:disabled) {
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+/* Pressed (on) state */
+[data-toggle-group-part="item"][data-state="on"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Focus visible */
+[data-toggle-group-part="item"]:focus-visible {
+  @apply outline-none;
+  box-shadow: 0 0 0 2px var(--background),
+              0 0 0 4px var(--ring);
+  z-index: 1;
+  position: relative;
+}
+
+/* Disabled */
+[data-toggle-group-part="item"]:disabled {
+  @apply opacity-50 cursor-not-allowed pointer-events-none;
+}
+
+/* ===== Icon Support ===== */
+[data-toggle-group-part="item"] svg {
+  @apply size-4 shrink-0 pointer-events-none;
+}
+
+/* Icon-only size adjustments */
+[data-component="toggle-group"][data-size="sm"] [data-toggle-group-part="item"] svg {
+  @apply size-3.5;
+}
+
+[data-component="toggle-group"][data-size="lg"] [data-toggle-group-part="item"] svg {
+  @apply size-5;
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */

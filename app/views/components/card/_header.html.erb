@@ -1,0 +1,9 @@
+<%# locals: (layout: :column, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    card_part: :header,
+    layout: (layout == :row ? :row : nil)
+  ).compact %>
+
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= yield %>
+<% end %>

@@ -1,0 +1,16 @@
+<%# locals: (css_classes: "", responsive: false, **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :breadcrumbs
+  )
+  
+  if responsive
+    merged_data[:controller] = "breadcrumb"
+  end %>
+
+<nav
+  aria-label="Breadcrumb"
+  class="<%= css_classes %>"
+  <%= tag.attributes(data: merged_data, **html_options) %>
+>
+  <%= yield %>
+</nav>
