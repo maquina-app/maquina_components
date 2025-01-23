@@ -12,3 +12,4 @@ ignore: # default: []
   - "db/schema.rb"
   - "test/dummy/**/*"
   - "tmp/**/*"
+  - "vendor/bundle/**/*"
