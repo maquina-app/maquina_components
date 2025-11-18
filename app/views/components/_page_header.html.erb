@@ -1,0 +1,36 @@
+<%# locals: (title:, description: nil, back_href: nil, back_text: "Back", actions: nil, container_class: "") -%>
+
+<div
+  class="<%= class_names("flex items-center justify-between", container_class) %>"
+>
+  <div>
+    <% if back_href.present? %>
+      <nav class="mb-2" aria-label="Breadcrumb">
+        <%= link_to back_href, 
+            class: class_names("inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors") do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          <%= back_text %>
+        <% end %>
+      </nav>
+    <% end %>
+
+    <h1 class="text-2xl font-bold text-foreground"><%= title %></h1>
+
+    <% if description.present? %>
+      <p class="mt-1 text-sm text-muted-foreground"><%= description %></p>
+    <% end %>
+  </div>
+
+  <% if actions.present? %>
+    <div class="flex items-center gap-3">
+      <%= actions %>
+    </div>
+  <% end %>
+</div>
