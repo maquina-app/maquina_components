@@ -1,0 +1,9 @@
+<%# locals: (css_classes: "") %>
+
+<li class="inline-flex items-center text-muted-foreground <%= css_classes %>">
+  <% if block_given? %>
+    <%= yield %>
+  <% else %>
+    <%= icon_for(:chevron_right) %>
+  <% end %>
+</li>

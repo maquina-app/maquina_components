@@ -1,0 +1,6 @@
+<%# locals: (css_classes: "") %>
+
+<%= content_tag :span, class: "inline-flex h-9 items-center justify-center #{css_classes}" do %>
+  <%= icon_for(:ellipsis) %>
+  <span class="sr-only">More</span>
+<% end %>

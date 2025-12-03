@@ -1,0 +1,7 @@
+<%# locals: (href:, css_classes: "", html_options: {}) %>
+
+<%= link_to href, 
+    class: "inline-flex items-center text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline #{css_classes}", 
+    **html_options do %>
+  <%= yield %>
+<% end %>
