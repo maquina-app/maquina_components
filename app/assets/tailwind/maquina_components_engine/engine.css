@@ -16,3 +16,109 @@
   @import "../../stylesheets/toast.css";
   @import "../../stylesheets/toggle_group.css";
 }
+
+@utility button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  /* gap-2 */
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  /* rounded-md */
+  font-size: 0.875rem;
+  /* text-sm */
+  font-weight: 500;
+  /* h-9 */
+  padding: 0.5rem 1rem;
+  /* px-4 py-2 */
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+
+  &:focus-visible {
+    outline: none;
+    ring-width: 1px;
+    ring-color: var(--color-ring);
+  }
+
+  &:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  & svg {
+    pointer-events: none;
+    width: 1rem;
+    /* size-4 */
+    height: 1rem;
+    /* size-4 */
+    flex-shrink: 0;
+  }
+}
+
+/* Form */
+.form-base {
+  @apply flex flex-col w-full gap-6;
+}
+
+.form-group {
+  @apply flex flex-col gap-2;
+}
+
+.form-label {
+  @apply text-foreground text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+}
+
+.form-input {
+  @apply h-10 flex w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm;
+}
+
+.form-select {
+  @apply col-start-1 row-start-1 w-full appearance-none rounded-md bg-transparent py-1.5 pl-3 pr-8 text-base text-foreground border border-input shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm/6;
+}
+
+.form-select-group {
+  @apply grid grid-cols-1;
+
+  & svg {
+    @apply pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-muted-foreground sm:size-4;
+  }
+}
+
+.form-help-text {
+  @apply text-sm text-muted-foreground;
+}
+
+.form-error-text {
+  @apply text-sm text-destructive;
+}
+
+/* Buttons */
+.button-primary {
+  @apply button-base bg-primary text-primary-foreground hover:bg-primary/90;
+}
+
+.button-secondary {
+  @apply button-base bg-secondary text-secondary-foreground hover:bg-secondary/80;
+}
+
+.button-ghost {
+  @apply button-base hover:bg-secondary hover:text-secondary-foreground;
+}
+
+.button-outline {
+  @apply button-base border border-border bg-background shadow-sm hover:bg-secondary/40 hover:text-secondary-foreground;
+}
+
+.button-destructive {
+  @apply button-base bg-destructive text-destructive shadow-sm hover:bg-destructive/90;
+}
+
+.separator {
+  @apply -mx-1 my-1 h-px bg-muted;
+}
+
+.dropdown-menu-item {
+  @apply relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0;
+}

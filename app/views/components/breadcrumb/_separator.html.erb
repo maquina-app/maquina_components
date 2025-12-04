@@ -1,7 +1,7 @@
-<%# locals: (css_classes: "") %>
+<%# locals: (css_classes: "", custom: false) %>
 
-<li class="inline-flex items-center text-muted-foreground <%= css_classes %>">
-  <% if block_given? %>
+<li class="size-4 inline-flex items-center text-muted-foreground <%= css_classes %>">
+  <% if custom %>
     <%= yield %>
   <% else %>
     <%= icon_for(:chevron_right) %>
