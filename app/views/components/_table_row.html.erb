@@ -1,0 +1,11 @@
+<%# locals: (css_classes: nil, selected: false, **html_options) %>
+<%
+  data_attrs = { table_part: "row" }
+  data_attrs[:state] = "selected" if selected
+  data_attrs.merge!(html_options.delete(:data) || {})
+  html_options[:data] = data_attrs
+  html_options[:class] = css_classes if css_classes
+%>
+<tr <%= tag.attributes(html_options) %>>
+  <%= yield %>
+</tr>

@@ -1,0 +1,10 @@
+<%# locals: (css_classes: nil, **html_options) %>
+<%
+  data_attrs = { table_part: "body" }
+  data_attrs.merge!(html_options.delete(:data) || {})
+  html_options[:data] = data_attrs
+  html_options[:class] = css_classes if css_classes
+%>
+<tbody <%= tag.attributes(html_options) %>>
+  <%= yield %>
+</tbody>
