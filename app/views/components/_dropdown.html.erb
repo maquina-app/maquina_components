@@ -1,3 +1,30 @@
+<%# DEPRECATED: Use components/dropdown_menu instead %>
+<%#
+  This partial is deprecated and will be removed in a future version.
+  
+  Migration:
+  
+  OLD (this partial):
+    <%= render "components/dropdown" do %>
+      <div class="dropdown-menu-item">Item</div>
+    <% end %>
+  
+  NEW (dropdown_menu component):
+    <%= render "components/dropdown_menu" do %>
+      <%= render "components/dropdown_menu/trigger" do %>Options<% end %>
+      <%= render "components/dropdown_menu/content" do %>
+        <%= render "components/dropdown_menu/item", href: "#" do %>Item<% end %>
+      <% end %>
+    <% end %>
+  
+  OR using the helper:
+    <%= dropdown_menu do |menu| %>
+      <% menu.trigger { "Options" } %>
+      <% menu.content do %>
+        <% menu.item "Item", href: "#" %>
+      <% end %>
+    <% end %>
+%>
 <div
   class="
     absolute z-10 overflow-hidden border border-border p-1 text-popover-foreground
@@ -19,6 +46,3 @@
 >
   <%= yield %>
 </div>
-<!--
-<div role="separator" aria-orientation="horizontal" class="separator"></div>
--->
