@@ -99,6 +99,48 @@
 | `data-align="end"` | End/right alignment |
 | `data-align="center"` | Center alignment |
 
+### Data Attributes
+
+These data attributes are used for CSS styling:
+
+**Component Identifiers**
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-component="card"` | Container div | Main component identifier |
+| `data-card-part="header"` | Header div | Card header section |
+| `data-card-part="title"` | Title div | Card title element |
+| `data-card-part="description"` | Description div | Card description element |
+| `data-card-part="action"` | Action div | Header action slot |
+| `data-card-part="content"` | Content div | Main body content |
+| `data-card-part="footer"` | Footer div | Card footer section |
+
+**Header Layout**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-layout="row"` | Row layout (title + action side by side) |
+
+**Title Size**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-size="sm"` | Small title text |
+
+**Content/Footer Spacing**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-spacing="full"` | Full padding (when no header precedes content) |
+
+**Footer Alignment**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-align="between"` | Space-between alignment |
+| `data-align="end"` | End/right alignment |
+| `data-align="center"` | Center alignment |
+
 ---
 
 ## Basic Usage

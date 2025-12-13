@@ -75,6 +75,33 @@
 |-----------|-------------|
 | `data-has-icon="true"` | Present when alert has an icon (adds grid layout) |
 
+### Data Attributes
+
+These data attributes are used for CSS styling:
+
+**Component Identifiers**
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-component="alert"` | Container div | Main component identifier |
+| `data-alert-part="title"` | Title div | Alert title section |
+| `data-alert-part="description"` | Description div | Alert description section |
+
+**Variants**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-variant="default"` | Default (neutral) styling |
+| `data-variant="destructive"` | Error/destructive styling |
+| `data-variant="success"` | Success styling |
+| `data-variant="warning"` | Warning styling |
+
+**Icon State**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-has-icon="true"` | Present when alert has an icon (adds grid layout) |
+
 ---
 
 ## Basic Usage

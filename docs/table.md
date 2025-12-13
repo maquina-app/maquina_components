@@ -93,6 +93,54 @@
 | `data-align="center"` | Center alignment |
 | `data-align="right"` | Right alignment |
 
+### Data Attributes
+
+These data attributes are used for CSS styling:
+
+**Component Identifiers**
+
+| Attribute | Element | Description |
+|-----------|---------|-------------|
+| `data-component="table"` | `<table>` | Main component identifier |
+| `data-table-part="container"` | Container div | Wrapper for horizontal scroll |
+| `data-table-part="header"` | `<thead>` | Table header section |
+| `data-table-part="body"` | `<tbody>` | Table body section |
+| `data-table-part="footer"` | `<tfoot>` | Table footer section |
+| `data-table-part="row"` | `<tr>` | Table row |
+| `data-table-part="head"` | `<th>` | Header cell |
+| `data-table-part="cell"` | `<td>` | Body cell |
+| `data-table-part="caption"` | `<caption>` | Table caption |
+
+**Container Variants**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-variant="bordered"` | Adds border and rounded corners to container |
+
+**Table Variants**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-variant="striped"` | Alternating row background colors |
+
+**Header State**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-sticky="true"` | Sticky header for scrollable tables |
+
+**Row State**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-state="selected"` | Highlights row as selected |
+
+**Cell State**
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-empty="true"` | Styles empty state message cell |
+
 ---
 
 ## Basic Usage
