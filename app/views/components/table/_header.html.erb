@@ -1,0 +1,8 @@
+<%# locals: (css_classes: "", sticky: false, **html_options) %>
+<%
+  merged_data = (html_options.delete(:data) || {}).merge(table_part: :header)
+  merged_data[:sticky] = "true" if sticky
+%>
+<%= content_tag :thead, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= yield %>
+<% end %>

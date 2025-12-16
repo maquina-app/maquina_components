@@ -1,0 +1,39 @@
+Description:
+    Install maquina_components into your Rails application.
+
+    This generator will:
+    - Add the engine CSS import to your Tailwind application.css
+    - Add theme variables (shadcn/ui convention) for customization
+    - Create a helper file for icon overrides and customizations
+
+Example:
+    bin/rails generate maquina_components:install
+
+    This will:
+      insert  @import "../builds/tailwind/maquina_components_engine.css";
+      append  Theme variables to app/assets/tailwind/application.css
+      create  app/helpers/maquina_components_helper.rb
+
+Options:
+    --skip-theme    Skip adding theme variables (if you already have them)
+    --skip-helper   Skip creating the helper file
+
+Prerequisites:
+    - tailwindcss-rails gem installed
+    - app/assets/tailwind/application.css exists
+
+After Installation:
+    1. Customize theme variables in app/assets/tailwind/application.css
+    2. Override icon helper in app/helpers/maquina_components_helper.rb
+    3. Start using components:
+
+       <%%= render "components/card" do %>
+         <%%= render "components/card/header" do %>
+           <%%= render "components/card/title", text: "Hello World" %>
+         <%% end %>
+       <%% end %>
+
+    4. Use data attributes with form helpers:
+
+       <%%= f.text_field :email, data: { component: "input" } %>
+       <%%= f.submit "Save", data: { component: "button", variant: "primary" } %>

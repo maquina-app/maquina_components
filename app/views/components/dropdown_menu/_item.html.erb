@@ -1,0 +1,29 @@
+<%# locals: (href: nil, method: nil, variant: :default, disabled: false, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "dropdown-menu-part": "item",
+    variant: variant
+  ) %>
+
+<% merged_data["turbo-method"] = method if method.present? %>
+
+<% aria_attrs = {} %>
+<% aria_attrs[:disabled] = "true" if disabled %>
+
+<% tag_name = href.present? ? :a : :button %>
+
+<% tag_options = {
+     role: "menuitem",
+     tabindex: "-1",
+     class: css_classes.presence,
+     data: merged_data,
+     aria: aria_attrs.presence,
+     disabled: (disabled unless href.present?),
+     **html_options
+   } %>
+
+<% tag_options[:href] = href if href.present? %>
+<% tag_options[:type] = "button" if tag_name == :button %>
+
+<%= content_tag tag_name, **tag_options.compact do %>
+  <%= yield %>
+<% end %>

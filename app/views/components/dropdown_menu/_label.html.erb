@@ -1,0 +1,13 @@
+<%# locals: (text: nil, inset: false, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "dropdown-menu-part": "label",
+    inset: inset
+  ) %>
+
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
+  <% if text.present? %>
+    <%= text %>
+  <% else %>
+    <%= yield %>
+  <% end %>
+<% end %>

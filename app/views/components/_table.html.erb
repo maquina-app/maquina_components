@@ -1,0 +1,21 @@
+<%# locals: (css_classes: "", container: true, variant: nil, table_variant: nil, **html_options) %>
+<%
+  # Table data attributes - merge user data with component defaults
+  table_data = (html_options.delete(:data) || {}).merge(component: :table)
+  table_data[:variant] = table_variant if table_variant
+
+  # Container data attributes
+  container_data = { table_part: :container }
+  container_data[:variant] = variant if variant
+%>
+<% if container %>
+<div data-table-part="container"<%= " data-variant=\"#{variant}\"" if variant %>>
+  <%= content_tag :table, class: css_classes.presence, data: table_data, **html_options do %>
+    <%= yield %>
+  <% end %>
+</div>
+<% else %>
+<%= content_tag :table, class: css_classes.presence, data: table_data, **html_options do %>
+  <%= yield %>
+<% end %>
+<% end %>

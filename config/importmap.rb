@@ -1,1 +1,1 @@
-pin_all_from File.expand_path("../app/javascript/controllers", __dir__), under: "controllers", preload: false
+pin_all_from MaquinaComponents::Engine.root.join("app/javascript/controllers"), under: "controllers"

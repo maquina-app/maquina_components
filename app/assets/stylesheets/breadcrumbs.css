@@ -1,0 +1,163 @@
+/* ===== Breadcrumbs Component Styles ===== */
+/* Comprehensive CSS using data-attribute selectors */
+/* Uses @apply for theme-customizable properties */
+
+/* ===== Breadcrumbs Container (nav) ===== */
+[data-component="breadcrumbs"] {
+  /* Container has no default styles - allows flexible placement */
+}
+
+/* ===== Breadcrumbs List ===== */
+[data-breadcrumb-part="list"] {
+  @apply flex flex-wrap items-center gap-1.5;
+  @apply text-sm break-words;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Compact variant */
+[data-component="breadcrumbs"][data-size="sm"] [data-breadcrumb-part="list"] {
+  @apply gap-1 text-xs;
+}
+
+/* ===== Breadcrumb Item ===== */
+[data-breadcrumb-part="item"] {
+  @apply inline-flex items-center;
+}
+
+/* Hidden state for responsive collapsing */
+[data-breadcrumb-part="item"].hidden {
+  @apply hidden;
+}
+
+/* ===== Breadcrumb Link ===== */
+[data-breadcrumb-part="link"] {
+  @apply inline-flex items-center;
+  @apply text-sm font-medium;
+  @apply underline-offset-4;
+  @apply transition-colors;
+  color: var(--muted-foreground);
+}
+
+[data-breadcrumb-part="link"]:hover {
+  color: var(--foreground);
+  @apply underline;
+}
+
+[data-breadcrumb-part="link"]:focus-visible {
+  @apply outline-none underline;
+  color: var(--foreground);
+}
+
+/* Link with icon */
+[data-breadcrumb-part="link"] svg {
+  @apply size-3.5 shrink-0;
+}
+
+[data-breadcrumb-part="link"] svg:first-child {
+  @apply mr-1.5;
+}
+
+/* ===== Breadcrumb Page (current) ===== */
+[data-breadcrumb-part="page"] {
+  @apply inline-flex items-center;
+  @apply text-sm font-medium;
+  color: var(--foreground);
+}
+
+/* Page with icon */
+[data-breadcrumb-part="page"] svg {
+  @apply size-3.5 shrink-0;
+}
+
+[data-breadcrumb-part="page"] svg:first-child {
+  @apply mr-1.5;
+}
+
+/* ===== Breadcrumb Separator ===== */
+[data-breadcrumb-part="separator"] {
+  @apply inline-flex items-center;
+  color: var(--muted-foreground);
+}
+
+[data-breadcrumb-part="separator"] svg {
+  @apply size-3.5 shrink-0;
+}
+
+/* Hidden state for responsive collapsing */
+[data-breadcrumb-part="separator"].hidden {
+  @apply hidden;
+}
+
+/* ===== Breadcrumb Ellipsis ===== */
+[data-breadcrumb-part="ellipsis"] {
+  @apply inline-flex size-9 items-center justify-center;
+  color: var(--muted-foreground);
+}
+
+[data-breadcrumb-part="ellipsis"] svg {
+  @apply size-4 shrink-0;
+}
+
+/* Ellipsis as dropdown trigger */
+[data-breadcrumb-part="ellipsis"][data-state="open"],
+[data-breadcrumb-part="ellipsis"]:hover {
+  color: var(--foreground);
+}
+
+/* ===== Responsive Behavior ===== */
+/* Items hidden by Stimulus controller */
+[data-controller="breadcrumb"] [data-breadcrumb-target="item"].hidden,
+[data-controller="breadcrumb"] [data-breadcrumb-target="ellipsisSeparator"].hidden {
+  @apply hidden;
+}
+
+/* Ellipsis shown by Stimulus controller */
+[data-controller="breadcrumb"] [data-breadcrumb-target="ellipsis"]:not(.hidden) {
+  @apply inline-flex;
+}
+
+/* ===== Mobile Adjustments ===== */
+@media (max-width: 640px) {
+  [data-breadcrumb-part="list"] {
+    @apply gap-1;
+  }
+
+  /* Hide middle items on very small screens by default */
+  [data-component="breadcrumbs"][data-auto-collapse] [data-breadcrumb-part="item"]:not(:first-child):not(:last-child) {
+    @apply hidden sm:inline-flex;
+  }
+}
+
+/* ===== Variants ===== */
+
+/* Slash separator variant */
+[data-component="breadcrumbs"][data-separator="slash"] [data-breadcrumb-part="separator"]::before {
+  content: "/";
+  @apply px-1;
+}
+
+[data-component="breadcrumbs"][data-separator="slash"] [data-breadcrumb-part="separator"] svg {
+  @apply hidden;
+}
+
+/* Dot separator variant */
+[data-component="breadcrumbs"][data-separator="dot"] [data-breadcrumb-part="separator"]::before {
+  content: "•";
+  @apply px-1;
+}
+
+[data-component="breadcrumbs"][data-separator="dot"] [data-breadcrumb-part="separator"] svg {
+  @apply hidden;
+}
+
+/* Arrow separator variant */
+[data-component="breadcrumbs"][data-separator="arrow"] [data-breadcrumb-part="separator"]::before {
+  content: "→";
+  @apply px-1;
+}
+
+[data-component="breadcrumbs"][data-separator="arrow"] [data-breadcrumb-part="separator"] svg {
+  @apply hidden;
+}

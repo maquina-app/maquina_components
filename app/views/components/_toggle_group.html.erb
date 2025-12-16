@@ -1,0 +1,24 @@
+<%# locals: (type: :single, variant: :default, size: :default, value: nil, disabled: false, css_classes: "", **html_options) %>
+<% selected_values = case value
+                    when Array then value.map(&:to_s)
+                    when nil then []
+                    else [value.to_s]
+                    end
+  
+  merged_data = (html_options.delete(:data) || {}).merge(
+    controller: "toggle-group",
+    component: "toggle-group",
+    variant: variant,
+    size: size,
+    "toggle-group-type-value": type,
+    "toggle-group-selected-value": selected_values.to_json
+  ) %>
+
+<%= content_tag :div,
+      role: "group",
+      class: css_classes.presence,
+      data: merged_data,
+      "aria-disabled": (disabled ? "true" : nil),
+      **html_options do %>
+  <%= yield %>
+<% end %>

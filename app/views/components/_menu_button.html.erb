@@ -1,4 +1,4 @@
-<%# locals: (title:, subtitle: nil, icon: nil, text_icon: nil) %>
+<%# locals: (title: "", subtitle: nil, icon: nil, text_icon: nil, icon_classes: "", submenu: false) %>
 
 <ul class="flex w-full min-w-0 flex-col gap-1">
   <li class="group/menu-item relative" data-controller="menu-button">
@@ -12,31 +12,31 @@
         disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50
         data-[state=open]:bg-sidebar-accent
         data-[state=open]text-sidebar-accent-foreground
-        group-data-[collapsible=icon]:!size-8 [&>span:last-child]:truncate
+        group-data-[collapsible=icon]:size-8! [&>span:last-child]:truncate
         [&>svg]:size-4 [&>svg]:shrink-0 hover:bg-sidebar-accent
         hover:text-sidebar-accent-foreground h-12 text-sm
-        group-data-[collapsible=icon]:!p-0
+        group-data-[collapsible=icon]:p-0!
       ", data-action="menu-button#toggle", data-menu-button-target="button" }
     >
-      <div
-        class="
-          flex aspect-square size-8 items-center justify-center rounded-lg
-          bg-sidebar-primary text-sidebar-primary-foreground
-        "
-      >
         <% if icon.present? %>
-          <!-- Here goes the icon -->
+          <%= image_tag icon, alt: "maquina", class: "#{icon_classes}" %>
         <% elsif text_icon.present? %>
-          <%= text_icon %>
+          <div
+            class="
+              flex aspect-square size-8 items-center justify-center rounded-lg
+              bg-sidebar-primary text-sidebar-primary-foreground
+            "
+          >
+              <span class="<%= icon_classes %>"><%= text_icon %></span>
+          </div>
         <% end %>
-      </div>
       <div class="grid flex-1 text-left text-sm leading-tight">
         <span class="truncate font-semibold"><%= title %></span>
         <% if subtitle.present? %>
           <span class="truncate text-xs"><%= subtitle %></span>
         <% end %>
       </div>
-      <%= icon_for(:chevron_up_down, class: "ml-auto") %>
+      <%= icon_for(:chevron_up_down, class: "ml-auto") if submenu %>
     </button>
 
     <%= yield %>

@@ -1,10 +1,6 @@
-<%# locals: (custom_classes: "") -%>
+<%# locals: (css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(component: :card) %>
 
-<div
-  class="<%= class_names(
-  "rounded-xl border border-border bg-card text-card-foreground shadow",
-  custom_classes
-) %>"
->
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
   <%= yield %>
-</div>
+<% end %>

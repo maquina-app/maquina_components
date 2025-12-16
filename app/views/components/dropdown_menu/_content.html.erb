@@ -1,0 +1,20 @@
+<%# locals: (align: :start, side: :bottom, width: :default, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    "dropdown-menu-part": "content",
+    "dropdown-menu-target": "content",
+    align: align,
+    side: side,
+    width: width,
+    state: "closed"
+  ) %>
+
+<%= content_tag :div,
+      role: "menu",
+      aria: { orientation: "vertical" },
+      tabindex: "-1",
+      class: css_classes.presence,
+      data: merged_data,
+      hidden: true,
+      **html_options do %>
+  <%= yield %>
+<% end %>

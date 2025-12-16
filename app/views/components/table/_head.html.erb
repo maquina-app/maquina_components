@@ -1,0 +1,8 @@
+<%# locals: (css_classes: "", scope: "col", **html_options) %>
+<%
+  merged_data = (html_options.delete(:data) || {}).merge(table_part: :head)
+  html_options[:scope] = scope if scope
+%>
+<%= content_tag :th, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= yield if block_given? %>
+<% end %>

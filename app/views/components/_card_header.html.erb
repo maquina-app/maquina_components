@@ -1,8 +1,0 @@
-<%# locals: (title:, custom_classes: "", icon: nil, icon_classes: "h-4 w-4 text-muted-foreground") -%>
-
-<div
-  class="<%= class_names("p-6 flex flex-row items-center justify-between space-y-0 pb-2", custom_classes) %>"
->
-  <h3 class="tracking-tight text-sm font-medium"><%= title %></h3>
-  <%= icon_for(icon, class: icon_classes) if icon.present? %>
-</div>

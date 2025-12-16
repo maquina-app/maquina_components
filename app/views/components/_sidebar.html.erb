@@ -1,29 +1,39 @@
+<%# locals: (id: nil, state: :collapsed, collapsible: :offcanvas, variant: :inset, side: :left, css_classes: "", **html_options) %>
+<% random_id = id || "sidebar-#{SecureRandom.hex(6)}"
+  
+  merged_data = (html_options.delete(:data) || {}).merge(
+    sidebar_part: :root,
+    sidebar_target: "sidebar",
+    state: state,
+    variant: variant,
+    collapsible: collapsible,
+    side: side
+  ) %>
+
 <aside
-  class="group peer hidden md:block text-sidebar-foreground"
-  data-controller="sidebars"
-  data-state="expanded"
-  data-collapsible=""
-  id="sidebar"
+  id="<%= random_id %>"
+  class="group peer sidebar-loading <%= css_classes %>"
+  <%= tag.attributes(data: merged_data, **html_options) %>
 >
-  <!-- Mobile overlay -->
+  <%# Sidebar gap (creates space for sidebar on desktop) %>
+  <div id="<%= random_id %>-gap" data-sidebar-part="gap"></div>
+
+  <%# Mobile backdrop overlay %>
   <div
-    class="
-      inset-0 bg-black/80 lg:hidden transition-opacity duration-300 hidden
-    "
-    data-sidebar-target="overlay"
-    data-action="click->sidebar#toggleMobile"
-  >
-  </div>
-  <!-- Sidebar container -->
+    id="<%= random_id %>-overlay"
+    data-sidebar-part="backdrop"
+    data-sidebar-target="backdrop"
+    data-action="click->sidebar#backdropClick"
+  ></div>
+
+  <%# Sidebar container (fixed positioned) %>
   <div
-    class="
-      duration-200 fixed inset-y-0 z-10 h-svh w-(--sidebar-width)
-      transition-[left,right,width] ease-linear md:flex left-0 border-r
-      border-sidebar-border group-data-[collapsible=icon]:w-[--sidebar-width-icon]
-    "
+    id="<%= random_id %>-container"
+    data-sidebar-part="container"
     data-sidebar-target="container"
   >
-    <div class=" flex h-full w-full flex-col bg-sidebar">
+    <%# Inner sidebar content wrapper %>
+    <div id="<%= random_id %>-inner" data-sidebar-part="inner">
       <%= yield %>
     </div>
   </div>

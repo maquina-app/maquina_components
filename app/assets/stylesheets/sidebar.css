@@ -1,0 +1,477 @@
+/* ===== Sidebar Component Styles ===== */
+/* Comprehensive CSS using data-attribute selectors */
+/* Uses @apply for theme-customizable properties */
+
+/* ===== Provider (Wrapper) ===== */
+[data-component="sidebar"] {
+  @apply flex min-h-svh w-full;
+}
+
+[data-component="sidebar"][data-variant="inset"] {
+  @apply h-svh;
+  background-color: var(--sidebar);
+}
+
+/* ===== Sidebar Root ===== */
+[data-sidebar-part="root"] {
+  @apply block text-sidebar-foreground;
+}
+
+/* Prevent transitions on initial load */
+[data-sidebar-part="root"].sidebar-loading,
+[data-sidebar-part="root"].sidebar-loading * {
+  transition: none !important;
+}
+
+/* ===== Sidebar Gap (creates space on desktop) ===== */
+[data-sidebar-part="gap"] {
+  @apply relative bg-transparent;
+  width: var(--sidebar-width);
+  transition: width 200ms linear;
+}
+
+[data-sidebar-part="root"][data-collapsible="offcanvas"] [data-sidebar-part="gap"] {
+  width: 0;
+}
+
+[data-sidebar-part="root"][data-side="right"] [data-sidebar-part="gap"] {
+  @apply rotate-180;
+}
+
+[data-sidebar-part="root"][data-state="collapsed"][data-collapsible="icon"] [data-sidebar-part="gap"] {
+  width: calc(var(--sidebar-width-icon) + 1rem);
+}
+
+/* ===== Sidebar Backdrop (mobile overlay) ===== */
+[data-sidebar-part="backdrop"] {
+  @apply fixed inset-0 z-40 hidden bg-black opacity-0;
+  transition: opacity 300ms;
+}
+
+[data-sidebar-part="backdrop"][data-state="visible"] {
+  @apply block opacity-60;
+}
+
+/* ===== Sidebar Container (fixed positioned) ===== */
+[data-sidebar-part="container"] {
+  @apply fixed inset-y-0 z-50 flex h-svh;
+  width: var(--sidebar-width);
+  transition: left 200ms linear, right 200ms linear, width 200ms linear;
+}
+
+@media (min-width: 768px) {
+  [data-sidebar-part="container"] {
+    @apply p-2;
+  }
+}
+
+[data-sidebar-part="root"][data-side="left"] [data-sidebar-part="container"] {
+  @apply left-0;
+}
+
+[data-sidebar-part="root"][data-side="right"] [data-sidebar-part="container"] {
+  @apply right-0;
+}
+
+/* Collapsed offcanvas - slide out */
+[data-sidebar-part="root"][data-state="collapsed"][data-collapsible="offcanvas"][data-side="left"] [data-sidebar-part="container"] {
+  left: calc(var(--sidebar-width) * -1);
+}
+
+[data-sidebar-part="root"][data-state="collapsed"][data-collapsible="offcanvas"][data-side="right"] [data-sidebar-part="container"] {
+  right: calc(var(--sidebar-width) * -1);
+}
+
+/* Collapsed icon mode - narrow width */
+[data-sidebar-part="root"][data-state="collapsed"][data-collapsible="icon"] [data-sidebar-part="container"] {
+  width: calc(var(--sidebar-width-icon) + 1rem + 2px);
+}
+
+/* ===== Sidebar Inner Content Wrapper ===== */
+[data-sidebar-part="inner"] {
+  @apply flex h-full w-full flex-col;
+  background-color: var(--sidebar);
+}
+
+[data-sidebar-part="root"][data-variant="floating"] [data-sidebar-part="inner"] {
+  @apply rounded-lg border shadow-sm;
+  border-color: var(--sidebar-border);
+}
+
+[data-sidebar-part="root"][data-variant="inset"] [data-sidebar-part="inner"] {
+  @apply rounded-none border-0 shadow-none;
+}
+
+/* ===== Sidebar Header ===== */
+[data-sidebar-part="header"] {
+  @apply flex flex-col gap-2 p-2;
+}
+
+/* ===== Sidebar Footer ===== */
+[data-sidebar-part="footer"] {
+  @apply flex flex-col gap-2 p-2;
+}
+
+/* ===== Sidebar Content (scrollable area) ===== */
+[data-sidebar-part="content"] {
+  @apply flex min-h-0 flex-1 flex-col gap-2 overflow-auto;
+}
+
+[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="content"] {
+  @apply overflow-hidden;
+}
+
+/* ===== Sidebar Group ===== */
+[data-sidebar-part="group"] {
+  @apply relative flex w-full min-w-0 flex-col p-2;
+}
+
+/* ===== Sidebar Group Label ===== */
+[data-sidebar-part="group-label"] {
+  @apply flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium uppercase tracking-wide;
+  @apply outline-hidden ring-sidebar-ring focus-visible:ring-2;
+  @apply transition-[margin,opacity] duration-200 ease-linear;
+  color: var(--sidebar-foreground);
+  opacity: 0.6;
+}
+
+[data-sidebar-part="group-label"] svg {
+  @apply size-4 shrink-0;
+}
+
+[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="group-label"] {
+  @apply -mt-8 opacity-0;
+}
+
+/* ===== Sidebar Group Action ===== */
+[data-sidebar-part="group-action"] {
+  @apply ml-auto flex aspect-square w-5 items-center justify-center rounded-md p-0;
+  @apply outline-hidden ring-sidebar-ring focus-visible:ring-2;
+  @apply transition-transform;
+  color: var(--sidebar-foreground);
+}
+
+[data-sidebar-part="group-action"]:hover {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-sidebar-part="group-action"] svg {
+  @apply size-4 shrink-0;
+}
+
+[data-sidebar-part="group-action"]::after {
+  @apply absolute -inset-2 md:hidden;
+  content: "";
+}
+
+/* ===== Sidebar Menu ===== */
+[data-sidebar-part="menu"] {
+  @apply flex w-full min-w-0 flex-col gap-1;
+}
+
+/* ===== Sidebar Menu Item ===== */
+[data-sidebar-part="menu-item"] {
+  @apply relative; /* group/menu-item  */
+}
+
+/* ===== Sidebar Menu Button (base styles) ===== */
+[data-sidebar-part="menu-button"] {
+  @apply flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm font-medium;
+  @apply outline-hidden ring-sidebar-ring focus-visible:ring-2;
+  @apply transition-[width,height,padding];
+  @apply disabled:pointer-events-none disabled:opacity-50;
+  @apply aria-disabled:pointer-events-none aria-disabled:opacity-50;
+  color: var(--sidebar-foreground);
+}
+
+[data-sidebar-part="menu-button"]:hover {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-sidebar-part="menu-button"]:active {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-sidebar-part="menu-button"][data-active="true"] {
+  @apply font-semibold;
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-sidebar-part="menu-button"][data-state="open"]:hover {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-sidebar-part="menu-button"] svg {
+  @apply size-4 shrink-0;
+}
+
+[data-sidebar-part="menu-button"] span:last-child {
+  @apply truncate;
+}
+
+/* Menu Button Sizes */
+[data-sidebar-part="menu-button"][data-size="default"],
+[data-sidebar-part="menu-button"]:not([data-size]) {
+  @apply h-8;
+}
+
+[data-sidebar-part="menu-button"][data-size="sm"] {
+  @apply h-7 text-xs;
+}
+
+[data-sidebar-part="menu-button"][data-size="lg"] {
+  @apply h-12;
+}
+
+/* Has menu action - add padding */
+.group-has-data-\[sidebar-part\=menu-action\]\/menu-item [data-sidebar-part="menu-button"],
+[data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"]) [data-sidebar-part="menu-button"] {
+  @apply pr-8;
+}
+
+/* Icon collapsed mode */
+[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-button"] {
+  @apply size-8 p-2;
+}
+
+[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-button"][data-size="lg"] {
+  @apply size-8 p-0;
+}
+
+/* ===== Sidebar Menu Link (avatar style variant) ===== */
+[data-sidebar-part="menu-link"] {
+  @apply flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm font-medium;
+  @apply outline-hidden ring-sidebar-ring focus-visible:ring-2;
+  @apply transition-[width,height,padding];
+  @apply disabled:pointer-events-none disabled:opacity-50;
+  @apply aria-disabled:pointer-events-none aria-disabled:opacity-50;
+  @apply h-12;
+  color: var(--sidebar-foreground);
+}
+
+[data-sidebar-part="menu-link"]:hover {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-sidebar-part="menu-link"]:active {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-sidebar-part="menu-link"][data-active="true"] {
+  @apply font-semibold;
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-sidebar-part="menu-link"] svg {
+  @apply size-4 shrink-0;
+}
+
+[data-sidebar-part="menu-link"] span:last-child {
+  @apply truncate;
+}
+
+/* Has menu action - add padding */
+.group-has-data-\[sidebar-part\=menu-action\]\/menu-item [data-sidebar-part="menu-link"],
+[data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"]) [data-sidebar-part="menu-link"] {
+  @apply pr-8;
+}
+
+/* Icon collapsed mode */
+[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-link"] {
+  @apply size-8 p-0;
+}
+
+/* ===== Sidebar Menu Avatar ===== */
+[data-sidebar-part="menu-avatar"] {
+  @apply flex aspect-square size-8 items-center justify-center rounded-lg;
+  background-color: var(--sidebar-primary);
+  color: var(--sidebar-primary-foreground);
+}
+
+/* ===== Sidebar Menu Action ===== */
+[data-sidebar-part="menu-action"] {
+  @apply absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0;
+  @apply outline-hidden ring-sidebar-ring focus-visible:ring-2;
+  @apply transition-transform;
+  color: var(--sidebar-foreground);
+}
+
+[data-sidebar-part="menu-action"]:hover {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-sidebar-part="menu-action"] svg {
+  @apply size-4 shrink-0;
+}
+
+[data-sidebar-part="menu-action"]::after {
+  @apply absolute -inset-2 md:hidden;
+  content: "";
+}
+
+/* Show on hover only (desktop) */
+[data-sidebar-part="menu-action"][data-show-on-hover="true"] {
+  @apply opacity-0 group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100;
+  @apply group-data-[collapsible=icon]:hidden;
+}
+
+/* ===== Sidebar Trigger ===== */
+[data-sidebar-part="trigger"] {
+  @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md;
+  @apply text-sm font-medium;
+  @apply outline-hidden focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px];
+  @apply disabled:pointer-events-none disabled:opacity-50;
+  @apply transition-all;
+  @apply size-7 shrink-0 -ml-1;
+  color: var(--foreground);
+}
+
+[data-sidebar-part="trigger"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-sidebar-part="trigger"]:hover {
+    background-color: color-mix(in oklch, var(--accent) 50%, transparent);
+  }
+}
+
+[data-sidebar-part="trigger"] svg {
+  @apply pointer-events-none size-4 shrink-0;
+}
+
+/* ===== Sidebar Inset (main content area) ===== */
+[data-sidebar-part="inset"] {
+  @apply relative flex w-full flex-1 flex-col;
+  background-color: var(--background);
+}
+
+@media (min-width: 768px) {
+  [data-sidebar-part="inset"] {
+    /* Peer selector for when sidebar is peer */
+    @apply peer-data-[variant=inset]:m-2 peer-data-[variant=inset]:ml-0;
+    @apply peer-data-[variant=inset]:rounded-xl peer-data-[variant=inset]:shadow-sm;
+  }
+
+  /* When sidebar is collapsed, add left margin */
+  .peer[data-state="collapsed"] ~ [data-sidebar-part="inset"],
+  [data-sidebar-part="root"][data-state="collapsed"] ~ [data-sidebar-part="inset"] {
+    @apply ml-2;
+  }
+}
+
+/* ===== Sidebar Rail (hover to expand) ===== */
+[data-sidebar-part="rail"] {
+  @apply absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear;
+  @apply after:absolute after:inset-y-0 after:left-1/2 after:w-[2px];
+  @apply hover:after:bg-sidebar-border;
+  @apply group-data-[side=left]:-right-4 group-data-[side=right]:left-0;
+}
+
+@media (min-width: 768px) {
+  [data-sidebar-part="rail"] {
+    @apply flex;
+  }
+}
+
+[data-sidebar-part="root"][data-collapsible="offcanvas"] [data-sidebar-part="rail"] {
+  @apply translate-x-0 after:left-full;
+  @apply group-data-[side=left]:right-2;
+  @apply group-data-[side=right]:left-0 group-data-[side=right]:-translate-x-full;
+}
+
+/* ===== Sidebar Separator ===== */
+[data-sidebar-part="separator"] {
+  @apply mx-2 w-auto;
+  background-color: var(--sidebar-border);
+}
+
+/* ===== Sidebar Menu Badge ===== */
+[data-sidebar-part="menu-badge"] {
+  @apply pointer-events-none absolute right-1 flex h-5 min-w-5 select-none items-center justify-center;
+  @apply rounded-md px-1 text-xs font-medium tabular-nums;
+  color: var(--sidebar-foreground);
+}
+
+[data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"]) [data-sidebar-part="menu-badge"] {
+  /* Shift badge when action button present */
+  @apply right-7;
+}
+
+[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-badge"] {
+  @apply hidden;
+}
+
+/* ===== Sidebar Menu Skeleton (loading state) ===== */
+[data-sidebar-part="menu-skeleton"] {
+  @apply flex h-8 items-center gap-2 rounded-md px-2;
+}
+
+[data-sidebar-part="menu-skeleton"] [data-skeleton="icon"] {
+  @apply size-4 rounded-md;
+  background-color: var(--sidebar-accent);
+}
+
+[data-sidebar-part="menu-skeleton"] [data-skeleton="text"] {
+  @apply h-4 max-w-[calc(var(--skeleton-width,100%)-1rem)] flex-1 rounded-md;
+  background-color: var(--sidebar-accent);
+}
+
+[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-skeleton"] {
+  @apply size-8;
+}
+
+[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-skeleton"] [data-skeleton="text"] {
+  @apply hidden;
+}
+
+/* ===== Utility: Sidebar hidden text in icon mode ===== */
+[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-hide-on-collapse] {
+  @apply hidden;
+}
+
+/* ===== Sidebar Primary Button (Quick Create style) ===== */
+.sidebar-primary-button {
+  @apply flex flex-1 items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm font-medium;
+  @apply outline-hidden ring-sidebar-ring focus-visible:ring-2;
+  @apply transition-colors;
+  background-color: var(--sidebar-primary);
+  color: var(--sidebar-primary-foreground);
+}
+
+.sidebar-primary-button:hover {
+  opacity: 0.9;
+}
+
+.sidebar-primary-button svg {
+  @apply size-4 shrink-0;
+}
+
+/* ===== Sidebar Outline Button ===== */
+.sidebar-outline-button {
+  @apply flex items-center justify-center rounded-md p-2;
+  @apply outline-hidden ring-sidebar-ring focus-visible:ring-2;
+  @apply transition-colors;
+  @apply border;
+  border-color: var(--sidebar-border);
+  color: var(--sidebar-foreground);
+}
+
+.sidebar-outline-button:hover {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+.sidebar-outline-button svg {
+  @apply size-4 shrink-0;
+}

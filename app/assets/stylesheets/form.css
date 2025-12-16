@@ -1,0 +1,617 @@
+/* ===================================================================
+   FORM COMPONENTS - CSS-only with data attributes
+   Matches shadcn/ui Tailwind v4 styles
+   Usage: Add data-component="..." to Rails form helpers
+   =================================================================== */
+
+/* ===================================================================
+   FORM CONTAINER
+   Usage: <%= form_with model: @user, data: { component: "form" } do |f| %>
+   =================================================================== */
+[data-component="form"] {
+  @apply grid gap-6;
+}
+
+/* Form Group - wraps label + input + help/error text */
+[data-form-part="group"] {
+  @apply grid gap-2;
+}
+
+/* Inline form group (horizontal layout) */
+[data-form-part="group"][data-layout="inline"] {
+  @apply flex items-center gap-3;
+}
+
+/* ===================================================================
+   LABEL
+   Usage: <%= f.label :email, data: { component: "label" } %>
+   =================================================================== */
+[data-component="label"] {
+  @apply flex items-center gap-2;
+  @apply text-sm leading-none font-medium select-none;
+  color: var(--foreground);
+}
+
+/* Label disabled state (when used with peer) */
+[data-component="label"]:has(+ :disabled),
+:disabled + [data-component="label"] {
+  @apply cursor-not-allowed opacity-50;
+}
+
+/* Required indicator */
+[data-component="label"][data-required]::after {
+  content: "*";
+  @apply ml-0.5;
+  color: var(--destructive);
+}
+
+/* ===================================================================
+   INPUT
+   Usage: <%= f.text_field :email, data: { component: "input" } %>
+   Matches: h-9 w-full min-w-0 rounded-md border border-input bg-transparent
+            px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none
+            md:text-sm placeholder:text-muted-foreground
+            focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
+            disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50
+            aria-invalid:ring-destructive/20 aria-invalid:border-destructive
+   =================================================================== */
+[data-component="input"] {
+  @apply h-9 w-full min-w-0;
+  @apply rounded-md border px-3 py-1;
+  @apply text-base md:text-sm;
+  @apply outline-none;
+  @apply transition-[color,box-shadow];
+
+  background-color: transparent;
+  border-color: var(--input);
+  color: var(--foreground);
+  box-shadow: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+/* Placeholder */
+[data-component="input"]::placeholder {
+  color: var(--muted-foreground);
+}
+
+/* Selection */
+[data-component="input"]::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Focus state */
+[data-component="input"]:focus,
+[data-component="input"]:focus-visible {
+  border-color: var(--ring);
+  box-shadow:
+    var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+/* Disabled state */
+[data-component="input"]:disabled {
+  @apply pointer-events-none cursor-not-allowed opacity-50;
+}
+
+/* Invalid/error state */
+[data-component="input"][aria-invalid="true"],
+[data-component="input"]:invalid:not(:placeholder-shown) {
+  border-color: var(--destructive);
+  box-shadow:
+    var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 3px color-mix(in oklch, var(--destructive) 20%, transparent);
+}
+
+/* File input */
+[data-component="input"][type="file"] {
+  @apply py-1.5;
+}
+
+[data-component="input"][type="file"]::file-selector-button {
+  @apply inline-flex h-7 items-center border-0 bg-transparent;
+  @apply text-sm font-medium;
+  color: var(--foreground);
+}
+
+/* Input sizes */
+[data-component="input"][data-size="sm"] {
+  @apply h-8 px-2.5 text-xs;
+}
+
+[data-component="input"][data-size="lg"] {
+  @apply h-11 px-4 text-base;
+}
+
+/* Dark mode */
+.dark [data-component="input"] {
+  background-color: color-mix(in oklch, var(--input) 30%, transparent);
+}
+
+/* ===================================================================
+   TEXTAREA
+   Usage: <%= f.text_area :bio, data: { component: "textarea" } %>
+   Matches: min-h-[60px] w-full rounded-md border border-input bg-transparent
+            px-3 py-2 text-base shadow-xs outline-none md:text-sm
+            placeholder:text-muted-foreground
+            focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
+            disabled:cursor-not-allowed disabled:opacity-50
+            aria-invalid:ring-destructive/20 aria-invalid:border-destructive
+   =================================================================== */
+[data-component="textarea"] {
+  @apply w-full min-w-0 min-h-16;
+  @apply rounded-md border px-3 py-2;
+  @apply text-base md:text-sm;
+  @apply outline-none resize-y;
+  @apply transition-[color,box-shadow];
+
+  background-color: transparent;
+  border-color: var(--input);
+  color: var(--foreground);
+  box-shadow: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+[data-component="textarea"]::placeholder {
+  color: var(--muted-foreground);
+}
+
+[data-component="textarea"]:focus,
+[data-component="textarea"]:focus-visible {
+  border-color: var(--ring);
+  box-shadow:
+    var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+[data-component="textarea"]:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
+
+[data-component="textarea"][aria-invalid="true"],
+[data-component="textarea"]:invalid:not(:placeholder-shown) {
+  border-color: var(--destructive);
+  box-shadow:
+    var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 3px color-mix(in oklch, var(--destructive) 20%, transparent);
+}
+
+/* Dark mode */
+.dark [data-component="textarea"] {
+  background-color: color-mix(in oklch, var(--input) 30%, transparent);
+}
+
+/* ===================================================================
+   SELECT (Native)
+   Usage: <%= f.select :country, options, {}, data: { component: "select" } %>
+   =================================================================== */
+[data-component="select"] {
+  @apply h-9 w-full min-w-0;
+  @apply rounded-md border px-3 py-1 pr-8;
+  @apply text-base md:text-sm;
+  @apply outline-none appearance-none cursor-pointer;
+  @apply transition-[color,box-shadow];
+
+  background-color: var(--background);
+  border-color: var(--input);
+  color: var(--foreground);
+  box-shadow: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+
+  /* Chevron icon */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25rem 1.25rem;
+}
+
+[data-component="select"]:focus,
+[data-component="select"]:focus-visible {
+  border-color: var(--ring);
+  box-shadow:
+    var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+[data-component="select"]:disabled {
+  @apply pointer-events-none cursor-not-allowed opacity-50;
+}
+
+[data-component="select"][aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+/* Dark mode */
+.dark [data-component="select"] {
+  background-color: color-mix(in oklch, var(--input) 30%, transparent);
+}
+
+/* ===================================================================
+   CHECKBOX
+   Usage: <%= f.check_box :terms, data: { component: "checkbox" } %>
+   Matches: peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs
+            transition-shadow outline-none
+            data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground
+            data-[state=checked]:border-primary
+            focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
+            disabled:cursor-not-allowed disabled:opacity-50
+            aria-invalid:ring-destructive/20 aria-invalid:border-destructive
+   =================================================================== */
+[data-component="checkbox"] {
+  @apply size-4 shrink-0;
+  @apply rounded-[4px] border;
+  @apply cursor-pointer appearance-none;
+  @apply transition-shadow;
+
+  border-color: var(--input);
+  background-color: transparent;
+  box-shadow: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+[data-component="checkbox"]:focus,
+[data-component="checkbox"]:focus-visible {
+  @apply outline-none;
+  border-color: var(--ring);
+  box-shadow:
+    var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+[data-component="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+
+  /* Checkmark icon */
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+[data-component="checkbox"]:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
+
+[data-component="checkbox"][aria-invalid="true"] {
+  border-color: var(--destructive);
+  box-shadow:
+    var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 3px color-mix(in oklch, var(--destructive) 20%, transparent);
+}
+
+[data-component="checkbox"]:indeterminate {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3crect x='3' y='7' width='10' height='2' rx='1'/%3e%3c/svg%3e");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+/* Dark mode */
+.dark [data-component="checkbox"]:not(:checked) {
+  background-color: color-mix(in oklch, var(--input) 30%, transparent);
+}
+
+/* ===================================================================
+   RADIO
+   Usage: <%= f.radio_button :plan, "basic", data: { component: "radio" } %>
+   =================================================================== */
+[data-component="radio"] {
+  @apply size-4 shrink-0;
+  @apply rounded-full border;
+  @apply cursor-pointer appearance-none;
+  @apply transition-shadow;
+
+  border-color: var(--input);
+  background-color: transparent;
+  box-shadow: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+[data-component="radio"]:focus,
+[data-component="radio"]:focus-visible {
+  @apply outline-none;
+  border-color: var(--ring);
+  box-shadow:
+    var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+[data-component="radio"]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+
+  /* Inner dot */
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+[data-component="radio"]:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
+
+/* Dark mode */
+.dark [data-component="radio"]:not(:checked) {
+  background-color: color-mix(in oklch, var(--input) 30%, transparent);
+}
+
+/* ===================================================================
+   SWITCH (Toggle)
+   Usage: <%= f.check_box :notifications, data: { component: "switch" } %>
+   =================================================================== */
+[data-component="switch"] {
+  @apply h-5 w-9 shrink-0;
+  @apply rounded-full border-2 border-transparent;
+  @apply cursor-pointer appearance-none;
+  @apply transition-all duration-200;
+
+  background-color: var(--input);
+
+  /* Thumb */
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='10' cy='10' r='8' fill='white'/%3e%3c/svg%3e");
+  background-position: left 2px center;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+}
+
+[data-component="switch"]:focus,
+[data-component="switch"]:focus-visible {
+  @apply outline-none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+[data-component="switch"]:checked {
+  background-color: var(--primary);
+  background-position: right 2px center;
+}
+
+[data-component="switch"]:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
+
+/* ===================================================================
+   BUTTON
+   Usage:
+     <%= f.submit "Save", data: { component: "button", variant: "primary" } %>
+     <%= button_to "Delete", path, data: { component: "button", variant: "destructive" } %>
+     <%= link_to "Cancel", path, data: { component: "button", variant: "outline" } %>
+   Matches: inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md
+            text-sm font-medium transition-colors outline-none
+            focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+            disabled:pointer-events-none disabled:opacity-50
+            [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0
+   =================================================================== */
+
+/* Base button styles */
+[data-component="button"] {
+  @apply inline-flex items-center justify-center gap-2;
+  @apply whitespace-nowrap rounded-md;
+  @apply text-sm font-medium;
+  @apply h-9 px-4 py-2;
+  @apply cursor-default;
+  @apply outline-none;
+  @apply transition-colors;
+  @apply select-none;
+
+  /* SVG icons inside buttons */
+  & svg {
+    @apply pointer-events-none size-4 shrink-0;
+  }
+}
+
+/* Disabled state - applies to all variants */
+[data-component="button"]:disabled,
+[data-component="button"][aria-disabled="true"] {
+  @apply pointer-events-none opacity-50;
+}
+
+/* Focus ring - applies to all variants */
+[data-component="button"]:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--ring);
+}
+
+/* ----- Variants ----- */
+
+/* Default (Primary) */
+[data-component="button"],
+[data-component="button"][data-variant="default"],
+[data-component="button"][data-variant="primary"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+[data-component="button"]:hover,
+[data-component="button"][data-variant="default"]:hover,
+[data-component="button"][data-variant="primary"]:hover {
+  background-color: color-mix(in oklch, var(--primary) 90%, black);
+}
+
+/* Destructive */
+[data-component="button"][data-variant="destructive"] {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+[data-component="button"][data-variant="destructive"]:hover {
+  background-color: color-mix(in oklch, var(--destructive) 90%, black);
+}
+
+[data-component="button"][data-variant="destructive"]:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--destructive);
+}
+
+/* Outline */
+[data-component="button"][data-variant="outline"] {
+  background-color: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--input);
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+[data-component="button"][data-variant="outline"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Secondary */
+[data-component="button"][data-variant="secondary"] {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+}
+
+[data-component="button"][data-variant="secondary"]:hover {
+  background-color: color-mix(in oklch, var(--secondary) 80%, black);
+}
+
+/* Ghost */
+[data-component="button"][data-variant="ghost"] {
+  background-color: transparent;
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+[data-component="button"][data-variant="ghost"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Link */
+[data-component="button"][data-variant="link"] {
+  background-color: transparent;
+  color: var(--primary);
+  text-decoration-line: underline;
+  text-underline-offset: 4px;
+  box-shadow: none;
+  @apply h-auto px-0 py-0;
+}
+
+[data-component="button"][data-variant="link"]:hover {
+  text-decoration-line: underline;
+}
+
+/* ----- Sizes ----- */
+
+[data-component="button"][data-size="sm"] {
+  @apply h-8 px-3 text-xs rounded-md;
+}
+
+[data-component="button"][data-size="lg"] {
+  @apply h-10 px-8 rounded-md;
+}
+
+[data-component="button"][data-size="icon"] {
+  @apply size-9 p-0;
+}
+
+[data-component="button"][data-size="icon-sm"] {
+  @apply size-8 p-0;
+}
+
+[data-component="button"][data-size="icon-lg"] {
+  @apply size-10 p-0;
+}
+
+/* ===================================================================
+   HELP TEXT / DESCRIPTION
+   Usage: <p data-form-part="description">We'll never share your email.</p>
+   =================================================================== */
+[data-form-part="description"] {
+  @apply text-sm;
+  color: var(--muted-foreground);
+}
+
+/* ===================================================================
+   ERROR TEXT / MESSAGE
+   Usage: <p data-form-part="error">Email is required</p>
+   =================================================================== */
+[data-form-part="error"] {
+  @apply text-sm font-medium;
+  color: var(--destructive);
+}
+
+/* Rails error wrapper compatibility */
+.field_with_errors {
+  @apply contents;
+}
+
+.field_with_errors [data-component="input"],
+.field_with_errors [data-component="textarea"],
+.field_with_errors [data-component="select"] {
+  border-color: var(--destructive);
+  box-shadow:
+    var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)),
+    0 0 0 3px color-mix(in oklch, var(--destructive) 20%, transparent);
+}
+
+/* ===================================================================
+   FORM ACTIONS (Submit area)
+   Usage: <div data-form-part="actions">
+   =================================================================== */
+[data-form-part="actions"] {
+  @apply flex items-center gap-3 pt-4;
+}
+
+[data-form-part="actions"][data-align="end"] {
+  @apply justify-end;
+}
+
+[data-form-part="actions"][data-align="between"] {
+  @apply justify-between;
+}
+
+/* ===================================================================
+   FIELDSET & LEGEND
+   =================================================================== */
+[data-component="fieldset"] {
+  @apply space-y-4 rounded-lg border p-4;
+  border-color: var(--border);
+}
+
+[data-component="legend"],
+[data-component="fieldset"] > legend {
+  @apply px-2 text-sm font-medium;
+  color: var(--foreground);
+}
+
+/* ===================================================================
+   INPUT GROUP (Prefix/Suffix support)
+   =================================================================== */
+[data-component="input-group"] {
+  @apply relative flex items-center;
+}
+
+[data-component="input-group"] [data-component="input"] {
+  @apply flex-1;
+}
+
+[data-input-group-part="prefix"],
+[data-input-group-part="suffix"] {
+  @apply absolute flex items-center justify-center;
+  @apply h-full px-3;
+  @apply text-sm;
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+
+[data-input-group-part="prefix"] {
+  @apply left-0;
+}
+
+[data-input-group-part="suffix"] {
+  @apply right-0;
+}
+
+/* Adjust input padding when prefix/suffix present */
+[data-component="input-group"]:has([data-input-group-part="prefix"]) [data-component="input"] {
+  @apply pl-9;
+}
+
+[data-component="input-group"]:has([data-input-group-part="suffix"]) [data-component="input"] {
+  @apply pr-9;
+}

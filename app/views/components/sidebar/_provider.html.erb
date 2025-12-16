@@ -1,0 +1,16 @@
+<%# locals: (default_open: true, variant: :inset, css_classes: "", cookie_name: "sidebar_state", keyboard_shortcut: "b", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :sidebar,
+    variant: variant,
+    controller: "sidebar",
+    outlet: "sidebar",
+    sidebar_default_open_value: default_open,
+    sidebar_open_value: default_open,
+    sidebar_cookie_name_value: cookie_name,
+    sidebar_keyboard_shortcut_value: keyboard_shortcut,
+    action: "keydown.meta+#{keyboard_shortcut}@window->sidebar#toggleWithKeyboard keydown.ctrl+#{keyboard_shortcut}@window->sidebar#toggleWithKeyboard"
+  ) %>
+
+<%= content_tag :div, class: css_classes, data: merged_data, **html_options do %>
+  <%= yield %>
+<% end %>

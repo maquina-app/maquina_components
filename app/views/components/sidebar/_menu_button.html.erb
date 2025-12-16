@@ -1,0 +1,14 @@
+<%# locals: (title:, url:, icon_name: nil, size: :default, active: false, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    sidebar_part: "menu-button",
+    size: size,
+    active: active
+  ) %>
+
+<%= link_to url, class: css_classes, data: merged_data, **html_options do %>
+  <% if icon_name.present? %>
+    <%= icon_for(icon_name) %>
+  <% end %>
+
+  <span><%= title %></span>
+<% end %>

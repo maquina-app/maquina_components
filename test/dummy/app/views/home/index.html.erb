@@ -1,0 +1,761 @@
+<% content_for :title, "Dashboard - maquina_components" %>
+
+<% content_for :header do %>
+  <%= breadcrumbs({"Dashboard" => "#"}, "Documents") %>
+<% end %>
+
+<%# Page Title %>
+<div class="flex items-center justify-between">
+  <h1 class="text-2xl font-bold tracking-tight">Documents</h1>
+
+  <%# Dropdown Menu Example %>
+  <%= render "components/dropdown_menu" do %>
+    <%= render "components/dropdown_menu/trigger" do %>
+      Actions
+    <% end %>
+
+    <%= render "components/dropdown_menu/content", align: :end do %>
+      <%= render "components/dropdown_menu/label", text: "Actions" %>
+      <%= render "components/dropdown_menu/separator" %>
+
+      <%= render "components/dropdown_menu/item", href: "#" do %>
+        <%= icon_for :plus, class: "size-4" %> New Document
+        <%= render "components/dropdown_menu/shortcut", text: "⌘N" %>
+      <% end %>
+
+      <%= render "components/dropdown_menu/item", href: "#" do %>
+        <%= icon_for :folder, class: "size-4" %> New Folder
+      <% end %>
+
+      <%= render "components/dropdown_menu/separator" %>
+
+      <%= render "components/dropdown_menu/item", href: "#", variant: :destructive do %>
+        <%= icon_for :trash, class: "size-4" %> Delete All
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<%# Stats Cards - Similar to shadcn dashboard %>
+<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-4">
+  <%# Total Revenue %>
+  <%= render "components/card" do %>
+    <%= render "components/card/header", css_classes: "pb-2" do %>
+      <%= render "components/card/title", text: "Total Revenue", size: :sm %>
+    <% end %>
+
+    <%= render "components/card/content", css_classes: "pt-0" do %>
+      <div class="text-2xl font-bold">$1,250.00</div>
+
+      <div
+        class="
+          flex items-center gap-1 text-sm text-emerald-600
+          dark:text-emerald-400
+        "
+      >
+        <%= icon_for :trending_up, class: "size-4" %> +12.5%
+      </div>
+
+      <p class="text-xs text-muted-foreground mt-2">Trending up this month</p>
+    <% end %>
+  <% end %>
+
+  <%# New Customers %>
+  <%= render "components/card" do %>
+    <%= render "components/card/header", css_classes: "pb-2" do %>
+      <%= render "components/card/title", text: "New Customers", size: :sm %>
+    <% end %>
+
+    <%= render "components/card/content", css_classes: "pt-0" do %>
+      <div class="text-2xl font-bold">1,234</div>
+
+      <div class="flex items-center gap-1 text-sm text-red-600 dark:text-red-400">
+        <%= icon_for :trending_down, class: "size-4" %> -20%
+      </div>
+
+      <p class="text-xs text-muted-foreground mt-2">
+        Acquisition needs attention
+      </p>
+    <% end %>
+  <% end %>
+
+  <%# Active Accounts %>
+  <%= render "components/card" do %>
+    <%= render "components/card/header", css_classes: "pb-2" do %>
+      <%= render "components/card/title", text: "Active Accounts", size: :sm %>
+    <% end %>
+
+    <%= render "components/card/content", css_classes: "pt-0" do %>
+      <div class="text-2xl font-bold">45,678</div>
+
+      <div
+        class="
+          flex items-center gap-1 text-sm text-emerald-600
+          dark:text-emerald-400
+        "
+      >
+        <%= icon_for :trending_up, class: "size-4" %> +12.5%
+      </div>
+
+      <p class="text-xs text-muted-foreground mt-2">Strong user retention</p>
+    <% end %>
+  <% end %>
+
+  <%# Growth Rate %>
+  <%= render "components/card" do %>
+    <%= render "components/card/header", css_classes: "pb-2" do %>
+      <%= render "components/card/title", text: "Growth Rate", size: :sm %>
+    <% end %>
+
+    <%= render "components/card/content", css_classes: "pt-0" do %>
+      <div class="text-2xl font-bold">4.5%</div>
+
+      <div
+        class="
+          flex items-center gap-1 text-sm text-emerald-600
+          dark:text-emerald-400
+        "
+      >
+        <%= icon_for :trending_up, class: "size-4" %> +4.5%
+      </div>
+
+      <p class="text-xs text-muted-foreground mt-2">Meets growth projections</p>
+    <% end %>
+  <% end %>
+</div>
+
+<%# Main Content Grid %>
+<div class="grid gap-4 lg:grid-cols-3 mt-4">
+  <%# Documents Table - Takes 2 columns %>
+  <div class="lg:col-span-2">
+    <%= render "components/card" do %>
+      <%= render "components/card/header", layout: :row do %>
+        <div>
+          <%= render "components/card/title", text: "Documents" %>
+          <%= render "components/card/description", text: "Manage your document library and track progress." %>
+        </div>
+
+        <%= render "components/card/action" do %>
+          <%# Toggle Group for view switching %>
+          <%= render "components/toggle_group", type: :single, variant: :outline, size: :sm, value: :list do %>
+            <%= render "components/toggle_group/item", value: "list", pressed: true, aria_label: "List view" do %>
+              <%= icon_for :list, class: "size-4" %>
+            <% end %>
+
+            <%= render "components/toggle_group/item", value: "grid", aria_label: "Grid view" do %>
+              <%= icon_for :grid, class: "size-4" %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= render "components/card/content" do %>
+        <% documents = [
+            { header: "Cover page", type: "Cover page", status: "In Process", reviewer: "Eddie Lake" },
+            { header: "Table of contents", type: "Table of contents", status: "Done", reviewer: "Eddie Lake" },
+            { header: "Executive summary", type: "Narrative", status: "Done", reviewer: "Eddie Lake" },
+            { header: "Technical approach", type: "Narrative", status: "Done", reviewer: "Jamik Tashpulatov" },
+            { header: "Design", type: "Narrative", status: "In Process", reviewer: "Jamik Tashpulatov" },
+            { header: "Capabilities", type: "Narrative", status: "In Process", reviewer: "Jamik Tashpulatov" },
+            { header: "Innovation and Advantages", type: "Narrative", status: "Done", reviewer: nil }
+          ] %>
+
+        <%= render "components/table", container: false do %>
+          <%= render "components/table/header" do %>
+            <%= render "components/table/row" do %>
+              <%= render "components/table/head" do %>
+                Header
+              <% end %>
+
+              <%= render "components/table/head" do %>
+                Section Type
+              <% end %>
+
+              <%= render "components/table/head" do %>
+                Status
+              <% end %>
+
+              <%= render "components/table/head" do %>
+                Reviewer
+              <% end %>
+
+              <%= render "components/table/head", css_classes: "w-10" do %>
+                <span class="sr-only">Actions</span>
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <%= render "components/table/body" do %>
+            <% documents.each do |doc| %>
+              <%= render "components/table/row" do %>
+                <%= render "components/table/cell", css_classes: "font-medium" do %>
+                  <%= doc[:header] %>
+                <% end %>
+
+                <%= render "components/table/cell" do %>
+                  <span class="text-muted-foreground"><%= doc[:type] %></span>
+                <% end %>
+
+                <%= render "components/table/cell" do %>
+                  <% status_variant = case doc[:status]
+                    when "Done" then :success
+                    when "In Process" then :warning
+                    else :secondary
+                    end %>
+
+                  <%= render "components/badge", variant: status_variant, size: :sm do %>
+                    <%= doc[:status] %>
+                  <% end %>
+                <% end %>
+
+                <%= render "components/table/cell" do %>
+                  <% if doc[:reviewer] %>
+                    <span class="text-sm"><%= doc[:reviewer] %></span>
+                  <% else %>
+                    <span class="text-muted-foreground text-sm italic">
+                      Assign reviewer
+                    </span>
+                  <% end %>
+                <% end %>
+
+                <%= render "components/table/cell" do %>
+                  <%= render "components/dropdown_menu" do %>
+                    <%= render "components/dropdown_menu/trigger", as_child: true do %>
+                      <button
+                        type="button"
+                        data-component="button"
+                        data-variant="ghost"
+                        data-size="icon-sm"
+                        data-dropdown-menu-target="trigger"
+                        data-action="dropdown-menu#toggle"
+                        aria-haspopup="menu"
+                        aria-expanded="false"
+                      >
+                        <%= icon_for :more_horizontal, class: "size-4" %>
+                      </button>
+                    <% end %>
+
+                    <%= render "components/dropdown_menu/content", align: :end do %>
+                      <%= render "components/dropdown_menu/item", href: "#" do %>
+                        <%= icon_for :edit, class: "size-4" %> Edit
+                      <% end %>
+
+                      <%= render "components/dropdown_menu/item", href: "#" do %>
+                        <%= icon_for :copy, class: "size-4" %> Duplicate
+                      <% end %>
+
+                      <%= render "components/dropdown_menu/separator" %>
+
+                      <%= render "components/dropdown_menu/item", href: "#", variant: :destructive do %>
+                        <%= icon_for :trash, class: "size-4" %> Delete
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= render "components/card/footer", align: :between do %>
+        <span class="text-sm text-muted-foreground whitespace-nowrap">
+          Showing 7 of 24 documents
+        </span>
+
+        <%# Pagination Demo %>
+        <% @pagy = fake_pagy(page: 2, pages: 4) %>
+        <%= pagination_nav(@pagy, :root_path, show_labels: false) %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Right Column - Recent Activity & Quick Actions %>
+  <div class="space-y-4">
+    <%# Recent Activity %>
+    <%= render "components/card" do %>
+      <%= render "components/card/header" do %>
+        <%= render "components/card/title", text: "Recent Activity" %>
+        <%= render "components/card/description", text: "Latest updates from your team." %>
+      <% end %>
+
+      <%= render "components/card/content" do %>
+        <div class="space-y-4">
+          <div class="flex items-start gap-3">
+            <div
+              class="
+                flex h-8 w-8 items-center justify-center rounded-full
+                bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30
+                dark:text-emerald-400
+              "
+            >
+              <%= icon_for :check, class: "size-4" %>
+            </div>
+
+            <div class="flex-1">
+              <p class="text-sm font-medium">Executive summary completed</p>
+
+              <p class="text-xs text-muted-foreground">
+                Eddie Lake • 2 hours ago
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div
+              class="
+                flex h-8 w-8 items-center justify-center rounded-full
+                bg-blue-100 text-blue-600 dark:bg-blue-900/30
+                dark:text-blue-400
+              "
+            >
+              <%= icon_for :message_square, class: "size-4" %>
+            </div>
+
+            <div class="flex-1">
+              <p class="text-sm font-medium">Comment on Technical approach</p>
+
+              <p class="text-xs text-muted-foreground">
+                Jamik T. • 4 hours ago
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3">
+            <div
+              class="
+                flex h-8 w-8 items-center justify-center rounded-full
+                bg-amber-100 text-amber-600 dark:bg-amber-900/30
+                dark:text-amber-400
+              "
+            >
+              <%= icon_for :edit, class: "size-4" %>
+            </div>
+
+            <div class="flex-1">
+              <p class="text-sm font-medium">Design section updated</p>
+              <p class="text-xs text-muted-foreground">Jamik T. • Yesterday</p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <%= render "components/card/footer", css_classes: "pt-0" do %>
+        <a href="#" class="text-sm text-primary hover:underline">
+          View all activity →
+        </a>
+      <% end %>
+    <% end %>
+
+    <%# Alert - Action needed %>
+    <%= render "components/alert", variant: :warning do %>
+      <%= render "components/alert/title", text: "Action Required" %>
+      <%= render "components/alert/description", text: "3 documents need reviewer assignment before the deadline." %>
+    <% end %>
+
+    <%# Quick Stats Card %>
+    <%= render "components/card" do %>
+      <%= render "components/card/header" do %>
+        <%= render "components/card/title", text: "Team Progress" %>
+      <% end %>
+
+      <%= render "components/card/content" do %>
+        <div class="space-y-3">
+          <div>
+            <div class="flex items-center justify-between text-sm mb-1">
+              <span>Completed</span>
+              <span class="font-medium">4/7</span>
+            </div>
+
+            <div class="h-2 rounded-full bg-muted overflow-hidden">
+              <div
+                class="h-full bg-emerald-500 rounded-full"
+                style="width: 57%"
+              ></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between text-sm mb-1">
+              <span>In Progress</span>
+              <span class="font-medium">3/7</span>
+            </div>
+
+            <div class="h-2 rounded-full bg-muted overflow-hidden">
+              <div class="h-full bg-amber-500 rounded-full" style="width: 43%"></div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%# Bottom Section - Additional Components Showcase %>
+<div class="grid gap-4 lg:grid-cols-2 mt-4">
+  <%# Recent Orders with Pagination %>
+  <%= render "components/card" do %>
+    <%= render "components/card/header", layout: :row do %>
+      <div>
+        <%= render "components/card/title", text: "Recent Orders" %>
+        <%= render "components/card/description", text: "Latest customer orders from your store." %>
+      </div>
+
+      <%= render "components/card/action" do %>
+        <%= render "components/badge", variant: :success, size: :sm do %>
+          <span class="relative flex h-2 w-2 mr-1">
+            <span
+              class="
+                animate-ping absolute inline-flex h-full w-full rounded-full
+                bg-emerald-400 opacity-75
+              "
+            ></span>
+
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          Live
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render "components/card/content" do %>
+      <% recent_orders = [
+          { id: "#3210", customer: "Olivia Martin", email: "olivia@email.com", status: "Shipped", amount: "$42.25" },
+          { id: "#3209", customer: "Ava Johnson", email: "ava@email.com", status: "Processing", amount: "$74.99" },
+          { id: "#3208", customer: "Michael Chen", email: "michael@email.com", status: "Delivered", amount: "$125.00" },
+          { id: "#3207", customer: "Sofia Davis", email: "sofia@email.com", status: "Shipped", amount: "$89.00" }
+        ] %>
+
+      <%= render "components/table", container: false do %>
+        <%= render "components/table/header" do %>
+          <%= render "components/table/row" do %>
+            <%= render "components/table/head" do %>
+              Order
+            <% end %>
+
+            <%= render "components/table/head" do %>
+              Customer
+            <% end %>
+
+            <%= render "components/table/head" do %>
+              Status
+            <% end %>
+
+            <%= render "components/table/head", css_classes: "text-right" do %>
+              Amount
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <%= render "components/table/body" do %>
+          <% recent_orders.each do |order| %>
+            <%= render "components/table/row" do %>
+              <%= render "components/table/cell", css_classes: "font-medium" do %>
+                <%= order[:id] %>
+              <% end %>
+
+              <%= render "components/table/cell" do %>
+                <div>
+                  <div class="font-medium"><%= order[:customer] %></div>
+
+                  <div class="text-xs text-muted-foreground">
+                    <%= order[:email] %>
+                  </div>
+                </div>
+              <% end %>
+
+              <%= render "components/table/cell" do %>
+                <% status_variant = case order[:status]
+                  when "Delivered" then :success
+                  when "Shipped" then :secondary
+                  else :warning
+                  end %>
+
+                <%= render "components/badge", variant: status_variant, size: :sm do %>
+                  <%= order[:status] %>
+                <% end %>
+              <% end %>
+
+              <%= render "components/table/cell", css_classes: "text-right font-medium" do %>
+                <%= order[:amount] %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render "components/card/footer", align: :between do %>
+      <span class="text-sm text-muted-foreground whitespace-nowrap">
+        Page 1 of 5
+      </span>
+
+      <%# Simple pagination %>
+      <% @orders_pagy = fake_pagy(page: 1, pages: 5) %>
+      <%= pagination_simple(@orders_pagy, :root_path) %>
+    <% end %>
+  <% end %>
+
+  <%# Team Members %>
+  <%= render "components/card" do %>
+    <%= render "components/card/header", layout: :row do %>
+      <div>
+        <%= render "components/card/title", text: "Team Members" %>
+        <%= render "components/card/description", text: "People working on this project." %>
+      </div>
+
+      <%= render "components/card/action" do %>
+        <button data-component="button" data-variant="outline" data-size="sm">
+          <%= icon_for :user_plus, class: "size-4 mr-1" %> Invite
+        </button>
+      <% end %>
+    <% end %>
+
+    <%= render "components/card/content" do %>
+      <% team_members = [
+          { name: "Eddie Lake", role: "Project Lead", avatar: "EL", status: "online" },
+          { name: "Jamik Tashpulatov", role: "Technical Writer", avatar: "JT", status: "online" },
+          { name: "Sarah Miller", role: "Designer", avatar: "SM", status: "away" },
+          { name: "Alex Wong", role: "Developer", avatar: "AW", status: "offline" }
+        ] %>
+
+      <div class="space-y-3">
+        <% team_members.each do |member| %>
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <div
+                class="
+                  flex h-9 w-9 items-center justify-center rounded-full
+                  bg-muted text-sm font-medium
+                "
+              >
+                <%= member[:avatar] %>
+              </div>
+
+              <% status_color = case member[:status]
+                when "online" then "bg-emerald-500"
+                when "away" then "bg-amber-500"
+                else "bg-gray-400"
+                end %>
+
+              <span class="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full <%= status_color %> ring-2 ring-background"></span>
+            </div>
+
+            <div class="flex-1">
+              <p class="text-sm font-medium"><%= member[:name] %></p>
+              <p class="text-xs text-muted-foreground"><%= member[:role] %></p>
+            </div>
+
+            <%= render "components/dropdown_menu" do %>
+              <%= render "components/dropdown_menu/trigger", as_child: true do %>
+                <button
+                  type="button"
+                  data-component="button"
+                  data-variant="ghost"
+                  data-size="icon-sm"
+                  data-dropdown-menu-target="trigger"
+                  data-action="dropdown-menu#toggle"
+                  aria-haspopup="menu"
+                  aria-expanded="false"
+                >
+                  <%= icon_for :more_horizontal, class: "size-4" %>
+                </button>
+              <% end %>
+
+              <%= render "components/dropdown_menu/content", align: :end do %>
+                <%= render "components/dropdown_menu/item", href: "#" do %>
+                  <%= icon_for :user, class: "size-4" %> View Profile
+                <% end %>
+
+                <%= render "components/dropdown_menu/item", href: "#" do %>
+                  <%= icon_for :mail, class: "size-4" %> Send Message
+                <% end %>
+
+                <%= render "components/dropdown_menu/separator" %>
+
+                <%= render "components/dropdown_menu/item", href: "#", variant: :destructive do %>
+                  <%= icon_for :log_out, class: "size-4" %> Remove from
+                  Project
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<%# Component Showcase Section %>
+<div class="mt-8">
+  <h2 class="text-xl font-semibold mb-4">Component Showcase</h2>
+
+  <div class="grid gap-4 lg:grid-cols-3">
+    <%# Badge Variants %>
+    <%= render "components/card" do %>
+      <%= render "components/card/header" do %>
+        <%= render "components/card/title", text: "Badge Variants" %>
+      <% end %>
+
+      <%= render "components/card/content" do %>
+        <div class="flex flex-wrap gap-2">
+          <%= render "components/badge", variant: :default do %>
+            Default
+          <% end %>
+
+          <%= render "components/badge", variant: :primary do %>
+            Primary
+          <% end %>
+
+          <%= render "components/badge", variant: :secondary do %>
+            Secondary
+          <% end %>
+
+          <%= render "components/badge", variant: :success do %>
+            Success
+          <% end %>
+
+          <%= render "components/badge", variant: :warning do %>
+            Warning
+          <% end %>
+
+          <%= render "components/badge", variant: :destructive do %>
+            Destructive
+          <% end %>
+
+          <%= render "components/badge", variant: :outline do %>
+            Outline
+          <% end %>
+        </div>
+
+        <div class="mt-4">
+          <p class="text-sm text-muted-foreground mb-2">With icons:</p>
+
+          <div class="flex flex-wrap gap-2">
+            <%= render "components/badge", variant: :success do %>
+              <%= icon_for :check, class: "size-3" %> Completed
+            <% end %>
+
+            <%= render "components/badge", variant: :warning do %>
+              <%= icon_for :clock, class: "size-3" %> Pending
+            <% end %>
+
+            <%= render "components/badge", variant: :destructive do %>
+              <%= icon_for :x, class: "size-3" %> Failed
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%# Alert Variants %>
+    <%= render "components/card" do %>
+      <%= render "components/card/header" do %>
+        <%= render "components/card/title", text: "Alert Variants" %>
+      <% end %>
+
+      <%= render "components/card/content", css_classes: "space-y-3" do %>
+        <%= render "components/alert", variant: :default do %>
+          <%= render "components/alert/title", text: "Information" %>
+          <%= render "components/alert/description", text: "This is a default informational alert." %>
+        <% end %>
+
+        <%= render "components/alert", variant: :success do %>
+          <%= render "components/alert/title", text: "Success" %>
+          <%= render "components/alert/description", text: "Your changes have been saved." %>
+        <% end %>
+
+        <%= render "components/alert", variant: :destructive do %>
+          <%= render "components/alert/title", text: "Error" %>
+          <%= render "components/alert/description", text: "Something went wrong." %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%# Toggle Group Variants %>
+    <%= render "components/card" do %>
+      <%= render "components/card/header" do %>
+        <%= render "components/card/title", text: "Toggle Group" %>
+      <% end %>
+
+      <%= render "components/card/content", css_classes: "space-y-4" do %>
+        <div>
+          <p class="text-sm text-muted-foreground mb-2">
+            Single selection (outline):
+          </p>
+
+          <%= render "components/toggle_group", type: :single, variant: :outline, value: :center do %>
+            <%= render "components/toggle_group/item", value: "left", aria_label: "Align left" do %>
+              <%= icon_for :align_left, class: "size-4" %>
+            <% end %>
+
+            <%= render "components/toggle_group/item", value: "center", pressed: true, aria_label: "Align center" do %>
+              <%= icon_for :align_center, class: "size-4" %>
+            <% end %>
+
+            <%= render "components/toggle_group/item", value: "right", aria_label: "Align right" do %>
+              <%= icon_for :align_right, class: "size-4" %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <div>
+          <p class="text-sm text-muted-foreground mb-2">
+            Multiple selection (default):
+          </p>
+
+          <%= render "components/toggle_group", type: :multiple, variant: :default, value: [:bold, :italic] do %>
+            <%= render "components/toggle_group/item", value: "bold", pressed: true, aria_label: "Bold" do %>
+              <%= icon_for :bold, class: "size-4" %>
+            <% end %>
+
+            <%= render "components/toggle_group/item", value: "italic", pressed: true, aria_label: "Italic" do %>
+              <%= icon_for :italic, class: "size-4" %>
+            <% end %>
+
+            <%= render "components/toggle_group/item", value: "underline", aria_label: "Underline" do %>
+              <%= icon_for :underline, class: "size-4" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<%# Empty State Example %>
+<div class="mt-4">
+  <%= render "components/card" do %>
+    <%= render "components/card/header" do %>
+      <%= render "components/card/title", text: "Empty State Example" %>
+      <%= render "components/card/description", text: "When there's no data to display." %>
+    <% end %>
+
+    <%= render "components/card/content" do %>
+      <%= render "components/empty" do %>
+        <%= render "components/empty/header" do %>
+          <%= render "components/empty/media" do %>
+            <div
+              class="
+                flex h-16 w-16 items-center justify-center rounded-full
+                bg-muted
+              "
+            >
+              <%= icon_for :inbox, class: "size-8 text-muted-foreground" %>
+            </div>
+          <% end %>
+
+          <%= render "components/empty/title", text: "No notifications" %>
+          <%= render "components/empty/description", text: "You're all caught up! Check back later for new updates." %>
+        <% end %>
+
+        <%= render "components/empty/content" do %>
+          <button data-component="button" data-variant="outline" data-size="sm">
+            <%= icon_for :bell, class: "size-4 mr-1" %> Configure
+            Notifications
+          </button>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

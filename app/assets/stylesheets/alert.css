@@ -1,0 +1,143 @@
+/* ===== Alert Component Styles ===== */
+/*
+ * Alert component for displaying callouts, messages, and notifications.
+ * Uses data attributes for styling to maintain consistency with other components.
+ * Fully compatible with dark mode via CSS variables.
+ */
+
+/* ===== Base Alert Styles ===== */
+[data-component="alert"] {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  @apply w-full rounded-lg border p-4 text-sm;
+  
+  /* Default colors */
+  background-color: var(--background);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+/* Alert with icon - add left padding for icon space */
+[data-component="alert"][data-has-icon="true"] {
+  grid-template-columns: auto 1fr;
+  @apply gap-3;
+}
+
+/* ===== Icon Support ===== */
+[data-component="alert"] > svg:first-child,
+[data-component="alert"] [data-alert-part="icon"] {
+  @apply size-4 shrink-0;
+  color: var(--foreground);
+  /* Align with first line of text */
+  margin-top: 0.125rem;
+}
+
+/* ===== Alert Title ===== */
+[data-component="alert"] [data-alert-part="title"] {
+  @apply font-medium leading-none tracking-tight;
+  color: var(--foreground);
+}
+
+/* Title followed by description needs margin */
+[data-component="alert"] [data-alert-part="title"]:has(+ [data-alert-part="description"]) {
+  @apply mb-1;
+}
+
+/* ===== Alert Description ===== */
+[data-component="alert"] [data-alert-part="description"] {
+  @apply text-sm;
+  color: var(--muted-foreground);
+}
+
+/* Nested paragraphs */
+[data-component="alert"] [data-alert-part="description"] p {
+  @apply leading-relaxed;
+}
+
+/* Lists inside description */
+[data-component="alert"] [data-alert-part="description"] ul {
+  @apply mt-2 list-inside list-disc;
+}
+
+/* ===== Variant: Default ===== */
+[data-component="alert"][data-variant="default"] {
+  background-color: var(--background);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+[data-component="alert"][data-variant="default"] > svg:first-child,
+[data-component="alert"][data-variant="default"] [data-alert-part="icon"] {
+  color: var(--foreground);
+}
+
+/* ===== Variant: Destructive ===== */
+[data-component="alert"][data-variant="destructive"] {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+  border-color: var(--destructive);
+}
+
+[data-component="alert"][data-variant="destructive"] [data-alert-part="title"] {
+  color: var(--destructive-foreground);
+}
+
+[data-component="alert"][data-variant="destructive"] [data-alert-part="description"] {
+  color: var(--destructive-foreground);
+  opacity: 0.9;
+}
+
+[data-component="alert"][data-variant="destructive"] > svg:first-child,
+[data-component="alert"][data-variant="destructive"] [data-alert-part="icon"] {
+  color: var(--destructive-foreground);
+}
+
+/* ===== Variant: Success ===== */
+[data-component="alert"][data-variant="success"] {
+  background-color: var(--success);
+  color: var(--success-foreground);
+  border-color: var(--success);
+}
+
+[data-component="alert"][data-variant="success"] [data-alert-part="title"] {
+  color: var(--success-foreground);
+}
+
+[data-component="alert"][data-variant="success"] [data-alert-part="description"] {
+  color: var(--success-foreground);
+  opacity: 0.9;
+}
+
+[data-component="alert"][data-variant="success"] > svg:first-child,
+[data-component="alert"][data-variant="success"] [data-alert-part="icon"] {
+  color: var(--success-foreground);
+}
+
+/* ===== Variant: Warning ===== */
+[data-component="alert"][data-variant="warning"] {
+  background-color: var(--warning);
+  color: var(--warning-foreground);
+  border-color: var(--warning);
+}
+
+[data-component="alert"][data-variant="warning"] [data-alert-part="title"] {
+  color: var(--warning-foreground);
+}
+
+[data-component="alert"][data-variant="warning"] [data-alert-part="description"] {
+  color: var(--warning-foreground);
+  opacity: 0.9;
+}
+
+[data-component="alert"][data-variant="warning"] > svg:first-child,
+[data-component="alert"][data-variant="warning"] [data-alert-part="icon"] {
+  color: var(--warning-foreground);
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */
