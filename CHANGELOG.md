@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-01-07
+
+### Added
+
+#### Interactive Components
+- **Combobox** — Searchable dropdown selection with keyboard navigation
+  - HTML5 Popover API for native light-dismiss behavior
+  - Filtering/search functionality
+  - Support for grouped options with labels and separators
+  - Width variants (sm, default, md, lg, full)
+  - Helper methods: `combobox` (builder pattern) and `combobox_simple` (data-driven)
+  - Full keyboard navigation (arrow keys, enter, escape, home, end)
+  - ARIA-compliant accessibility (`role="combobox"`, `role="listbox"`)
+
+#### Feedback Components
+- **Toast** — Non-intrusive notification system
+  - Five variants: default, success, info, warning, error
+  - Six position options: top-left, top-center, top-right, bottom-left, bottom-center, bottom-right
+  - Auto-dismiss with configurable duration
+  - Pause timer on hover
+  - Global JavaScript API (`Toast.success()`, `Toast.error()`, etc.)
+  - Flash message integration via `toast_flash_messages` helper
+  - Action button support
+  - Enter/exit animations based on position
+  - Maximum visible toasts enforcement
+
+### Technical Details
+- Combobox uses HTML5 Popover API with `@oddbird/popover-polyfill` recommended for older browsers
+- Toast system includes two Stimulus controllers: `toaster` (container/API) and `toast` (individual lifecycle)
+
 ## [0.2.0] - 2025-01-01
 
 ### Added
@@ -71,6 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/maquina-app/maquina_components/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/maquina-app/maquina_components/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/maquina-app/maquina_components/releases/tag/v0.1.0

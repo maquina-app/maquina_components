@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    maquina-components (0.2.0)
+    maquina-components (0.3.0)
       rails (>= 7.2.0)
       tailwindcss-rails (~> 4.2)
 

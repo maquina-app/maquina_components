@@ -152,7 +152,14 @@ bin/rails generate maquina_components:install --skip-helper
 
 | Component | Description | Documentation |
 |-----------|-------------|---------------|
+| **Combobox** | Searchable dropdown with keyboard navigation | [Combobox](https://maquina.app/documentation/components/combobox/) |
 | **Toggle Group** | Single/multiple selection button group | [Toggle Group](https://maquina.app/documentation/components/toggle-group/) |
+
+### Feedback Components
+
+| Component | Description | Documentation |
+|-----------|-------------|---------------|
+| **Toast** | Non-intrusive notifications with auto-dismiss | [Toast](https://maquina.app/documentation/components/toast/) |
 
 ### Form Components
 
@@ -252,6 +259,41 @@ bin/rails generate maquina_components:install --skip-helper
 <%= pagination_nav(@pagy, :users_path) %>
 ```
 
+### Combobox
+
+```erb
+<%= render "components/combobox", placeholder: "Select framework..." do |combobox_id| %>
+  <%= render "components/combobox/trigger", for_id: combobox_id, placeholder: "Select framework..." %>
+  <%= render "components/combobox/content", id: combobox_id do %>
+    <%= render "components/combobox/input", placeholder: "Search..." %>
+    <%= render "components/combobox/list" do %>
+      <%= render "components/combobox/option", value: "rails" do %>Ruby on Rails<% end %>
+      <%= render "components/combobox/option", value: "hanami" do %>Hanami<% end %>
+      <%= render "components/combobox/option", value: "sinatra" do %>Sinatra<% end %>
+    <% end %>
+    <%= render "components/combobox/empty" %>
+  <% end %>
+<% end %>
+```
+
+### Toast Notifications
+
+```erb
+<%# Add toaster to your layout %>
+<%= render "components/toaster", position: :bottom_right do %>
+  <%= toast_flash_messages %>
+<% end %>
+
+<%# In your controller %>
+flash[:success] = "Changes saved successfully!"
+
+<%# Or use the JavaScript API %>
+<script>
+  Toast.success("Profile updated!")
+  Toast.error("Something went wrong", { description: "Please try again." })
+</script>
+```
+
 ### Tables
 
 ```erb
@@ -349,6 +391,10 @@ The install generator adds default theme variables. Customize them in `app/asset
 | `sidebar_open?(cookie_name)` | Check if the sidebar is expanded |
 | `pagination_nav(pagy, route)` | Render pagination from Pagy object |
 | `pagination_simple(pagy, route)` | Render simple Previous/Next pagination |
+| `toast_flash_messages` | Render all flash messages as toasts |
+| `toast(variant, title, **options)` | Render a single toast notification |
+| `combobox(placeholder:, **options, &block)` | Builder pattern for combobox |
+| `combobox_simple(options:, **options)` | Data-driven simple combobox |
 
 ---
 
@@ -379,7 +425,12 @@ The install generator adds default theme variables. Customize them in `app/asset
 
 ### Interactive
 
+- **[Combobox](https://maquina.app/documentation/components/combobox/)** — Searchable dropdown selection
 - **[Toggle Group](https://maquina.app/documentation/components/toggle-group/)** — Toggle button groups
+
+### Feedback
+
+- **[Toast](https://maquina.app/documentation/components/toast/)** — Toast notifications
 
 ### Forms
 
