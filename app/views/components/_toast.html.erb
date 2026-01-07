@@ -1,0 +1,53 @@
+<%# locals: (variant: :default, title: nil, description: nil, icon: nil, duration: 5000, dismissible: true, css_classes: "", **html_options) %>
+<%
+  # Auto-select icon based on variant if not provided
+  default_icons = {
+    default: nil,
+    success: :circle_check,
+    info: :info,
+    warning: :triangle_alert,
+    error: :circle_x
+  }
+  toast_icon = icon || default_icons[variant]
+%>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :toast,
+    controller: "toast",
+    variant: variant,
+    toast_duration_value: duration,
+    toast_dismissible_value: dismissible,
+    state: "entering"
+  ) %>
+
+<%= content_tag :div,
+      role: "alert",
+      class: css_classes.presence,
+      data: merged_data,
+      **html_options do %>
+  <% if toast_icon %>
+    <div data-toast-part="icon">
+      <%= icon_for toast_icon, class: "size-5" %>
+    </div>
+  <% end %>
+
+  <div data-toast-part="content">
+    <% if title.present? %>
+      <%= render "components/toast/title", text: title %>
+    <% end %>
+
+    <% if description.present? %>
+      <%= render "components/toast/description", text: description %>
+    <% end %>
+
+    <%= yield if block_given? %>
+  </div>
+
+  <% if dismissible %>
+    <button type="button"
+            data-toast-part="close"
+            data-action="toast#dismiss"
+            aria-label="Dismiss notification">
+      <%= icon_for :x, class: "size-4" %>
+    </button>
+  <% end %>
+<% end %>

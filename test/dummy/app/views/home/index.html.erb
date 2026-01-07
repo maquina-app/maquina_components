@@ -785,6 +785,77 @@
   </div>
 </div>
 
+<%# Toast Examples %>
+<div class="mt-4">
+  <%= render "components/card" do %>
+    <%= render "components/card/header" do %>
+      <%= render "components/card/title", text: "Toast Notifications" %>
+      <%= render "components/card/description", text: "Click buttons to trigger toast notifications." %>
+    <% end %>
+
+    <%= render "components/card/content" do %>
+      <div class="flex flex-wrap gap-2">
+        <button
+          type="button"
+          data-component="button"
+          data-variant="default"
+          onclick="Toast.success('Profile updated!', { description: 'Your changes have been saved.' })"
+        >
+          Success Toast
+        </button>
+
+        <button
+          type="button"
+          data-component="button"
+          data-variant="destructive"
+          onclick="Toast.error('Something went wrong', { description: 'Please try again later.' })"
+        >
+          Error Toast
+        </button>
+
+        <button
+          type="button"
+          data-component="button"
+          data-variant="outline"
+          onclick="Toast.warning('Session expiring', { description: 'Your session will expire in 5 minutes.' })"
+        >
+          Warning Toast
+        </button>
+
+        <button
+          type="button"
+          data-component="button"
+          data-variant="secondary"
+          onclick="Toast.info('New feature available', { description: 'Check out the new dashboard!' })"
+        >
+          Info Toast
+        </button>
+
+        <button
+          type="button"
+          data-component="button"
+          data-variant="ghost"
+          onclick="Toast.show('Simple notification')"
+        >
+          Default Toast
+        </button>
+      </div>
+
+      <div class="mt-4 pt-4 border-t border-border">
+        <p class="text-sm text-muted-foreground mb-2">With action button:</p>
+        <button
+          type="button"
+          data-component="button"
+          data-variant="outline"
+          onclick="Toast.info('New version available', { description: 'A new update is ready to install.', action: { label: 'Update now' } })"
+        >
+          Toast with Action
+        </button>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
 <%# Empty State Example %>
 <div class="mt-4">
   <%= render "components/card" do %>

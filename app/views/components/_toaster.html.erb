@@ -1,0 +1,17 @@
+<%# locals: (position: :bottom_right, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :toaster,
+    controller: "toaster",
+    position: position.to_s.dasherize,
+    toaster_target: "container"
+  ) %>
+
+<%= content_tag :div,
+      id: "toaster",
+      role: "region",
+      aria: { label: "Notifications", live: "polite" },
+      class: css_classes.presence,
+      data: merged_data,
+      **html_options do %>
+  <%= yield if block_given? %>
+<% end %>

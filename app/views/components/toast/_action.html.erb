@@ -1,0 +1,14 @@
+<%# locals: (label:, href: nil, method: nil, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    toast_part: "action"
+  ) %>
+
+<% merged_data["turbo-method"] = method if method.present? %>
+
+<% if href.present? %>
+  <%= link_to label, href, class: css_classes.presence, data: merged_data, **html_options %>
+<% else %>
+  <%= content_tag :button, type: "button", class: css_classes.presence, data: merged_data, **html_options do %>
+    <%= label %>
+  <% end %>
+<% end %>

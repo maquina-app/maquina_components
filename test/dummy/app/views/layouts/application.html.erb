@@ -273,5 +273,10 @@
         <div class="flex-1 overflow-y-auto p-4"><%= yield %></div>
       <% end %>
     <% end %>
+
+    <%# Toast notifications container %>
+    <%= render "components/toaster", position: :bottom_right do %>
+      <%= toast_flash_messages %>
+    <% end %>
   </body>
 </html>

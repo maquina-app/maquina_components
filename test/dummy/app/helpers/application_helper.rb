@@ -26,6 +26,7 @@ module ApplicationHelper
   include MaquinaComponents::PaginationHelper
   include MaquinaComponents::SidebarHelper
   include MaquinaComponents::TableHelper
+  include MaquinaComponents::ToastHelper
 
   # Sidebar cookie name for this application
   SIDEBAR_COOKIE_NAME = "maquina_demo_sidebar_state"

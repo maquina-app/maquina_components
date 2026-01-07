@@ -1,0 +1,433 @@
+/* ===== Toast Component Styles ===== */
+/*
+ * Toast notification system for displaying temporary messages.
+ * Uses data attributes for styling to maintain consistency.
+ * Fully compatible with dark mode via CSS variables.
+ *
+ * Structure:
+ * - toaster (fixed container, manages stack)
+ *   - toast (individual notification)
+ *     - icon (variant icon)
+ *     - content (title + description)
+ *     - action (optional button)
+ *     - close (dismiss button)
+ */
+
+/* ===== Toaster Container ===== */
+[data-component="toaster"] {
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  @apply gap-3 p-4;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+/* Position variants */
+[data-component="toaster"][data-position="top-left"] {
+  top: 0;
+  left: 0;
+  align-items: flex-start;
+}
+
+[data-component="toaster"][data-position="top-center"] {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+
+[data-component="toaster"][data-position="top-right"] {
+  top: 0;
+  right: 0;
+  align-items: flex-end;
+}
+
+[data-component="toaster"][data-position="bottom-left"] {
+  bottom: 0;
+  left: 0;
+  align-items: flex-start;
+  flex-direction: column-reverse;
+}
+
+[data-component="toaster"][data-position="bottom-center"] {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+  flex-direction: column-reverse;
+}
+
+[data-component="toaster"][data-position="bottom-right"] {
+  bottom: 0;
+  right: 0;
+  align-items: flex-end;
+  flex-direction: column-reverse;
+}
+
+/* ===== Toast Base Styles ===== */
+[data-component="toast"] {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  pointer-events: auto;
+  background-color: var(--popover, var(--background));
+  color: var(--popover-foreground, var(--foreground));
+  border-color: var(--border);
+  @apply w-full max-w-sm gap-3 rounded-lg border p-4 pr-10 shadow-lg;
+}
+
+/* ===== Icon ===== */
+[data-toast-part="icon"] {
+  @apply shrink-0;
+  color: var(--foreground);
+}
+
+[data-toast-part="icon"] svg {
+  @apply size-5;
+}
+
+/* ===== Content ===== */
+[data-toast-part="content"] {
+  @apply flex-1 min-w-0;
+}
+
+/* ===== Title ===== */
+[data-toast-part="title"] {
+  @apply text-sm font-semibold;
+  color: var(--foreground);
+}
+
+/* Title followed by description */
+[data-toast-part="title"]:has(+ [data-toast-part="description"]) {
+  @apply mb-1;
+}
+
+/* ===== Description ===== */
+[data-toast-part="description"] {
+  @apply text-sm;
+  color: var(--muted-foreground);
+}
+
+/* ===== Close Button ===== */
+[data-toast-part="close"] {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.5;
+  color: var(--foreground);
+  @apply size-6 rounded-sm transition-opacity;
+}
+
+[data-toast-part="close"]:hover {
+  opacity: 1;
+}
+
+[data-toast-part="close"]:focus-visible {
+  opacity: 1;
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+[data-toast-part="close"] svg {
+  @apply size-4;
+}
+
+/* ===== Action Button ===== */
+[data-toast-part="action"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background-color: transparent;
+  color: var(--foreground);
+  cursor: pointer;
+  text-decoration: none;
+  @apply mt-2 h-8 rounded-md px-3 text-xs font-medium transition-colors;
+}
+
+[data-toast-part="action"]:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+[data-toast-part="action"]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ===== Variant: Default ===== */
+[data-component="toast"][data-variant="default"] {
+  background-color: var(--popover, var(--background));
+  color: var(--popover-foreground, var(--foreground));
+  border-color: var(--border);
+}
+
+/* ===== Variant: Success ===== */
+[data-component="toast"][data-variant="success"] {
+  background-color: var(--success);
+  color: var(--success-foreground);
+  border-color: var(--success);
+}
+
+[data-component="toast"][data-variant="success"] [data-toast-part="icon"],
+[data-component="toast"][data-variant="success"] [data-toast-part="title"],
+[data-component="toast"][data-variant="success"] [data-toast-part="close"] {
+  color: var(--success-foreground);
+}
+
+[data-component="toast"][data-variant="success"] [data-toast-part="description"] {
+  color: var(--success-foreground);
+  opacity: 0.9;
+}
+
+[data-component="toast"][data-variant="success"] [data-toast-part="action"] {
+  border-color: var(--success-foreground);
+  color: var(--success-foreground);
+}
+
+[data-component="toast"][data-variant="success"] [data-toast-part="action"]:hover {
+  background-color: var(--success-foreground);
+  color: var(--success);
+}
+
+/* ===== Variant: Info ===== */
+[data-component="toast"][data-variant="info"] {
+  background-color: var(--info, var(--primary));
+  color: var(--info-foreground, var(--primary-foreground));
+  border-color: var(--info, var(--primary));
+}
+
+[data-component="toast"][data-variant="info"] [data-toast-part="icon"],
+[data-component="toast"][data-variant="info"] [data-toast-part="title"],
+[data-component="toast"][data-variant="info"] [data-toast-part="close"] {
+  color: var(--info-foreground, var(--primary-foreground));
+}
+
+[data-component="toast"][data-variant="info"] [data-toast-part="description"] {
+  color: var(--info-foreground, var(--primary-foreground));
+  opacity: 0.9;
+}
+
+[data-component="toast"][data-variant="info"] [data-toast-part="action"] {
+  border-color: var(--info-foreground, var(--primary-foreground));
+  color: var(--info-foreground, var(--primary-foreground));
+}
+
+[data-component="toast"][data-variant="info"] [data-toast-part="action"]:hover {
+  background-color: var(--info-foreground, var(--primary-foreground));
+  color: var(--info, var(--primary));
+}
+
+/* ===== Variant: Warning ===== */
+[data-component="toast"][data-variant="warning"] {
+  background-color: var(--warning);
+  color: var(--warning-foreground);
+  border-color: var(--warning);
+}
+
+[data-component="toast"][data-variant="warning"] [data-toast-part="icon"],
+[data-component="toast"][data-variant="warning"] [data-toast-part="title"],
+[data-component="toast"][data-variant="warning"] [data-toast-part="close"] {
+  color: var(--warning-foreground);
+}
+
+[data-component="toast"][data-variant="warning"] [data-toast-part="description"] {
+  color: var(--warning-foreground);
+  opacity: 0.9;
+}
+
+[data-component="toast"][data-variant="warning"] [data-toast-part="action"] {
+  border-color: var(--warning-foreground);
+  color: var(--warning-foreground);
+}
+
+[data-component="toast"][data-variant="warning"] [data-toast-part="action"]:hover {
+  background-color: var(--warning-foreground);
+  color: var(--warning);
+}
+
+/* ===== Variant: Error ===== */
+[data-component="toast"][data-variant="error"] {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+  border-color: var(--destructive);
+}
+
+[data-component="toast"][data-variant="error"] [data-toast-part="icon"],
+[data-component="toast"][data-variant="error"] [data-toast-part="title"],
+[data-component="toast"][data-variant="error"] [data-toast-part="close"] {
+  color: var(--destructive-foreground);
+}
+
+[data-component="toast"][data-variant="error"] [data-toast-part="description"] {
+  color: var(--destructive-foreground);
+  opacity: 0.9;
+}
+
+[data-component="toast"][data-variant="error"] [data-toast-part="action"] {
+  border-color: var(--destructive-foreground);
+  color: var(--destructive-foreground);
+}
+
+[data-component="toast"][data-variant="error"] [data-toast-part="action"]:hover {
+  background-color: var(--destructive-foreground);
+  color: var(--destructive);
+}
+
+/* ===== Animation States ===== */
+
+/* Enter from right (for right-aligned positions) */
+[data-component="toast"][data-state="entering"] {
+  animation: toast-enter-right 200ms ease-out;
+}
+
+/* Enter from left (for left-aligned positions) */
+[data-component="toaster"][data-position="top-left"] [data-component="toast"][data-state="entering"],
+[data-component="toaster"][data-position="bottom-left"] [data-component="toast"][data-state="entering"] {
+  animation: toast-enter-left 200ms ease-out;
+}
+
+/* Enter from top (for center-aligned positions) */
+[data-component="toaster"][data-position="top-center"] [data-component="toast"][data-state="entering"] {
+  animation: toast-enter-top 200ms ease-out;
+}
+
+/* Enter from bottom (for bottom-center) */
+[data-component="toaster"][data-position="bottom-center"] [data-component="toast"][data-state="entering"] {
+  animation: toast-enter-bottom 200ms ease-out;
+}
+
+/* Visible state */
+[data-component="toast"][data-state="visible"] {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+}
+
+/* Exit animations */
+[data-component="toast"][data-state="exiting"] {
+  animation: toast-exit-right 150ms ease-in forwards;
+}
+
+[data-component="toaster"][data-position="top-left"] [data-component="toast"][data-state="exiting"],
+[data-component="toaster"][data-position="bottom-left"] [data-component="toast"][data-state="exiting"] {
+  animation: toast-exit-left 150ms ease-in forwards;
+}
+
+[data-component="toaster"][data-position="top-center"] [data-component="toast"][data-state="exiting"] {
+  animation: toast-exit-top 150ms ease-in forwards;
+}
+
+[data-component="toaster"][data-position="bottom-center"] [data-component="toast"][data-state="exiting"] {
+  animation: toast-exit-bottom 150ms ease-in forwards;
+}
+
+/* Keyframes */
+@keyframes toast-enter-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-enter-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-enter-top {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-enter-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-exit-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes toast-exit-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes toast-exit-top {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes toast-exit-bottom {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+/* ===== Hover Pause Indicator ===== */
+[data-component="toast"]:hover {
+  /* Slight scale to indicate interaction */
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */
