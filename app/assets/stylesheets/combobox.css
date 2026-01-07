@@ -1,0 +1,218 @@
+/* ===== Combobox Component Styles ===== */
+/*
+ * Combobox component for autocomplete/search with selection.
+ * Uses HTML5 Popover API for positioning and light-dismiss.
+ * Uses data attributes for styling to avoid inline utility classes.
+ * Fully compatible with dark mode via CSS variables.
+ *
+ * Structure:
+ * - combobox (root with Stimulus controller)
+ *   - trigger (button that opens popover)
+ *   - content (popover container)
+ *     - input (search field)
+ *     - list (scrollable options)
+ *       - option (selectable item)
+ *       - group (logical grouping)
+ *       - label (section heading)
+ *       - separator (divider)
+ *     - empty (no results message)
+ */
+
+/* ===== Root Container ===== */
+[data-component="combobox"] {
+  position: relative;
+  display: inline-block;
+}
+
+/* ===== Trigger Button ===== */
+/* Trigger uses button component styles via data-component="button" */
+[data-combobox-part="trigger"] {
+  @apply justify-between gap-2;
+  min-width: 200px;
+}
+
+[data-combobox-part="trigger"] [data-combobox-target="label"] {
+  @apply truncate text-left flex-1;
+}
+
+/* Placeholder state */
+[data-combobox-part="trigger"][data-has-value="false"] [data-combobox-target="label"] {
+  color: var(--muted-foreground);
+}
+
+/* Icon styling */
+[data-combobox-part="trigger"] > svg {
+  @apply size-4 shrink-0 opacity-50;
+}
+
+/* ===== Content (Popover) ===== */
+[data-combobox-part="content"] {
+  background-color: var(--popover, var(--background));
+  color: var(--popover-foreground, var(--foreground));
+  border-color: var(--border);
+  @apply rounded-md border p-0 shadow-md outline-none;
+  @apply min-w-[200px];
+
+  /* Reset popover defaults - positioning handled by JS */
+  margin: 0;
+  padding: 0;
+  inset: unset;
+}
+
+/* Width variants */
+[data-combobox-part="content"][data-width="sm"] {
+  @apply w-40;
+}
+
+[data-combobox-part="content"][data-width="default"] {
+  @apply w-[200px];
+}
+
+[data-combobox-part="content"][data-width="md"] {
+  @apply w-56;
+}
+
+[data-combobox-part="content"][data-width="lg"] {
+  @apply w-72;
+}
+
+[data-combobox-part="content"][data-width="full"] {
+  @apply w-full;
+}
+
+/* Alignment is handled by JavaScript for proper popover positioning */
+
+/* Animation */
+[data-combobox-part="content"]:popover-open {
+  animation: combobox-in 150ms ease-out;
+}
+
+@keyframes combobox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ===== Search Input ===== */
+[data-combobox-part="input-wrapper"] {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  @apply px-3 gap-2;
+}
+
+[data-combobox-part="input-wrapper"] > svg {
+  @apply size-4 shrink-0 opacity-50;
+}
+
+[data-combobox-part="input"] {
+  background-color: transparent;
+  color: var(--foreground);
+  @apply flex h-10 w-full py-3 text-sm outline-none;
+  @apply placeholder:text-muted-foreground;
+  @apply disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+/* ===== Options List ===== */
+[data-combobox-part="list"] {
+  @apply max-h-[300px] overflow-y-auto overflow-x-hidden p-1;
+}
+
+/* ===== Option Item ===== */
+[data-combobox-part="option"] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: default;
+  user-select: none;
+  color: var(--popover-foreground, var(--foreground));
+  @apply gap-2 rounded-sm py-1.5 text-sm outline-none transition-colors;
+  @apply pl-8 pr-2; /* Space for check icon on left */
+}
+
+/* Hover state */
+[data-combobox-part="option"]:hover:not([aria-disabled="true"]) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  cursor: pointer;
+}
+
+/* Focus state (keyboard navigation) */
+[data-combobox-part="option"]:focus {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Selected state */
+[data-combobox-part="option"][data-selected="true"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Disabled state */
+[data-combobox-part="option"][aria-disabled="true"] {
+  @apply opacity-50 cursor-not-allowed pointer-events-none;
+}
+
+/* Hidden state (filtered out) */
+[data-combobox-part="option"][hidden] {
+  display: none;
+}
+
+/* Check indicator */
+[data-combobox-part="check"] {
+  position: absolute;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @apply size-4;
+}
+
+[data-combobox-part="check"].invisible {
+  visibility: hidden;
+}
+
+[data-combobox-part="check"] svg {
+  @apply size-4;
+}
+
+/* ===== Empty State ===== */
+[data-combobox-part="empty"] {
+  @apply py-6 text-center text-sm;
+  color: var(--muted-foreground);
+}
+
+[data-combobox-part="empty"][hidden] {
+  display: none;
+}
+
+/* ===== Group ===== */
+[data-combobox-part="group"] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Label ===== */
+[data-combobox-part="label"] {
+  @apply px-2 py-1.5 text-xs font-medium;
+  color: var(--muted-foreground);
+}
+
+/* ===== Separator ===== */
+[data-combobox-part="separator"] {
+  @apply -mx-1 my-1 h-px;
+  background-color: var(--border);
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */

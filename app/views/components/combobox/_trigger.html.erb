@@ -1,0 +1,22 @@
+<%# locals: (for_id:, placeholder: "Select...", variant: :outline, size: :default, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :button,
+    variant: variant,
+    size: size,
+    combobox_part: "trigger",
+    combobox_target: "trigger",
+    action: "combobox#toggle"
+  ) %>
+
+<%= content_tag :button,
+      type: "button",
+      popovertarget: for_id,
+      popovertargetaction: "toggle",
+      role: "combobox",
+      aria: { expanded: false, haspopup: "listbox", controls: for_id },
+      class: css_classes.presence,
+      data: merged_data,
+      **html_options do %>
+  <span data-combobox-target="label"><%= placeholder %></span>
+  <%= icon_for :chevrons_up_down, class: "size-4 shrink-0 opacity-50" %>
+<% end %>

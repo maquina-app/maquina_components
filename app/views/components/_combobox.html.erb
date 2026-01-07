@@ -1,0 +1,13 @@
+<%# locals: (id: nil, name: nil, value: nil, placeholder: "Select...", css_classes: "", **html_options) %>
+<% combobox_id = id || "combobox-#{SecureRandom.hex(4)}" %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :combobox,
+    controller: "combobox",
+    combobox_value_value: value,
+    combobox_name_value: name,
+    combobox_placeholder_value: placeholder
+  ) %>
+
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= yield combobox_id %>
+<% end %>

@@ -1,0 +1,18 @@
+<%# locals: (placeholder: "Search...", css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    combobox_part: "input",
+    combobox_target: "input",
+    action: "input->combobox#filter"
+  ) %>
+
+<div data-combobox-part="input-wrapper">
+  <%= icon_for :search, class: "size-4 shrink-0 opacity-50" %>
+  <%= tag.input type: "text",
+                placeholder: placeholder,
+                autocomplete: "off",
+                autocorrect: "off",
+                spellcheck: false,
+                class: css_classes.presence,
+                data: merged_data,
+                **html_options %>
+</div>

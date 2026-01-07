@@ -1,0 +1,8 @@
+<%# locals: (text: nil, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    combobox_part: "label"
+  ) %>
+
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= text || yield %>
+<% end %>

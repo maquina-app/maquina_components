@@ -720,6 +720,68 @@
         </div>
       <% end %>
     <% end %>
+
+    <%# Combobox Examples %>
+    <%= render "components/card" do %>
+      <%= render "components/card/header" do %>
+        <%= render "components/card/title", text: "Combobox" %>
+        <%= render "components/card/description", text: "Searchable dropdown selection." %>
+      <% end %>
+
+      <%= render "components/card/content", css_classes: "space-y-4" do %>
+        <div>
+          <p class="text-sm text-muted-foreground mb-2">Framework selector:</p>
+          <%= render "components/combobox", placeholder: "Select framework..." do |combobox_id| %>
+            <%= render "components/combobox/trigger", for_id: combobox_id, placeholder: "Select framework..." %>
+
+            <%= render "components/combobox/content", id: combobox_id do %>
+              <%= render "components/combobox/input", placeholder: "Search frameworks..." %>
+
+              <%= render "components/combobox/list" do %>
+                <%= render "components/combobox/option", value: "rails" do %>Ruby on Rails<% end %>
+                <%= render "components/combobox/option", value: "hanami" do %>Hanami<% end %>
+                <%= render "components/combobox/option", value: "sinatra" do %>Sinatra<% end %>
+                <%= render "components/combobox/option", value: "roda" do %>Roda<% end %>
+                <%= render "components/combobox/option", value: "grape" do %>Grape<% end %>
+              <% end %>
+
+              <%= render "components/combobox/empty" %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <div>
+          <p class="text-sm text-muted-foreground mb-2">With groups:</p>
+          <%= render "components/combobox", placeholder: "Select technology..." do |combobox_id| %>
+            <%= render "components/combobox/trigger", for_id: combobox_id, placeholder: "Select technology..." %>
+
+            <%= render "components/combobox/content", id: combobox_id, width: :md do %>
+              <%= render "components/combobox/input", placeholder: "Search..." %>
+
+              <%= render "components/combobox/list" do %>
+                <%= render "components/combobox/group" do %>
+                  <%= render "components/combobox/label", text: "Frontend" %>
+                  <%= render "components/combobox/option", value: "hotwire" do %>Hotwire<% end %>
+                  <%= render "components/combobox/option", value: "vue" do %>Vue<% end %>
+                  <%= render "components/combobox/option", value: "svelte" do %>Svelte<% end %>
+                <% end %>
+
+                <%= render "components/combobox/separator" %>
+
+                <%= render "components/combobox/group" do %>
+                  <%= render "components/combobox/label", text: "Backend" %>
+                  <%= render "components/combobox/option", value: "rails" do %>Ruby on Rails<% end %>
+                  <%= render "components/combobox/option", value: "django" do %>Django<% end %>
+                  <%= render "components/combobox/option", value: "phoenix" do %>Phoenix<% end %>
+                <% end %>
+              <% end %>
+
+              <%= render "components/combobox/empty" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
   </div>
 </div>
 

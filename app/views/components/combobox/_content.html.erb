@@ -1,0 +1,17 @@
+<%# locals: (id:, align: :start, width: :default, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    combobox_part: "content",
+    combobox_target: "content",
+    align: align,
+    width: width
+  ) %>
+
+<%= content_tag :div,
+      id: id,
+      popover: "auto",
+      role: "listbox",
+      class: css_classes.presence,
+      data: merged_data,
+      **html_options do %>
+  <%= yield %>
+<% end %>

@@ -1,0 +1,6 @@
+<%# locals: (css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    combobox_part: "separator"
+  ) %>
+
+<%= tag.div role: "separator", class: css_classes.presence, data: merged_data, **html_options %>

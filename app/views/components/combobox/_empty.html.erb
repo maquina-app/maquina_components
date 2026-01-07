@@ -1,0 +1,9 @@
+<%# locals: (text: "No results found.", css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    combobox_part: "empty",
+    combobox_target: "empty"
+  ) %>
+
+<%= content_tag :div, class: css_classes.presence, data: merged_data, hidden: true, **html_options do %>
+  <%= text %>
+<% end %>

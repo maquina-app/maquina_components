@@ -1,0 +1,24 @@
+<%# locals: (value:, selected: false, disabled: false, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    combobox_part: "option",
+    combobox_target: "option",
+    value: value,
+    selected: selected,
+    action: "click->combobox#select"
+  ) %>
+
+<% aria_attrs = { selected: selected } %>
+<% aria_attrs[:disabled] = true if disabled %>
+
+<%= content_tag :div,
+      role: "option",
+      tabindex: "-1",
+      aria: aria_attrs,
+      class: css_classes.presence,
+      data: merged_data,
+      **html_options do %>
+  <span data-combobox-part="check" class="<%= 'invisible' unless selected %>">
+    <%= icon_for :check, class: "size-4" %>
+  </span>
+  <%= yield %>
+<% end %>
