@@ -455,6 +455,28 @@ bin/rails test
 
 ---
 
+## Claude Code Skill
+
+This repository includes a Claude Code skill that teaches Claude how to build consistent, accessible UIs using maquina_components. The skill provides:
+
+- **Component catalog** — Complete reference for all components with ERB examples
+- **Form patterns** — Validation, error handling, and complex form structures
+- **Layout patterns** — Sidebar navigation, page structure, responsive design
+- **Turbo integration** — Turbo Frames, Streams, and component updates
+- **Spec checklist** — Review criteria for UI implementation quality
+
+### Installation
+
+Copy the `skill/` directory to your Rails project:
+
+```bash
+cp -r /path/to/maquina_components/skill .claude/skills/maquina-ui-standards
+```
+
+See the [Skill README](skill/README.md) for detailed installation and usage instructions.
+
+---
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at [github.com/maquina-app/maquina_components](https://github.com/maquina-app/maquina_components).
