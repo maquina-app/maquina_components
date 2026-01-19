@@ -16,6 +16,7 @@ export default class extends Controller {
 
   connect() {
     this.updateNavigationState()
+    this.updateDayStates()
   }
 
   previousMonth() {
