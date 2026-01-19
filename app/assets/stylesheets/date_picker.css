@@ -79,9 +79,7 @@
   opacity: 1;
   transform: translateY(0) scale(1);
   transition: opacity 150ms ease-out,
-              transform 150ms ease-out,
-              overlay 150ms ease-out allow-discrete,
-              display 150ms ease-out allow-discrete;
+              transform 150ms ease-out;
 }
 
 /* Closed state - for exit animation */

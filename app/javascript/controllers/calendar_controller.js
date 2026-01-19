@@ -107,16 +107,22 @@ export default class extends Controller {
   }
 
   buildWeekHTML(days, displayMonth, selectedDate, selectedEndDate, minDate, maxDate) {
+    // Use string comparisons for range to avoid timezone issues
+    const selectedStr = this.selectedValue || ""
+    const selectedEndStr = this.selectedEndValue || ""
+
     const daysHTML = days.map(day => {
+      const dateStr = this.formatDate(day)
       const isOutside = day.getMonth() + 1 !== displayMonth
       const isToday = this.isSameDate(day, new Date())
-      const isSelected = selectedDate && this.isSameDate(day, selectedDate)
-      const isRangeEnd = selectedEndDate && this.isSameDate(day, selectedEndDate)
-      const isRangeMiddle = selectedDate && selectedEndDate && day > selectedDate && day < selectedEndDate
+      const isSelected = selectedStr && dateStr === selectedStr
+      const isRangeEnd = selectedEndStr && dateStr === selectedEndStr
+      // ISO date strings are lexicographically sortable
+      const isRangeMiddle = selectedStr && selectedEndStr && dateStr > selectedStr && dateStr < selectedEndStr
       const isDisabled = (minDate && day < minDate) || (maxDate && day > maxDate)
 
       let dayState = null
-      if (isSelected && this.modeValue === "range" && selectedEndDate) {
+      if (isSelected && this.modeValue === "range" && selectedEndStr) {
         dayState = "range-start"
       } else if (isRangeEnd) {
         dayState = "range-end"
@@ -126,7 +132,6 @@ export default class extends Controller {
         dayState = "selected"
       }
 
-      const dateStr = this.formatDate(day)
       const attrs = [
         'type="button"',
         'data-calendar-part="day"',
@@ -182,21 +187,27 @@ export default class extends Controller {
   }
 
   handleRangeSelection(dateStr) {
-    const clickedDate = new Date(dateStr)
-    const selectedDate = this.selectedValue ? new Date(this.selectedValue) : null
-    const selectedEndDate = this.selectedEndValue ? new Date(this.selectedEndValue) : null
+    // Use string comparisons to avoid timezone issues
+    // ISO date strings are lexicographically sortable
+    const selectedStr = this.selectedValue || ""
+    const selectedEndStr = this.selectedEndValue || ""
 
-    if (!selectedDate || (selectedDate && selectedEndDate)) {
+    if (!selectedStr || (selectedStr && selectedEndStr)) {
+      // No selection or complete range - start new selection
       this.selectedValue = dateStr
       this.selectedEndValue = ""
     } else {
-      if (clickedDate < selectedDate) {
+      // Have start but no end
+      if (dateStr < selectedStr) {
+        // Clicked before start - swap
         this.selectedEndValue = this.selectedValue
         this.selectedValue = dateStr
-      } else if (this.isSameDate(clickedDate, selectedDate)) {
+      } else if (dateStr === selectedStr) {
+        // Clicked same date - clear
         this.selectedValue = ""
         this.selectedEndValue = ""
       } else {
+        // Clicked after start - set end
         this.selectedEndValue = dateStr
       }
     }
@@ -270,26 +281,28 @@ export default class extends Controller {
   }
 
   updateDayStates() {
-    const selectedDate = this.selectedValue ? new Date(this.selectedValue) : null
-    const selectedEndDate = this.selectedEndValue ? new Date(this.selectedEndValue) : null
+    // Use string comparisons to avoid timezone issues
+    const selectedStr = this.selectedValue || ""
+    const selectedEndStr = this.selectedEndValue || ""
 
     this.dayTargets.forEach(button => {
-      const date = new Date(button.dataset.date)
+      const dateStr = button.dataset.date
       let state = null
 
-      if (this.modeValue === "range" && selectedDate && selectedEndDate) {
-        if (this.isSameDate(date, selectedDate)) {
+      if (this.modeValue === "range" && selectedStr && selectedEndStr) {
+        if (dateStr === selectedStr) {
           state = "range-start"
-        } else if (this.isSameDate(date, selectedEndDate)) {
+        } else if (dateStr === selectedEndStr) {
           state = "range-end"
-        } else if (date > selectedDate && date < selectedEndDate) {
+        } else if (dateStr > selectedStr && dateStr < selectedEndStr) {
+          // ISO date strings are lexicographically sortable
           state = "range-middle"
         }
-      } else if (this.modeValue === "range" && selectedDate && !selectedEndDate) {
-        if (this.isSameDate(date, selectedDate)) {
+      } else if (this.modeValue === "range" && selectedStr && !selectedEndStr) {
+        if (dateStr === selectedStr) {
           state = "range-start"
         }
-      } else if (selectedDate && this.isSameDate(date, selectedDate)) {
+      } else if (selectedStr && dateStr === selectedStr) {
         state = "selected"
       }
 
