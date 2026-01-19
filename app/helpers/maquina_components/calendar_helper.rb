@@ -67,7 +67,7 @@ module MaquinaComponents
     # @return [Boolean]
     def calendar_date_in_range?(date, start_date, end_date)
       return false unless start_date && end_date
-      date >= start_date && date <= end_date
+      date.between?(start_date, end_date)
     end
 
     # Generate data attributes hash for calendar
