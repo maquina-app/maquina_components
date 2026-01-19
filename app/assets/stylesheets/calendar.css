@@ -1,0 +1,222 @@
+/* ===== Calendar Component Styles ===== */
+/*
+ * A date picker calendar with single and range selection.
+ * Uses data attributes for styling to avoid inline utility classes.
+ * Fully compatible with dark mode via CSS variables.
+ *
+ * Structure:
+ * - calendar (root container)
+ *   - header (navigation)
+ *   - weekdays (day name headers)
+ *   - grid (day buttons grid)
+ *     - week (row)
+ *       - day (button)
+ */
+
+/* ===== Root Container ===== */
+[data-component="calendar"] {
+  --cell-size: 2rem;
+
+  @apply p-3 w-fit rounded-lg border;
+  background-color: var(--background);
+  border-color: var(--border);
+}
+
+/* ===== Header (Navigation) ===== */
+[data-calendar-part="header"] {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @apply mb-4;
+}
+
+[data-calendar-part="header"] button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  @apply rounded-md;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--foreground);
+  @apply transition-colors duration-150;
+}
+
+[data-calendar-part="header"] button:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+[data-calendar-part="header"] button:focus-visible {
+  @apply outline-none;
+  box-shadow: 0 0 0 2px var(--background),
+              0 0 0 4px var(--ring);
+}
+
+[data-calendar-part="header"] button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+[data-calendar-part="header"] button svg {
+  @apply size-4 shrink-0;
+}
+
+[data-calendar-part="caption"] {
+  @apply text-sm font-medium select-none;
+  color: var(--foreground);
+}
+
+/* ===== Weekday Headers ===== */
+[data-calendar-part="weekdays"] {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cell-size));
+  @apply mb-1;
+}
+
+[data-calendar-part="weekday"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  @apply text-xs font-normal select-none;
+  color: var(--muted-foreground);
+}
+
+/* ===== Calendar Grid ===== */
+[data-calendar-part="grid"] {
+  display: flex;
+  flex-direction: column;
+  @apply gap-1;
+}
+
+[data-calendar-part="week"] {
+  display: grid;
+  grid-template-columns: repeat(7, var(--cell-size));
+}
+
+/* ===== Day Button Base ===== */
+[data-calendar-part="day"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  @apply text-sm font-normal rounded-md;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  color: var(--foreground);
+  @apply transition-colors duration-150;
+}
+
+/* ===== Day States ===== */
+
+/* Hover */
+[data-calendar-part="day"]:hover:not(:disabled):not([data-state]) {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Today */
+[data-calendar-part="day"][data-today] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Selected (single mode) */
+[data-calendar-part="day"][data-state="selected"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  @apply rounded-md;
+}
+
+[data-calendar-part="day"][data-state="selected"]:hover {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Range Start */
+[data-calendar-part="day"][data-state="range-start"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  @apply rounded-l-md rounded-r-none;
+}
+
+/* Range End */
+[data-calendar-part="day"][data-state="range-end"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  @apply rounded-r-md rounded-l-none;
+}
+
+/* Range Middle */
+[data-calendar-part="day"][data-state="range-middle"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  @apply rounded-none;
+}
+
+/* Today within selection - override background */
+[data-calendar-part="day"][data-today][data-state="selected"],
+[data-calendar-part="day"][data-today][data-state="range-start"],
+[data-calendar-part="day"][data-today][data-state="range-end"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+[data-calendar-part="day"][data-today][data-state="range-middle"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Outside days (previous/next month) */
+[data-calendar-part="day"][data-outside] {
+  color: var(--muted-foreground);
+  @apply opacity-50;
+}
+
+[data-calendar-part="day"][data-outside][data-state="selected"],
+[data-calendar-part="day"][data-outside][data-state="range-start"],
+[data-calendar-part="day"][data-outside][data-state="range-end"] {
+  color: var(--primary-foreground);
+  @apply opacity-30;
+}
+
+[data-calendar-part="day"][data-outside][data-state="range-middle"] {
+  color: var(--accent-foreground);
+  @apply opacity-30;
+}
+
+/* Disabled */
+[data-calendar-part="day"]:disabled {
+  color: var(--muted-foreground);
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Focus */
+[data-calendar-part="day"]:focus-visible {
+  @apply outline-none;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 0 0 2px var(--background),
+              0 0 0 4px var(--ring);
+}
+
+/* ===== Responsive Cell Sizes ===== */
+/*
+ * Custom cell sizes can be set via --cell-size CSS variable:
+ * style="--cell-size: 2.5rem;"
+ *
+ * Or with Tailwind classes:
+ * css_classes: "[--cell-size:2.5rem] md:[--cell-size:3rem]"
+ */
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */
