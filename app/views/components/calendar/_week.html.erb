@@ -1,16 +1,4 @@
-<%# locals: (
-  days:,
-  display_month:,
-  selected_date: nil,
-  selected_end_date: nil,
-  mode: :single,
-  min_date: nil,
-  max_date: nil,
-  disabled_dates: [],
-  show_outside_days: true,
-  css_classes: "",
-  **html_options
-) %>
+<%# locals: (days:, display_month:, selected_date: nil, selected_end_date: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, css_classes: "", **html_options) %>
 <% merged_data = (html_options.delete(:data) || {}).merge("calendar-part": "week") %>
 
 <%= content_tag :div, role: "row", class: css_classes.presence, data: merged_data, **html_options do %>

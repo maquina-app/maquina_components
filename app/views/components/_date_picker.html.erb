@@ -1,21 +1,4 @@
-<%# locals: (
-  selected: nil,
-  selected_end: nil,
-  mode: :single,
-  min_date: nil,
-  max_date: nil,
-  disabled_dates: [],
-  show_outside_days: true,
-  week_starts_on: :sunday,
-  placeholder: nil,
-  input_name: nil,
-  input_name_end: nil,
-  id: nil,
-  disabled: false,
-  required: false,
-  css_classes: "",
-  **html_options
-) %>
+<%# locals: (selected: nil, selected_end: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, week_starts_on: :sunday, placeholder: nil, input_name: nil, input_name_end: nil, id: nil, disabled: false, required: false, css_classes: "", **html_options) %>
 <%
   # Generate unique ID for popover targeting
   component_id = id || "date-picker-#{SecureRandom.hex(4)}"
