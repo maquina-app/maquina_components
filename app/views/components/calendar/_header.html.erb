@@ -1,0 +1,22 @@
+<%# locals: (month:, year:, month_name:, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge("calendar-part": "header") %>
+
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
+  <button type="button"
+          data-action="click->calendar#previousMonth"
+          data-calendar-target="prevButton"
+          aria-label="Previous month">
+    <%= icon_for :chevron_left, class: "size-4" %>
+  </button>
+
+  <div data-calendar-part="caption">
+    <%= month_name %>
+  </div>
+
+  <button type="button"
+          data-action="click->calendar#nextMonth"
+          data-calendar-target="nextButton"
+          aria-label="Next month">
+    <%= icon_for :chevron_right, class: "size-4" %>
+  </button>
+<% end %>

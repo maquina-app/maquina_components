@@ -1,0 +1,119 @@
+<%# locals: (
+  selected: nil,
+  selected_end: nil,
+  mode: :single,
+  min_date: nil,
+  max_date: nil,
+  disabled_dates: [],
+  show_outside_days: true,
+  week_starts_on: :sunday,
+  placeholder: nil,
+  input_name: nil,
+  input_name_end: nil,
+  id: nil,
+  disabled: false,
+  required: false,
+  css_classes: "",
+  **html_options
+) %>
+<%
+  # Generate unique ID for popover targeting
+  component_id = id || "date-picker-#{SecureRandom.hex(4)}"
+  popover_id = "#{component_id}-popover"
+
+  # Parse selected dates for display
+  selected_date = case selected
+                  when String then Date.parse(selected) rescue nil
+                  when Date, Time, DateTime then selected.to_date
+                  else nil
+                  end
+
+  selected_end_date = case selected_end
+                      when String then Date.parse(selected_end) rescue nil
+                      when Date, Time, DateTime then selected_end.to_date
+                      else nil
+                      end
+
+  # Format display value
+  display_value = if mode == :range && selected_date && selected_end_date
+                    "#{I18n.l(selected_date, format: :short)} - #{I18n.l(selected_end_date, format: :short)}"
+                  elsif mode == :range && selected_date
+                    "#{I18n.l(selected_date, format: :short)} - ..."
+                  elsif selected_date
+                    I18n.l(selected_date, format: :long)
+                  end
+
+  default_placeholder = mode == :range ? "Select date range" : "Select date"
+
+  merged_data = (html_options.delete(:data) || {}).merge(
+    controller: "date-picker",
+    component: "date-picker",
+    "date-picker-mode-value": mode,
+    "date-picker-selected-value": selected_date&.iso8601,
+    "date-picker-selected-end-value": selected_end_date&.iso8601
+  )
+%>
+
+<div id="<%= component_id %>"
+     class="<%= css_classes.presence %>"
+     data-controller="date-picker"
+     data-component="date-picker"
+     data-date-picker-mode-value="<%= mode %>"
+     data-date-picker-selected-value="<%= selected_date&.iso8601 %>"
+     data-date-picker-selected-end-value="<%= selected_end_date&.iso8601 %>">
+
+  <%# Hidden inputs for form submission %>
+  <% if input_name %>
+    <input type="hidden"
+           name="<%= input_name %>"
+           value="<%= selected_date&.iso8601 %>"
+           data-date-picker-target="input"
+           <%= "required" if required %>>
+  <% end %>
+  <% if input_name_end && mode == :range %>
+    <input type="hidden"
+           name="<%= input_name_end %>"
+           value="<%= selected_end_date&.iso8601 %>"
+           data-date-picker-target="inputEnd">
+  <% end %>
+
+  <%# Trigger button %>
+  <button type="button"
+          popovertarget="<%= popover_id %>"
+          data-date-picker-target="trigger"
+          data-date-picker-part="trigger"
+          <%= "disabled" if disabled %>
+          aria-haspopup="dialog"
+          aria-expanded="false">
+    <%= icon_for :calendar, class: "size-4" %>
+    <span data-date-picker-target="display">
+      <%= display_value || placeholder || default_placeholder %>
+    </span>
+    <% unless display_value %>
+      <span data-date-picker-part="placeholder-indicator"></span>
+    <% end %>
+  </button>
+
+  <%# Popover with Calendar %>
+  <div id="<%= popover_id %>"
+       popover
+       data-date-picker-target="popover"
+       data-date-picker-part="popover"
+       role="dialog"
+       aria-modal="true"
+       aria-label="<%= mode == :range ? 'Date range picker' : 'Date picker' %>">
+    <%= render "components/calendar",
+          selected: selected_date,
+          selected_end: selected_end_date,
+          mode: mode,
+          min_date: min_date,
+          max_date: max_date,
+          disabled_dates: disabled_dates,
+          show_outside_days: show_outside_days,
+          week_starts_on: week_starts_on,
+          data: {
+            "date-picker-target": "calendar",
+            action: "calendar:change->date-picker#handleChange calendar:navigate->date-picker#handleNavigate"
+          } %>
+  </div>
+</div>
