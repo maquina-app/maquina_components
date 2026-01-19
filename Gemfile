@@ -4,6 +4,7 @@ source "https://rubygems.org"
 gemspec
 
 gem "puma"
+gem "thruster", ">= 0.1.1"
 
 gem "sqlite3"
 

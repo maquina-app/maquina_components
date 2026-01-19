@@ -1,0 +1,65 @@
+# Kamal 2.x deployment configuration for maquina_components demo app
+# See: https://kamal-deploy.org/docs/configuration/overview/
+
+service: maquina-components-demo
+
+# Docker image registry
+image: your-registry/maquina-components-demo
+
+# Deploy to these servers
+servers:
+  web:
+    hosts:
+      - your-server-ip
+    options:
+      # Mount persistent storage for SQLite database
+      volume:
+        - /var/lib/maquina-components-demo/storage:/rails/test/dummy/storage
+
+# Kamal proxy configuration (replaces Traefik in Kamal 2.x)
+proxy:
+  ssl: true
+  host: your-domain.com
+  # Health check configuration
+  healthcheck:
+    interval: 3
+    path: /up
+    timeout: 3
+
+# Docker registry credentials
+registry:
+  username: your-registry-username
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Docker build configuration
+builder:
+  # Build from project root to include the engine
+  context: ../..
+  dockerfile: test/dummy/Dockerfile
+  # Multiplatform builds (optional, uncomment for ARM support)
+  # multiarch: false
+  # arch:
+  #   - amd64
+  #   - arm64
+
+# Environment variables
+env:
+  # Secret environment variables (loaded from .kamal/secrets)
+  secret:
+    - RAILS_MASTER_KEY
+  # Clear environment variables
+  clear:
+    RAILS_LOG_TO_STDOUT: "true"
+    RAILS_SERVE_STATIC_FILES: "true"
+
+# Asset bridging for zero-downtime deploys
+# Keeps old assets available during deployment
+asset_path: /rails/test/dummy/public/assets
+
+# Aliases for common commands
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"

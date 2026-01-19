@@ -12,6 +12,9 @@
 
 .DS_Store
 
+# Kamal secrets (contains sensitive deployment credentials)
+/test/dummy/.kamal/secrets
+
 # Claude Code local files
 CLAUDE.md
 AGENTS.md
