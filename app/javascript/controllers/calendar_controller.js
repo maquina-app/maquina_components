@@ -1,28 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
-/**
- * Calendar Controller
- *
- * Manages calendar navigation and date selection.
- * Supports single and range selection modes.
- *
- * @example Single selection
- *   <div data-controller="calendar"
- *        data-calendar-mode-value="single"
- *        data-calendar-selected-value="2025-01-15">
- *     ...
- *   </div>
- *
- * @example Range selection
- *   <div data-controller="calendar"
- *        data-calendar-mode-value="range"
- *        data-calendar-selected-value="2025-01-15"
- *        data-calendar-selected-end-value="2025-01-20">
- *     ...
- *   </div>
- */
 export default class extends Controller {
-  static targets = ["day", "input", "inputEnd", "prevButton", "nextButton"]
+  static targets = ["day", "input", "inputEnd", "prevButton", "nextButton", "grid", "caption"]
 
   static values = {
     month: Number,
@@ -39,9 +18,6 @@ export default class extends Controller {
     this.updateNavigationState()
   }
 
-  /**
-   * Navigate to previous month
-   */
   previousMonth() {
     let newMonth = this.monthValue - 1
     let newYear = this.yearValue
@@ -54,9 +30,6 @@ export default class extends Controller {
     this.navigateToMonth(newMonth, newYear)
   }
 
-  /**
-   * Navigate to next month
-   */
   nextMonth() {
     let newMonth = this.monthValue + 1
     let newYear = this.yearValue
@@ -69,13 +42,12 @@ export default class extends Controller {
     this.navigateToMonth(newMonth, newYear)
   }
 
-  /**
-   * Navigate to specific month/year
-   * Dispatches event for Turbo Frame reload or parent handling
-   */
   navigateToMonth(month, year) {
     this.monthValue = month
     this.yearValue = year
+
+    this.rebuildCalendar()
+    this.updateNavigationState()
 
     this.dispatch("navigate", {
       detail: {
@@ -85,14 +57,105 @@ export default class extends Controller {
         selectedEnd: this.selectedEndValue
       }
     })
-
-    this.updateNavigationState()
   }
 
-  /**
-   * Select a day
-   * @param {Event} event - Click event from day button
-   */
+  rebuildCalendar() {
+    const grid = this.element.querySelector("[data-calendar-part='grid']")
+    const caption = this.element.querySelector("[data-calendar-part='caption']")
+    if (!grid) return
+
+    const year = this.yearValue
+    const month = this.monthValue
+    const firstOfMonth = new Date(year, month - 1, 1)
+    const lastOfMonth = new Date(year, month, 0)
+
+    // Update caption
+    if (caption) {
+      caption.textContent = firstOfMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+    }
+
+    // Calculate start of calendar grid
+    const weekStart = this.weekStartsOnValue === "monday" ? 1 : 0
+    const daysBefore = (firstOfMonth.getDay() - weekStart + 7) % 7
+    const calendarStart = new Date(firstOfMonth)
+    calendarStart.setDate(calendarStart.getDate() - daysBefore)
+
+    // Calculate weeks needed
+    const totalDays = daysBefore + lastOfMonth.getDate()
+    const weeksNeeded = Math.min(Math.ceil(totalDays / 7), 6)
+
+    // Build weeks
+    const weeks = []
+    const currentDate = new Date(calendarStart)
+    for (let w = 0; w < weeksNeeded; w++) {
+      const week = []
+      for (let d = 0; d < 7; d++) {
+        week.push(new Date(currentDate))
+        currentDate.setDate(currentDate.getDate() + 1)
+      }
+      weeks.push(week)
+    }
+
+    // Parse dates for comparison
+    const selectedDate = this.selectedValue ? new Date(this.selectedValue) : null
+    const selectedEndDate = this.selectedEndValue ? new Date(this.selectedEndValue) : null
+    const minDate = this.minDateValue ? new Date(this.minDateValue) : null
+    const maxDate = this.maxDateValue ? new Date(this.maxDateValue) : null
+
+    // Rebuild grid HTML
+    grid.innerHTML = weeks.map(week => this.buildWeekHTML(week, month, selectedDate, selectedEndDate, minDate, maxDate)).join('')
+  }
+
+  buildWeekHTML(days, displayMonth, selectedDate, selectedEndDate, minDate, maxDate) {
+    const daysHTML = days.map(day => {
+      const isOutside = day.getMonth() + 1 !== displayMonth
+      const isToday = this.isSameDate(day, new Date())
+      const isSelected = selectedDate && this.isSameDate(day, selectedDate)
+      const isRangeEnd = selectedEndDate && this.isSameDate(day, selectedEndDate)
+      const isRangeMiddle = selectedDate && selectedEndDate && day > selectedDate && day < selectedEndDate
+      const isDisabled = (minDate && day < minDate) || (maxDate && day > maxDate)
+
+      let dayState = null
+      if (isSelected && this.modeValue === "range" && selectedEndDate) {
+        dayState = "range-start"
+      } else if (isRangeEnd) {
+        dayState = "range-end"
+      } else if (isRangeMiddle) {
+        dayState = "range-middle"
+      } else if (isSelected) {
+        dayState = "selected"
+      }
+
+      const dateStr = this.formatDate(day)
+      const attrs = [
+        'type="button"',
+        'data-calendar-part="day"',
+        'data-calendar-target="day"',
+        `data-date="${dateStr}"`,
+        `data-action="click->calendar#selectDay keydown->calendar#handleKeydown"`,
+        `tabindex="${isToday ? '0' : '-1'}"`,
+      ]
+
+      if (dayState) {
+        attrs.push(`data-state="${dayState}"`)
+        attrs.push('aria-selected="true"')
+      }
+      if (isOutside) attrs.push('data-outside')
+      if (isToday) attrs.push('data-today aria-current="date"')
+      if (isDisabled) attrs.push('disabled')
+
+      return `<button ${attrs.join(' ')}>${day.getDate()}</button>`
+    }).join('')
+
+    return `<div data-calendar-part="week" role="row">${daysHTML}</div>`
+  }
+
+  isSameDate(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate()
+  }
+
   selectDay(event) {
     const button = event.currentTarget
     if (button.disabled) return
@@ -106,9 +169,6 @@ export default class extends Controller {
     }
   }
 
-  /**
-   * Handle single date selection
-   */
   handleSingleSelection(dateStr) {
     if (this.selectedValue === dateStr) {
       this.selectedValue = ""
@@ -121,9 +181,6 @@ export default class extends Controller {
     this.dispatchChange()
   }
 
-  /**
-   * Handle range date selection
-   */
   handleRangeSelection(dateStr) {
     const clickedDate = new Date(dateStr)
     const selectedDate = this.selectedValue ? new Date(this.selectedValue) : null
@@ -136,7 +193,7 @@ export default class extends Controller {
       if (clickedDate < selectedDate) {
         this.selectedEndValue = this.selectedValue
         this.selectedValue = dateStr
-      } else if (clickedDate.getTime() === selectedDate.getTime()) {
+      } else if (this.isSameDate(clickedDate, selectedDate)) {
         this.selectedValue = ""
         this.selectedEndValue = ""
       } else {
@@ -149,10 +206,6 @@ export default class extends Controller {
     this.dispatchChange()
   }
 
-  /**
-   * Handle keyboard navigation
-   * @param {KeyboardEvent} event
-   */
   handleKeydown(event) {
     const currentButton = event.currentTarget
     const currentDate = new Date(currentButton.dataset.date)
@@ -199,9 +252,6 @@ export default class extends Controller {
     }
   }
 
-  /**
-   * Focus a specific date
-   */
   focusDate(date) {
     const dateStr = this.formatDate(date)
     const targetButton = this.dayTargets.find(btn => btn.dataset.date === dateStr)
@@ -210,12 +260,15 @@ export default class extends Controller {
       targetButton.focus()
     } else {
       this.navigateToMonth(date.getMonth() + 1, date.getFullYear())
+      requestAnimationFrame(() => {
+        const newButton = this.dayTargets.find(btn => btn.dataset.date === dateStr)
+        if (newButton && !newButton.disabled) {
+          newButton.focus()
+        }
+      })
     }
   }
 
-  /**
-   * Update day button states
-   */
   updateDayStates() {
     const selectedDate = this.selectedValue ? new Date(this.selectedValue) : null
     const selectedEndDate = this.selectedEndValue ? new Date(this.selectedEndValue) : null
@@ -225,18 +278,18 @@ export default class extends Controller {
       let state = null
 
       if (this.modeValue === "range" && selectedDate && selectedEndDate) {
-        if (date.getTime() === selectedDate.getTime()) {
+        if (this.isSameDate(date, selectedDate)) {
           state = "range-start"
-        } else if (date.getTime() === selectedEndDate.getTime()) {
+        } else if (this.isSameDate(date, selectedEndDate)) {
           state = "range-end"
         } else if (date > selectedDate && date < selectedEndDate) {
           state = "range-middle"
         }
       } else if (this.modeValue === "range" && selectedDate && !selectedEndDate) {
-        if (date.getTime() === selectedDate.getTime()) {
+        if (this.isSameDate(date, selectedDate)) {
           state = "range-start"
         }
-      } else if (selectedDate && date.getTime() === selectedDate.getTime()) {
+      } else if (selectedDate && this.isSameDate(date, selectedDate)) {
         state = "selected"
       }
 
@@ -250,9 +303,6 @@ export default class extends Controller {
     })
   }
 
-  /**
-   * Update hidden inputs
-   */
   updateInputs() {
     if (this.hasInputTarget) {
       this.inputTarget.value = this.selectedValue || ""
@@ -262,9 +312,6 @@ export default class extends Controller {
     }
   }
 
-  /**
-   * Update navigation button states based on min/max dates
-   */
   updateNavigationState() {
     if (this.minDateValue && this.hasPrevButtonTarget) {
       const minDate = new Date(this.minDateValue)
@@ -279,9 +326,6 @@ export default class extends Controller {
     }
   }
 
-  /**
-   * Dispatch change event
-   */
   dispatchChange() {
     const detail = {
       mode: this.modeValue,
@@ -297,9 +341,6 @@ export default class extends Controller {
     }))
   }
 
-  /**
-   * Format date as ISO string (YYYY-MM-DD)
-   */
   formatDate(date) {
     const year = date.getFullYear()
     const month = String(date.getMonth() + 1).padStart(2, "0")
@@ -307,10 +348,6 @@ export default class extends Controller {
     return `${year}-${month}-${day}`
   }
 
-  /**
-   * Get current value(s)
-   * @returns {Object}
-   */
   getValue() {
     return {
       selected: this.selectedValue || null,
@@ -318,10 +355,6 @@ export default class extends Controller {
     }
   }
 
-  /**
-   * Programmatically select a date
-   * @param {string|Date} date
-   */
   select(date) {
     const dateStr = date instanceof Date ? this.formatDate(date) : date
 
@@ -337,9 +370,6 @@ export default class extends Controller {
     this.dispatchChange()
   }
 
-  /**
-   * Clear selection
-   */
   clear() {
     this.selectedValue = ""
     this.selectedEndValue = ""

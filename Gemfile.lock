@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    maquina-components (0.3.0)
+    maquina-components (0.3.1)
       rails (>= 7.2.0)
       tailwindcss-rails (~> 4.2)
 
@@ -307,4 +307,4 @@ DEPENDENCIES
   turbo-rails
 
 BUNDLED WITH
-   2.6.2
+  4.0.3
