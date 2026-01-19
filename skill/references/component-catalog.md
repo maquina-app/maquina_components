@@ -48,7 +48,9 @@ Choose the approach that fits your use case. There's no "right" level of abstrac
    - [Dropdown Menu](#dropdown-menu)
    - [Pagination](#pagination)
 5. [Interactive Components](#interactive-components)
+   - [Calendar](#calendar)
    - [Combobox](#combobox)
+   - [Date Picker](#date-picker)
    - [Toggle Group](#toggle-group)
 6. [Form Components](#form-components)
    - [Button](#button)
@@ -763,6 +765,92 @@ Page navigation integrated with Pagy.
 
 ## Interactive Components
 
+### Calendar
+
+Inline date picker calendar with single and range selection support.
+
+**When to Use:**
+- Inline date selection (always visible)
+- Booking/scheduling interfaces
+- Date range selection for filters
+- Embedded in custom date picker UIs
+
+**Structure:**
+```erb
+<%= render "components/calendar",
+  mode: :single,
+  selected: @event.date,
+  min_date: Date.current %>
+```
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `selected` | Date/String | `nil` | Selected date |
+| `selected_end` | Date/String | `nil` | End date (range mode) |
+| `mode` | Symbol | `:single` | `:single` or `:range` |
+| `min_date` | Date/String | `nil` | Earliest selectable date |
+| `max_date` | Date/String | `nil` | Latest selectable date |
+| `disabled_dates` | Array | `[]` | Dates to disable |
+| `show_outside_days` | Boolean | `true` | Show days from adjacent months |
+| `week_starts_on` | Symbol | `:sunday` | `:sunday` or `:monday` |
+| `input_name` | String | `nil` | Hidden input name for form |
+| `input_name_end` | String | `nil` | Hidden input name for end date |
+| `cell_size` | String | `nil` | Custom cell size (CSS value) |
+
+**Single Selection:**
+```erb
+<%= render "components/calendar",
+  mode: :single,
+  selected: @booking.date,
+  min_date: Date.current,
+  input_name: "booking[date]" %>
+```
+
+**Range Selection:**
+```erb
+<%= render "components/calendar",
+  mode: :range,
+  selected: @report.start_date,
+  selected_end: @report.end_date,
+  input_name: "report[start_date]",
+  input_name_end: "report[end_date]" %>
+```
+
+**With Constraints:**
+```erb
+<%= render "components/calendar",
+  min_date: Date.current,
+  max_date: Date.current + 90.days,
+  disabled_dates: @unavailable_dates %>
+```
+
+**Keyboard Navigation:**
+
+| Key | Action |
+|-----|--------|
+| `←` / `→` | Previous/next day |
+| `↑` / `↓` | Previous/next week |
+| `Home` / `End` | First/last day of month |
+| `Enter` / `Space` | Select focused date |
+
+**Listening for Changes:**
+```erb
+<%= render "components/calendar",
+  data: { action: "calendar:change->booking#dateChanged" } %>
+```
+
+```javascript
+// booking_controller.js
+dateChanged(event) {
+  const { selected, selectedEnd, mode } = event.detail
+  console.log(`Selected: ${selected}`)
+}
+```
+
+---
+
 ### Combobox
 
 Autocomplete input with searchable dropdown list for selecting from many options.
@@ -972,6 +1060,138 @@ pin "@oddbird/popover-polyfill", to: "https://cdn.jsdelivr.net/npm/@oddbird/popo
 ```javascript
 // app/javascript/application.js
 import "@oddbird/popover-polyfill"
+```
+
+---
+
+### Date Picker
+
+Popover-based date selection using the native Popover API with Calendar component.
+
+**When to Use:**
+- Form field date selection
+- Compact date input with popover
+- Date range selection in forms
+- Any place you'd use a traditional date picker
+
+**Structure:**
+```erb
+<%= render "components/date_picker",
+  placeholder: "Select date",
+  selected: @event.date,
+  input_name: "event[date]" %>
+```
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | String | `"Pick a date"` | Placeholder text |
+| `selected` | Date/String | `nil` | Selected date |
+| `selected_end` | Date/String | `nil` | End date (range mode) |
+| `mode` | Symbol | `:single` | `:single` or `:range` |
+| `min_date` | Date/String | `nil` | Earliest selectable date |
+| `max_date` | Date/String | `nil` | Latest selectable date |
+| `disabled_dates` | Array | `[]` | Dates to disable |
+| `input_name` | String | `nil` | Hidden input name |
+| `input_name_end` | String | `nil` | Hidden input name for end date |
+| `size` | Symbol | `:default` | `:sm`, `:default`, `:lg` |
+| `full_width` | Boolean | `false` | Full-width trigger button |
+| `error` | Boolean | `false` | Error state styling |
+| `disabled` | Boolean | `false` | Disable the picker |
+| `show_outside_days` | Boolean | `true` | Show adjacent month days |
+| `week_starts_on` | Symbol | `:sunday` | `:sunday` or `:monday` |
+
+**Single Date Selection:**
+```erb
+<%= render "components/date_picker",
+  placeholder: "Select date",
+  selected: @booking.date,
+  min_date: Date.current,
+  input_name: "booking[date]" %>
+```
+
+**Range Selection:**
+```erb
+<%= render "components/date_picker",
+  mode: :range,
+  placeholder: "Select date range",
+  selected: @report.start_date,
+  selected_end: @report.end_date,
+  input_name: "report[start_date]",
+  input_name_end: "report[end_date]" %>
+```
+
+**With Form Builder:**
+```erb
+<%= form_with model: @booking, data: { component: "form" } do |f| %>
+  <div data-form-part="group">
+    <%= f.label :date, data: { component: "label" } %>
+    <%= render "components/date_picker",
+      placeholder: "Select date",
+      selected: @booking.date,
+      min_date: Date.current,
+      input_name: "booking[date]",
+      error: @booking.errors[:date].any? %>
+    <% if @booking.errors[:date].any? %>
+      <p data-form-part="error"><%= @booking.errors[:date].first %></p>
+    <% end %>
+  </div>
+<% end %>
+```
+
+**Sizes:**
+```erb
+<%# Small %>
+<%= render "components/date_picker", size: :sm, ... %>
+
+<%# Default %>
+<%= render "components/date_picker", size: :default, ... %>
+
+<%# Large %>
+<%= render "components/date_picker", size: :lg, ... %>
+```
+
+**Full Width:**
+```erb
+<%= render "components/date_picker", full_width: true, ... %>
+```
+
+**With Constraints:**
+```erb
+<%= render "components/date_picker",
+  min_date: Date.current,
+  max_date: Date.current + 30.days,
+  disabled_dates: @blocked_dates %>
+```
+
+**Listening for Changes:**
+```erb
+<div data-controller="booking-form">
+  <%= render "components/date_picker",
+    data: { action: "date-picker:change->booking-form#dateSelected" } %>
+</div>
+```
+
+```javascript
+// booking_form_controller.js
+export default class extends Controller {
+  dateSelected(event) {
+    const { selected, selectedEnd, mode } = event.detail
+    console.log(`Selected: ${selected}`)
+    if (mode === "range") {
+      console.log(`End: ${selectedEnd}`)
+    }
+  }
+}
+```
+
+**Browser Support:**
+Uses HTML5 Popover API. For older browsers, include the polyfill:
+
+```ruby
+# config/importmap.rb
+pin "@oddbird/popover-polyfill", to: "https://cdn.jsdelivr.net/npm/@oddbird/popover-polyfill@latest/dist/popover.min.js"
 ```
 
 ---
