@@ -1,0 +1,22 @@
+<%= render "components/pagination" do %>
+  <%= render "components/pagination/content" do %>
+    <%= render "components/pagination/item" do %>
+      <%= render "components/pagination/previous", url: "#" %>
+    <% end %>
+    <%= render "components/pagination/item" do %>
+      <%= render "components/pagination/link", url: "#", page: 1 %>
+    <% end %>
+    <%= render "components/pagination/item" do %>
+      <%= render "components/pagination/link", url: "#", page: 2, active: true %>
+    <% end %>
+    <%= render "components/pagination/item" do %>
+      <%= render "components/pagination/link", url: "#", page: 3 %>
+    <% end %>
+    <%= render "components/pagination/item" do %>
+      <%= render "components/pagination/ellipsis" %>
+    <% end %>
+    <%= render "components/pagination/item" do %>
+      <%= render "components/pagination/next", url: "#" %>
+    <% end %>
+  <% end %>
+<% end %>

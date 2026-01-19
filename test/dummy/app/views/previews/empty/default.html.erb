@@ -1,0 +1,16 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/empty" do %>
+    <%= render "components/empty/media" do %>
+      <%= icon_for :inbox, class: "size-12" %>
+    <% end %>
+    <%= render "components/empty/header" do %>
+      <%= render "components/empty/title", text: "No results found" %>
+      <%= render "components/empty/description", text: "Try adjusting your search or filter to find what you're looking for." %>
+    <% end %>
+    <%= render "components/empty/content" do %>
+      <button data-component="button" data-variant="primary">
+        Clear filters
+      </button>
+    <% end %>
+  <% end %>
+<% end %>

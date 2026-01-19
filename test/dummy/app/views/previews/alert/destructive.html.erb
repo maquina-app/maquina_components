@@ -1,0 +1,6 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/alert", variant: :destructive, icon: :triangle_alert do %>
+    <%= render "components/alert/title", text: "Error" %>
+    <%= render "components/alert/description", text: "Your session has expired. Please log in again." %>
+  <% end %>
+<% end %>

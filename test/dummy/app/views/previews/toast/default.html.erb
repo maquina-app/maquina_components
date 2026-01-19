@@ -1,0 +1,35 @@
+<%= preview_stack gap: 4 do %>
+  <%= preview_section "Default" do %>
+    <%= render "components/toast",
+          title: "Scheduled: Catch up",
+          description: "Friday, February 10, 2025 at 5:57 PM" %>
+  <% end %>
+
+  <%= preview_section "Success" do %>
+    <%= render "components/toast",
+          variant: :success,
+          title: "Success!",
+          description: "Your changes have been saved successfully." %>
+  <% end %>
+
+  <%= preview_section "Error" do %>
+    <%= render "components/toast",
+          variant: :error,
+          title: "Error",
+          description: "There was a problem with your request." %>
+  <% end %>
+
+  <%= preview_section "Warning" do %>
+    <%= render "components/toast",
+          variant: :warning,
+          title: "Warning",
+          description: "Your session is about to expire." %>
+  <% end %>
+
+  <%= preview_section "Info" do %>
+    <%= render "components/toast",
+          variant: :info,
+          title: "Information",
+          description: "New features are available." %>
+  <% end %>
+<% end %>

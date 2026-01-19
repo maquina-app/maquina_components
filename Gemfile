@@ -21,3 +21,6 @@ gem "tailwindcss-rails", "~> 4.4"
 # Hotwire
 gem "turbo-rails"
 gem "stimulus-rails"
+
+# CORS for preview embeds
+gem "rack-cors"

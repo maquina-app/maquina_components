@@ -1,0 +1,34 @@
+<%= render "components/dropdown_menu" do %>
+  <%= render "components/dropdown_menu/trigger" do %>
+    <button data-component="button" data-variant="outline">
+      Open Menu
+      <%= icon_for :chevron_down, class: "size-4 ml-2" %>
+    </button>
+  <% end %>
+
+  <%= render "components/dropdown_menu/content" do %>
+    <%= render "components/dropdown_menu/label" do %>My Account<% end %>
+    <%= render "components/dropdown_menu/separator" %>
+
+    <%= render "components/dropdown_menu/group" do %>
+      <%= render "components/dropdown_menu/item", icon: :user do %>
+        Profile
+        <%= render "components/dropdown_menu/shortcut" do %>Ctrl+P<% end %>
+      <% end %>
+      <%= render "components/dropdown_menu/item", icon: :settings do %>
+        Settings
+        <%= render "components/dropdown_menu/shortcut" do %>Ctrl+S<% end %>
+      <% end %>
+      <%= render "components/dropdown_menu/item", icon: :credit_card do %>
+        Billing
+      <% end %>
+    <% end %>
+
+    <%= render "components/dropdown_menu/separator" %>
+
+    <%= render "components/dropdown_menu/item", icon: :log_out, variant: :destructive do %>
+      Log out
+      <%= render "components/dropdown_menu/shortcut" do %>Ctrl+Q<% end %>
+    <% end %>
+  <% end %>
+<% end %>

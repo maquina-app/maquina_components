@@ -1,0 +1,31 @@
+<%= preview_stack gap: 4 do %>
+  <%= preview_container width: :md do %>
+    <div data-form-part="group">
+      <label data-component="label" for="email">Email</label>
+      <input type="email" id="email" placeholder="name@example.com" data-component="input">
+      <p data-form-part="description">We'll never share your email.</p>
+    </div>
+  <% end %>
+
+  <%= preview_container width: :md do %>
+    <div data-form-part="group">
+      <label data-component="label" data-required for="name">Name</label>
+      <input type="text" id="name" placeholder="John Doe" data-component="input" required>
+    </div>
+  <% end %>
+
+  <%= preview_container width: :md do %>
+    <div data-form-part="group">
+      <label data-component="label" for="disabled-input">Disabled</label>
+      <input type="text" id="disabled-input" placeholder="Disabled input" data-component="input" disabled>
+    </div>
+  <% end %>
+
+  <%= preview_section "Sizes" do %>
+    <%= preview_stack gap: 2 do %>
+      <input type="text" placeholder="Small" data-component="input" data-size="sm" class="max-w-xs">
+      <input type="text" placeholder="Default" data-component="input" class="max-w-xs">
+      <input type="text" placeholder="Large" data-component="input" data-size="lg" class="max-w-xs">
+    <% end %>
+  <% end %>
+<% end %>

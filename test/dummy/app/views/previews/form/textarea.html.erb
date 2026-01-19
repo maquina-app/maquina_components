@@ -1,0 +1,16 @@
+<%= preview_stack gap: 4 do %>
+  <%= preview_container width: :md do %>
+    <div data-form-part="group">
+      <label data-component="label" for="bio">Bio</label>
+      <textarea id="bio" placeholder="Tell us about yourself..." data-component="textarea" rows="4"></textarea>
+      <p data-form-part="description">Your bio will be displayed on your public profile.</p>
+    </div>
+  <% end %>
+
+  <%= preview_container width: :md do %>
+    <div data-form-part="group">
+      <label data-component="label" for="disabled-textarea">Disabled</label>
+      <textarea id="disabled-textarea" placeholder="Disabled textarea" data-component="textarea" disabled rows="3"></textarea>
+    </div>
+  <% end %>
+<% end %>

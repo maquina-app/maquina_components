@@ -1,0 +1,57 @@
+<%= preview_stack gap: 4 do %>
+  <%= preview_section "Variants" do %>
+    <%= preview_row do %>
+      <button data-component="button" data-variant="primary">Primary</button>
+      <button data-component="button" data-variant="secondary">Secondary</button>
+      <button data-component="button" data-variant="destructive">Destructive</button>
+      <button data-component="button" data-variant="outline">Outline</button>
+      <button data-component="button" data-variant="ghost">Ghost</button>
+      <button data-component="button" data-variant="link">Link</button>
+    <% end %>
+  <% end %>
+
+  <%= preview_section "Sizes" do %>
+    <%= preview_row do %>
+      <button data-component="button" data-variant="primary" data-size="sm">Small</button>
+      <button data-component="button" data-variant="primary">Default</button>
+      <button data-component="button" data-variant="primary" data-size="lg">Large</button>
+    <% end %>
+  <% end %>
+
+  <%= preview_section "With Icons" do %>
+    <%= preview_row do %>
+      <button data-component="button" data-variant="primary">
+        <%= icon_for :mail, class: "size-4" %>
+        Send Email
+      </button>
+      <button data-component="button" data-variant="outline">
+        <%= icon_for :download, class: "size-4" %>
+        Download
+      </button>
+      <button data-component="button" data-variant="destructive">
+        <%= icon_for :trash, class: "size-4" %>
+        Delete
+      </button>
+    <% end %>
+  <% end %>
+
+  <%= preview_section "Icon Only" do %>
+    <%= preview_row do %>
+      <button data-component="button" data-variant="outline" data-size="icon">
+        <%= icon_for :settings, class: "size-4" %>
+        <span class="sr-only">Settings</span>
+      </button>
+      <button data-component="button" data-variant="ghost" data-size="icon">
+        <%= icon_for :search, class: "size-4" %>
+        <span class="sr-only">Search</span>
+      </button>
+    <% end %>
+  <% end %>
+
+  <%= preview_section "Disabled" do %>
+    <%= preview_row do %>
+      <button data-component="button" data-variant="primary" disabled>Disabled</button>
+      <button data-component="button" data-variant="outline" disabled>Disabled</button>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,21 @@
+<%= preview_container width: :md do %>
+  <%= render "components/card" do %>
+    <%= render "components/card/header", layout: :row do %>
+      <div>
+        <%= render "components/card/title", text: "Team Members" %>
+        <%= render "components/card/description", text: "Manage your team and permissions." %>
+      </div>
+      <%= render "components/card/action" do %>
+        <button data-component="button" data-variant="primary" data-size="sm">
+          <%= icon_for :plus, class: "size-4 mr-1" %>
+          Add
+        </button>
+      <% end %>
+    <% end %>
+    <%= render "components/card/content" do %>
+      <p class="text-sm text-muted-foreground">
+        No team members yet. Add your first team member to get started.
+      </p>
+    <% end %>
+  <% end %>
+<% end %>

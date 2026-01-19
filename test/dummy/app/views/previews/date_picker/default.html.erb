@@ -1,0 +1,17 @@
+<%= preview_container width: :md do %>
+  <%= preview_stack gap: 4 do %>
+    <%= preview_section "Single Date" do %>
+      <%= render "components/date_picker",
+            mode: :single,
+            placeholder: "Pick a date",
+            input_name: "event_date" %>
+    <% end %>
+
+    <%= preview_section "With Pre-selected Date" do %>
+      <%= render "components/date_picker",
+            mode: :single,
+            selected: Date.today,
+            input_name: "selected_date" %>
+    <% end %>
+  <% end %>
+<% end %>

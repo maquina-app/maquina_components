@@ -1,0 +1,42 @@
+<% content_for :title, "Component Previews" %>
+
+<div class="max-w-4xl mx-auto py-8">
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold">Component Previews</h1>
+    <p class="text-muted-foreground mt-1">
+      Isolated component renders for documentation embeds.
+    </p>
+  </div>
+
+  <div class="grid gap-6">
+    <% @components.each do |component, examples| %>
+      <%= render "components/card" do %>
+        <%= render "components/card/header" do %>
+          <%= render "components/card/title", text: component.titleize %>
+        <% end %>
+        <%= render "components/card/content" do %>
+          <div class="flex flex-wrap gap-2">
+            <% examples.each do |example| %>
+              <%= link_to example.titleize,
+                          preview_path(component, example),
+                          data: { component: "button", variant: "secondary", size: "sm" },
+                          target: "_blank" %>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="mt-8">
+    <%= render "components/alert", variant: :default, icon: :info do %>
+      <%= render "components/alert/title", text: "Query Parameters" %>
+      <%= render "components/alert/description" do %>
+        <ul class="text-sm space-y-1 mt-2">
+          <li><code class="bg-muted px-1 rounded">?theme=dark</code> - Enable dark mode</li>
+          <li><code class="bg-muted px-1 rounded">?color_theme=blue</code> - Set color theme (neutral, green, rose, blue)</li>
+        </ul>
+      <% end %>
+    <% end %>
+  </div>
+</div>

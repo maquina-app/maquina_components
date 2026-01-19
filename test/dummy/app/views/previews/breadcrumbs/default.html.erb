@@ -1,0 +1,15 @@
+<%= render "components/breadcrumbs" do %>
+  <%= render "components/breadcrumbs/list" do %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/link", url: "#" do %>Home<% end %>
+    <% end %>
+    <%= render "components/breadcrumbs/separator" %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/link", url: "#" do %>Components<% end %>
+    <% end %>
+    <%= render "components/breadcrumbs/separator" %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/page" do %>Breadcrumbs<% end %>
+    <% end %>
+  <% end %>
+<% end %>

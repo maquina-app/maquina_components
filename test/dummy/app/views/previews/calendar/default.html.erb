@@ -1,0 +1,14 @@
+<%= preview_stack gap: 4 do %>
+  <%= preview_section "Single Date" do %>
+    <%= render "components/calendar",
+          mode: :single,
+          selected: Date.today %>
+  <% end %>
+
+  <%= preview_section "Date Range" do %>
+    <%= render "components/calendar",
+          mode: :range,
+          selected: Date.today,
+          selected_end: Date.today + 5 %>
+  <% end %>
+<% end %>

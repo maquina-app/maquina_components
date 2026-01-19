@@ -9,6 +9,12 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  # Component previews for documentation
+  scope :previews do
+    get "/", to: "previews#index", as: :previews
+    get "/:component/:example", to: "previews#show", as: :preview
+  end
+
   # Defines the root path route ("/")
   root "home#index"
 end

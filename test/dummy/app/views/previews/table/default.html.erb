@@ -1,0 +1,38 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/table" do %>
+    <%= render "components/table/header" do %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/head" do %>Invoice<% end %>
+        <%= render "components/table/head" do %>Status<% end %>
+        <%= render "components/table/head" do %>Method<% end %>
+        <%= render "components/table/head", css_classes: "text-right" do %>Amount<% end %>
+      <% end %>
+    <% end %>
+    <%= render "components/table/body" do %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", css_classes: "font-medium" do %>INV001<% end %>
+        <%= render "components/table/cell" do %>Paid<% end %>
+        <%= render "components/table/cell" do %>Credit Card<% end %>
+        <%= render "components/table/cell", css_classes: "text-right" do %>$250.00<% end %>
+      <% end %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", css_classes: "font-medium" do %>INV002<% end %>
+        <%= render "components/table/cell" do %>Pending<% end %>
+        <%= render "components/table/cell" do %>PayPal<% end %>
+        <%= render "components/table/cell", css_classes: "text-right" do %>$150.00<% end %>
+      <% end %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", css_classes: "font-medium" do %>INV003<% end %>
+        <%= render "components/table/cell" do %>Unpaid<% end %>
+        <%= render "components/table/cell" do %>Bank Transfer<% end %>
+        <%= render "components/table/cell", css_classes: "text-right" do %>$350.00<% end %>
+      <% end %>
+    <% end %>
+    <%= render "components/table/footer" do %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", colspan: 3 do %>Total<% end %>
+        <%= render "components/table/cell", css_classes: "text-right" do %>$750.00<% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
