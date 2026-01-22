@@ -1,0 +1,19 @@
+<%= render "components/breadcrumbs" do %>
+  <%= render "components/breadcrumbs/list" do %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/link", href: "#" do %>Home<% end %>
+    <% end %>
+    <%= render "components/breadcrumbs/separator" %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/ellipsis" %>
+    <% end %>
+    <%= render "components/breadcrumbs/separator" %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/link", href: "#" do %>Components<% end %>
+    <% end %>
+    <%= render "components/breadcrumbs/separator" %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/page" do %>Breadcrumbs<% end %>
+    <% end %>
+  <% end %>
+<% end %>
