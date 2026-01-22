@@ -1,0 +1,24 @@
+<%= preview_container width: :md do %>
+  <%= render "components/card" do %>
+    <%= render "components/card/header" do %>
+      <%= render "components/card/title", text: "Notifications" %>
+      <%= render "components/card/description", text: "Configure how you receive notifications." %>
+    <% end %>
+    <%= render "components/card/content" do %>
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-sm">Email notifications</span>
+          <span class="text-sm text-muted-foreground">Enabled</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm">Push notifications</span>
+          <span class="text-sm text-muted-foreground">Disabled</span>
+        </div>
+      </div>
+    <% end %>
+    <%= render "components/card/footer", align: :end do %>
+      <button data-component="button" data-variant="outline" data-size="sm">Cancel</button>
+      <button data-component="button" data-variant="primary" data-size="sm">Save</button>
+    <% end %>
+  <% end %>
+<% end %>

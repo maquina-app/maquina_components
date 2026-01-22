@@ -1,6 +1,7 @@
 <%= preview_container width: :md do %>
   <%= render "components/date_picker",
         mode: :single,
+        selected: Date.today,
         placeholder: "Select a date",
         input_name: "event_date" %>
 <% end %>

@@ -1,20 +1,7 @@
 <%= preview_container width: :md do %>
-  <%= preview_stack gap: 4 do %>
-    <%= preview_section "Date Range" do %>
-      <%= render "components/date_picker",
-            mode: :range,
-            placeholder: "Select date range",
-            input_name: "start_date",
-            input_name_end: "end_date" %>
-    <% end %>
-
-    <%= preview_section "With Pre-selected Range" do %>
-      <%= render "components/date_picker",
-            mode: :range,
-            selected: Date.today,
-            selected_end: Date.today + 7,
-            input_name: "range_start",
-            input_name_end: "range_end" %>
-    <% end %>
-  <% end %>
+  <%= render "components/date_picker",
+        mode: :range,
+        placeholder: "Select date range",
+        input_name: "start_date",
+        input_name_end: "end_date" %>
 <% end %>
