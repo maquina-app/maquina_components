@@ -294,6 +294,87 @@ module MaquinaComponents
             <path d="m15 5 4 4"/>
           </svg>
         SVG
+      when :home
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
+            <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          </svg>
+        SVG
+      when :layout_dashboard
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <rect width="7" height="9" x="3" y="3" rx="1"/>
+            <rect width="7" height="5" x="14" y="3" rx="1"/>
+            <rect width="7" height="9" x="14" y="12" rx="1"/>
+            <rect width="7" height="5" x="3" y="16" rx="1"/>
+          </svg>
+        SVG
+      when :align_left
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <line x1="21" x2="3" y1="6" y2="6"/>
+            <line x1="15" x2="3" y1="12" y2="12"/>
+            <line x1="17" x2="3" y1="18" y2="18"/>
+          </svg>
+        SVG
+      when :align_center
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <line x1="21" x2="3" y1="6" y2="6"/>
+            <line x1="17" x2="7" y1="12" y2="12"/>
+            <line x1="19" x2="5" y1="18" y2="18"/>
+          </svg>
+        SVG
+      when :align_right
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <line x1="21" x2="3" y1="6" y2="6"/>
+            <line x1="21" x2="9" y1="12" y2="12"/>
+            <line x1="21" x2="7" y1="18" y2="18"/>
+          </svg>
+        SVG
+      when :bold
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <path d="M6 12h9a4 4 0 0 1 0 8H7a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h7a4 4 0 0 1 0 8"/>
+          </svg>
+        SVG
+      when :italic
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <line x1="19" x2="10" y1="4" y2="4"/>
+            <line x1="14" x2="5" y1="20" y2="20"/>
+            <line x1="15" x2="9" y1="4" y2="20"/>
+          </svg>
+        SVG
+      when :underline
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <path d="M6 4v6a6 6 0 0 0 12 0V4"/>
+            <line x1="4" x2="20" y1="20" y2="20"/>
+          </svg>
+        SVG
+      when :list
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <line x1="8" x2="21" y1="6" y2="6"/>
+            <line x1="8" x2="21" y1="12" y2="12"/>
+            <line x1="8" x2="21" y1="18" y2="18"/>
+            <line x1="3" x2="3.01" y1="6" y2="6"/>
+            <line x1="3" x2="3.01" y1="12" y2="12"/>
+            <line x1="3" x2="3.01" y1="18" y2="18"/>
+          </svg>
+        SVG
+      when :grid
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <rect width="7" height="7" x="3" y="3" rx="1"/>
+            <rect width="7" height="7" x="14" y="3" rx="1"/>
+            <rect width="7" height="7" x="14" y="14" rx="1"/>
+            <rect width="7" height="7" x="3" y="14" rx="1"/>
+          </svg>
+        SVG
       end
     end
   end
