@@ -1,0 +1,23 @@
+<%= preview_container width: :md do %>
+  <%= render "components/dropdown_menu" do %>
+    <%= render "components/dropdown_menu/trigger" do %>My Account<% end %>
+
+    <%= render "components/dropdown_menu/content", width: :md do %>
+      <%= render "components/dropdown_menu/label" do %>Account<% end %>
+      <%= render "components/dropdown_menu/separator" %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>
+        <%= icon_for :user, class: "size-4" %>
+        Profile
+      <% end %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>
+        <%= icon_for :settings, class: "size-4" %>
+        Settings
+      <% end %>
+      <%= render "components/dropdown_menu/separator" %>
+      <%= render "components/dropdown_menu/item", href: "#", variant: :destructive do %>
+        <%= icon_for :log_out, class: "size-4" %>
+        Logout
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

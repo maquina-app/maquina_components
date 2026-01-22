@@ -1,0 +1,23 @@
+<%= preview_container width: :md do %>
+  <%= render "components/dropdown_menu" do %>
+    <%= render "components/dropdown_menu/trigger", as_child: true do %>
+      <button type="button"
+              data-component="button"
+              data-variant="ghost"
+              data-size="icon"
+              data-dropdown-menu-target="trigger"
+              data-action="dropdown-menu#toggle"
+              aria-haspopup="menu"
+              aria-expanded="false">
+        <%= icon_for :more_horizontal, class: "size-4" %>
+      </button>
+    <% end %>
+
+    <%= render "components/dropdown_menu/content", align: :end do %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>Edit<% end %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>Duplicate<% end %>
+      <%= render "components/dropdown_menu/separator" %>
+      <%= render "components/dropdown_menu/item", href: "#", variant: :destructive do %>Delete<% end %>
+    <% end %>
+  <% end %>
+<% end %>

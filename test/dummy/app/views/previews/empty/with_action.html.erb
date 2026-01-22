@@ -1,0 +1,12 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/empty" do %>
+    <%= render "components/empty/header" do %>
+      <%= render "components/empty/media", icon: :folder %>
+      <%= render "components/empty/title", text: "No projects yet" %>
+      <%= render "components/empty/description", text: "Get started by creating your first project." %>
+    <% end %>
+    <%= render "components/empty/content" do %>
+      <button data-component="button" data-variant="primary">Create project</button>
+    <% end %>
+  <% end %>
+<% end %>
