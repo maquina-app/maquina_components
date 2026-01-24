@@ -1,0 +1,8 @@
+<%= preview_container width: :md do %>
+  <%= render "components/date_picker",
+        mode: :single,
+        min_date: Date.today,
+        max_date: Date.today + 30,
+        placeholder: "Select within 30 days",
+        input_name: "event_date" %>
+<% end %>

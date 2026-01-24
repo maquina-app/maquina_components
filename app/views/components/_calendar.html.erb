@@ -1,0 +1,121 @@
+<%# locals: (selected: nil, selected_end: nil, month: nil, year: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, week_starts_on: :sunday, cell_size: nil, input_name: nil, input_name_end: nil, css_classes: "", **html_options) %>
+<%
+  # Parse selected dates
+  selected_date = case selected
+                  when String then Date.parse(selected) rescue nil
+                  when Date, Time, DateTime then selected.to_date
+                  else nil
+                  end
+
+  selected_end_date = case selected_end
+                      when String then Date.parse(selected_end) rescue nil
+                      when Date, Time, DateTime then selected_end.to_date
+                      else nil
+                      end
+
+  # Parse min/max dates
+  min_date_parsed = case min_date
+                    when String then Date.parse(min_date) rescue nil
+                    when Date, Time, DateTime then min_date.to_date
+                    else nil
+                    end
+
+  max_date_parsed = case max_date
+                    when String then Date.parse(max_date) rescue nil
+                    when Date, Time, DateTime then max_date.to_date
+                    else nil
+                    end
+
+  # Determine display month/year
+  display_date = selected_date || Date.current
+  display_month = month || display_date.month
+  display_year = year || display_date.year
+
+  # Build the calendar data
+  first_of_month = Date.new(display_year, display_month, 1)
+  last_of_month = first_of_month.end_of_month
+
+  # Calculate start of calendar grid
+  week_start = week_starts_on == :monday ? 1 : 0
+  days_before = (first_of_month.wday - week_start) % 7
+  calendar_start = first_of_month - days_before.days
+
+  # Calculate end of calendar grid (6 weeks max)
+  total_days = days_before + last_of_month.day
+  weeks_needed = (total_days / 7.0).ceil
+  weeks_needed = [weeks_needed, 6].min
+  calendar_end = calendar_start + (weeks_needed * 7 - 1).days
+
+  # Build weeks array
+  weeks = (calendar_start..calendar_end).each_slice(7).to_a
+
+  # Weekday names
+  weekday_names = week_starts_on == :monday ?
+    %w[Mo Tu We Th Fr Sa Su] :
+    %w[Su Mo Tu We Th Fr Sa]
+
+  merged_data = (html_options.delete(:data) || {}).merge(
+    controller: "calendar",
+    component: "calendar",
+    "calendar-mode-value": mode,
+    "calendar-month-value": display_month,
+    "calendar-year-value": display_year,
+    "calendar-selected-value": selected_date&.iso8601,
+    "calendar-selected-end-value": selected_end_date&.iso8601,
+    "calendar-min-date-value": min_date_parsed&.iso8601,
+    "calendar-max-date-value": max_date_parsed&.iso8601,
+    "calendar-week-starts-on-value": week_starts_on
+  )
+
+  style_attr = cell_size ? "--cell-size: #{cell_size};" : nil
+%>
+
+<%= content_tag :div,
+      class: css_classes.presence,
+      data: merged_data,
+      style: style_attr,
+      **html_options do %>
+
+  <%# Hidden inputs for form integration %>
+  <% if input_name %>
+    <input type="hidden"
+           name="<%= input_name %>"
+           value="<%= selected_date&.iso8601 %>"
+           data-calendar-target="input">
+  <% end %>
+  <% if input_name_end && mode == :range %>
+    <input type="hidden"
+           name="<%= input_name_end %>"
+           value="<%= selected_end_date&.iso8601 %>"
+           data-calendar-target="inputEnd">
+  <% end %>
+
+  <%# Header with navigation %>
+  <%= render "components/calendar/header",
+        month: display_month,
+        year: display_year,
+        month_name: I18n.l(first_of_month, format: "%B %Y") %>
+
+  <%# Weekday headers %>
+  <div data-calendar-part="weekdays">
+    <% weekday_names.each do |day_name| %>
+      <div data-calendar-part="weekday"><%= day_name %></div>
+    <% end %>
+  </div>
+
+  <%# Calendar grid %>
+  <div data-calendar-part="grid" role="grid" aria-label="Calendar">
+    <% weeks.each do |week_days| %>
+      <%= render "components/calendar/week",
+            days: week_days,
+            display_month: display_month,
+            selected_date: selected_date,
+            selected_end_date: selected_end_date,
+            mode: mode,
+            min_date: min_date_parsed,
+            max_date: max_date_parsed,
+            disabled_dates: disabled_dates,
+            show_outside_days: show_outside_days %>
+    <% end %>
+  </div>
+<% end %>

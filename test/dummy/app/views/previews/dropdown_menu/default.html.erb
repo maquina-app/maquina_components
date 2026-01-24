@@ -1,0 +1,12 @@
+<%= preview_container width: :md do %>
+  <%= render "components/dropdown_menu" do %>
+    <%= render "components/dropdown_menu/trigger" do %>Open Menu<% end %>
+
+    <%= render "components/dropdown_menu/content" do %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>Profile<% end %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>Settings<% end %>
+      <%= render "components/dropdown_menu/separator" %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>Logout<% end %>
+    <% end %>
+  <% end %>
+<% end %>

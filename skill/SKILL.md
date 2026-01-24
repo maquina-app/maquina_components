@@ -43,9 +43,13 @@ Build production-quality Rails UIs with maquina_components — ERB partials styl
 | No data state | **Empty** | Consistent empty patterns |
 | User actions menu | **Dropdown Menu** | Accessible, keyboard-navigable |
 | Selection from options | **Toggle Group** | Visual, single/multi select |
+| Selection from many options | **Combobox** | Searchable, filterable |
+| Date selection (inline) | **Calendar** | Always-visible date picker |
+| Date selection (popover) | **Date Picker** | Compact form date input |
 | Page location | **Breadcrumbs** | Navigation context |
 | Large result sets | **Pagination** | Pagy integration |
 | App navigation | **Sidebar** | Collapsible, persistent state |
+| Temporary notifications | **Toast** | Non-intrusive feedback |
 | Form inputs | **Form components** | Consistent styling via data attrs |
 
 ## File References

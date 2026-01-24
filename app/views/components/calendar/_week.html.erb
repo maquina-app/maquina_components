@@ -1,0 +1,53 @@
+<%# locals: (days:, display_month:, selected_date: nil, selected_end_date: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge("calendar-part": "week") %>
+
+<%= content_tag :div, role: "row", class: css_classes.presence, data: merged_data, **html_options do %>
+  <% days.each do |day| %>
+    <%
+      is_outside = day.month != display_month
+      is_today = day == Date.current
+      is_selected = selected_date && day == selected_date
+      is_range_end = selected_end_date && day == selected_end_date
+      is_range_middle = selected_date && selected_end_date &&
+                        day > selected_date && day < selected_end_date
+      is_disabled = (min_date && day < min_date) ||
+                    (max_date && day > max_date) ||
+                    disabled_dates.include?(day)
+
+      day_state = if is_selected && mode == :range && selected_end_date
+                    "range-start"
+                  elsif is_range_end
+                    "range-end"
+                  elsif is_range_middle
+                    "range-middle"
+                  elsif is_selected
+                    "selected"
+                  end
+
+      # Skip rendering if outside day and not showing them
+      next if is_outside && !show_outside_days
+
+      day_data = {
+        "calendar-part": "day",
+        "calendar-target": "day",
+        date: day.iso8601,
+        state: day_state.presence,
+        outside: (is_outside ? true : nil),
+        today: (is_today ? true : nil),
+        action: "click->calendar#selectDay keydown->calendar#handleKeydown"
+      }.compact
+    %>
+    <button type="button"
+            data-calendar-part="day"
+            data-calendar-target="day"
+            data-date="<%= day.iso8601 %>"
+            <%= "data-state=\"#{day_state}\"" if day_state %>
+            <%= "data-outside" if is_outside %>
+            <%= "data-today" if is_today %>
+            data-action="click->calendar#selectDay keydown->calendar#handleKeydown"
+            <%= "disabled" if is_disabled %>
+            tabindex="<%= is_today ? '0' : '-1' %>"
+            <%= "aria-selected=\"true\"" if day_state&.include?("selected") || day_state == "range-start" || day_state == "range-end" %>
+            <%= "aria-current=\"date\"" if is_today %>><%= day.day %></button>
+  <% end %>
+<% end %>

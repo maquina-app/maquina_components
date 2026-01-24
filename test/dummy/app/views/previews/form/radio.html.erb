@@ -1,0 +1,27 @@
+<%= preview_stack gap: 4 do %>
+  <%= preview_section "Select a plan" do %>
+    <%= preview_stack gap: 2 do %>
+      <div data-form-part="group" data-layout="inline">
+        <input type="radio" id="plan-basic" name="plan" value="basic" data-component="radio">
+        <label data-component="label" for="plan-basic">Basic - Free</label>
+      </div>
+
+      <div data-form-part="group" data-layout="inline">
+        <input type="radio" id="plan-pro" name="plan" value="pro" data-component="radio" checked>
+        <label data-component="label" for="plan-pro">Pro - $10/month</label>
+      </div>
+
+      <div data-form-part="group" data-layout="inline">
+        <input type="radio" id="plan-enterprise" name="plan" value="enterprise" data-component="radio">
+        <label data-component="label" for="plan-enterprise">Enterprise - Contact us</label>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= preview_section "Disabled" do %>
+    <div data-form-part="group" data-layout="inline">
+      <input type="radio" id="disabled-radio" name="disabled" value="disabled" data-component="radio" disabled>
+      <label data-component="label" for="disabled-radio">Disabled option</label>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,29 @@
+<%= preview_container width: :md do %>
+  <%= render "components/dropdown_menu" do %>
+    <%= render "components/dropdown_menu/trigger" do %>Edit<% end %>
+
+    <%= render "components/dropdown_menu/content", width: :md do %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>
+        Undo
+        <%= render "components/dropdown_menu/shortcut" do %>⌘Z<% end %>
+      <% end %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>
+        Redo
+        <%= render "components/dropdown_menu/shortcut" do %>⇧⌘Z<% end %>
+      <% end %>
+      <%= render "components/dropdown_menu/separator" %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>
+        Cut
+        <%= render "components/dropdown_menu/shortcut" do %>⌘X<% end %>
+      <% end %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>
+        Copy
+        <%= render "components/dropdown_menu/shortcut" do %>⌘C<% end %>
+      <% end %>
+      <%= render "components/dropdown_menu/item", href: "#" do %>
+        Paste
+        <%= render "components/dropdown_menu/shortcut" do %>⌘V<% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

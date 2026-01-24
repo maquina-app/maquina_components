@@ -1,0 +1,35 @@
+<%= preview_stack gap: 4 do %>
+  <%# Slash separator %>
+  <%= render "components/breadcrumbs" do %>
+    <%= render "components/breadcrumbs/list" do %>
+      <%= render "components/breadcrumbs/item" do %>
+        <%= render "components/breadcrumbs/link", href: "#" do %>Home<% end %>
+      <% end %>
+      <%= render "components/breadcrumbs/separator", icon: :slash %>
+      <%= render "components/breadcrumbs/item" do %>
+        <%= render "components/breadcrumbs/link", href: "#" do %>Components<% end %>
+      <% end %>
+      <%= render "components/breadcrumbs/separator", icon: :slash %>
+      <%= render "components/breadcrumbs/item" do %>
+        <%= render "components/breadcrumbs/page" do %>Current<% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%# Arrow separator %>
+  <%= render "components/breadcrumbs" do %>
+    <%= render "components/breadcrumbs/list" do %>
+      <%= render "components/breadcrumbs/item" do %>
+        <%= render "components/breadcrumbs/link", href: "#" do %>Home<% end %>
+      <% end %>
+      <%= render "components/breadcrumbs/separator", icon: :arrow_right %>
+      <%= render "components/breadcrumbs/item" do %>
+        <%= render "components/breadcrumbs/link", href: "#" do %>Components<% end %>
+      <% end %>
+      <%= render "components/breadcrumbs/separator", icon: :arrow_right %>
+      <%= render "components/breadcrumbs/item" do %>
+        <%= render "components/breadcrumbs/page" do %>Current<% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,18 @@
+<%= preview_container width: :md do %>
+  <%= render "components/combobox", placeholder: "Select status...", value: "active" do |combobox_id| %>
+    <%= render "components/combobox/trigger", for_id: combobox_id, placeholder: "Select status..." %>
+
+    <%= render "components/combobox/content", id: combobox_id do %>
+      <%= render "components/combobox/input", placeholder: "Search status..." %>
+
+      <%= render "components/combobox/list" do %>
+        <%= render "components/combobox/option", value: "active", selected: true do %>Active<% end %>
+        <%= render "components/combobox/option", value: "pending" do %>Pending<% end %>
+        <%= render "components/combobox/option", value: "inactive" do %>Inactive<% end %>
+        <%= render "components/combobox/option", value: "archived", disabled: true do %>Archived<% end %>
+      <% end %>
+
+      <%= render "components/combobox/empty" %>
+    <% end %>
+  <% end %>
+<% end %>

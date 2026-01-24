@@ -152,7 +152,9 @@ bin/rails generate maquina_components:install --skip-helper
 
 | Component | Description | Documentation |
 |-----------|-------------|---------------|
+| **Calendar** | Inline date picker with single/range selection | [Calendar](https://maquina.app/documentation/components/calendar/) |
 | **Combobox** | Searchable dropdown with keyboard navigation | [Combobox](https://maquina.app/documentation/components/combobox/) |
+| **Date Picker** | Popover-based date selection | [Date Picker](https://maquina.app/documentation/components/date-picker/) |
 | **Toggle Group** | Single/multiple selection button group | [Toggle Group](https://maquina.app/documentation/components/toggle-group/) |
 
 ### Feedback Components
@@ -425,7 +427,9 @@ The install generator adds default theme variables. Customize them in `app/asset
 
 ### Interactive
 
+- **[Calendar](https://maquina.app/documentation/components/calendar/)** — Inline date picker
 - **[Combobox](https://maquina.app/documentation/components/combobox/)** — Searchable dropdown selection
+- **[Date Picker](https://maquina.app/documentation/components/date-picker/)** — Popover date selection
 - **[Toggle Group](https://maquina.app/documentation/components/toggle-group/)** — Toggle button groups
 
 ### Feedback

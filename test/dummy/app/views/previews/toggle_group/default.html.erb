@@ -1,0 +1,40 @@
+<%= preview_stack gap: 4 do %>
+  <%= preview_section "Single Selection" do %>
+    <%= render "components/toggle_group", type: :single, value: "center" do %>
+      <%= render "components/toggle_group/item", value: "left", aria_label: "Align left" do %>
+        <%= icon_for :align_left, class: "size-4" %>
+      <% end %>
+      <%= render "components/toggle_group/item", value: "center", aria_label: "Align center", pressed: true do %>
+        <%= icon_for :align_center, class: "size-4" %>
+      <% end %>
+      <%= render "components/toggle_group/item", value: "right", aria_label: "Align right" do %>
+        <%= icon_for :align_right, class: "size-4" %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= preview_section "Multiple Selection" do %>
+    <%= render "components/toggle_group", type: :multiple, value: ["bold", "italic"] do %>
+      <%= render "components/toggle_group/item", value: "bold", aria_label: "Bold", pressed: true do %>
+        <%= icon_for :bold, class: "size-4" %>
+      <% end %>
+      <%= render "components/toggle_group/item", value: "italic", aria_label: "Italic", pressed: true do %>
+        <%= icon_for :italic, class: "size-4" %>
+      <% end %>
+      <%= render "components/toggle_group/item", value: "underline", aria_label: "Underline" do %>
+        <%= icon_for :underline, class: "size-4" %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= preview_section "Outline Variant" do %>
+    <%= render "components/toggle_group", type: :single, variant: :outline do %>
+      <%= render "components/toggle_group/item", value: "list", aria_label: "List view" do %>
+        <%= icon_for :list, class: "size-4" %>
+      <% end %>
+      <%= render "components/toggle_group/item", value: "grid", aria_label: "Grid view" do %>
+        <%= icon_for :grid, class: "size-4" %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,28 @@
+<div class="text-sm text-muted-foreground p-4 bg-muted/50 rounded-lg">
+  <p class="font-medium mb-2">Sidebar Component</p>
+  <p>The sidebar component requires a full-page layout context with the sidebar provider.</p>
+  <p class="mt-2">See the <a href="/" class="text-primary underline" target="_blank">main application</a> for a live sidebar example.</p>
+</div>
+
+<div class="mt-6">
+  <p class="text-sm font-medium mb-3">Sidebar Menu Items Preview:</p>
+
+  <%= preview_stack gap: 2 do %>
+    <div class="flex items-center gap-2 px-3 py-2 rounded-md bg-accent text-accent-foreground">
+      <%= icon_for :layout_dashboard, class: "size-4" %>
+      <span class="text-sm">Dashboard</span>
+    </div>
+    <div class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent text-muted-foreground">
+      <%= icon_for :inbox, class: "size-4" %>
+      <span class="text-sm">Inbox</span>
+    </div>
+    <div class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent text-muted-foreground">
+      <%= icon_for :calendar, class: "size-4" %>
+      <span class="text-sm">Calendar</span>
+    </div>
+    <div class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent text-muted-foreground">
+      <%= icon_for :settings, class: "size-4" %>
+      <span class="text-sm">Settings</span>
+    </div>
+  <% end %>
+</div>

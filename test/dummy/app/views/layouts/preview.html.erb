@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html
+  class="<%= @theme == 'dark' ? 'dark' : '' %>"
+  data-theme="<%= @color_theme %>"
+>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview: <%= [@component, @example].compact.join("/") %></title>
+
+  <%= stylesheet_link_tag "tailwind", data_turbo_track: "reload" %>
+  <%= javascript_importmap_tags %>
+
+  <style>
+    html, body {
+      min-height: auto !important;
+    }
+    html {
+      background-color: var(--background);
+    }
+    body {
+      padding: 1.5rem;
+    }
+    /* Ensure popover content renders correctly */
+    [popover] {
+      background: var(--popover, white);
+    }
+  </style>
+
+  <script>
+    // Iframe resize communication
+    (function() {
+      const sendHeight = () => {
+        const height = document.body.scrollHeight;
+        window.parent.postMessage({
+          type: 'maquina:resize',
+          height: height,
+          component: '<%= @component %>',
+          example: '<%= @example %>'
+        }, '*');
+      };
+
+      // Send on load
+      window.addEventListener('load', sendHeight);
+
+      // Send on resize
+      window.addEventListener('resize', sendHeight);
+
+      // Send on DOM changes (for dynamic content)
+      const observer = new ResizeObserver(sendHeight);
+      document.addEventListener('DOMContentLoaded', () => {
+        observer.observe(document.body);
+      });
+
+      // Send on popover/dialog toggle
+      document.addEventListener('toggle', sendHeight, true);
+
+      // Fallback: send periodically for edge cases
+      setInterval(sendHeight, 1000);
+    })();
+  </script>
+</head>
+<body class="bg-background text-foreground">
+  <%= yield %>
+</body>
+</html>

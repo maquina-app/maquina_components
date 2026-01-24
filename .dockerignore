@@ -1,0 +1,48 @@
+# Git
+.git
+.gitignore
+.github
+
+# Development
+.bundle
+.ruby-lsp
+.claude
+.kamal/secrets
+
+# Documentation (not needed for runtime)
+CLAUDE.md
+AGENTS.md
+CHANGELOG.md
+README.md
+docs/
+references/
+imgs/
+
+# IDE/Editor
+.DS_Store
+*.swp
+*.swo
+.vscode
+.idea
+
+# Logs and temp files
+log/
+tmp/
+*.log
+
+# Test artifacts
+test/dummy/log/
+test/dummy/tmp/
+test/dummy/storage/
+test/dummy/db/*.sqlite3
+test/dummy/db/*.sqlite3-*
+
+# Asset builds (will be regenerated)
+test/dummy/app/assets/builds/
+
+# Credentials (sensitive)
+test/dummy/config/credentials/*.key
+
+# Gem build artifacts
+pkg/
+*.gem

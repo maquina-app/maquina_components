@@ -1,0 +1,22 @@
+<%= preview_container width: :md do %>
+  <form data-component="form">
+    <div data-form-part="group">
+      <label data-component="label" for="email">Email</label>
+      <input type="email" id="email" placeholder="you@example.com" data-component="input">
+    </div>
+
+    <div data-form-part="group">
+      <label data-component="label" for="password">Password</label>
+      <input type="password" id="password" data-component="input">
+    </div>
+
+    <div data-form-part="group" data-layout="inline">
+      <input type="checkbox" id="remember" data-component="checkbox">
+      <label data-component="label" for="remember">Remember me</label>
+    </div>
+
+    <div data-form-part="actions">
+      <button type="submit" data-component="button" data-variant="primary">Sign in</button>
+    </div>
+  </form>
+<% end %>

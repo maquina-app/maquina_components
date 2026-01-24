@@ -1,0 +1,26 @@
+<%= preview_stack gap: 4 do %>
+  <%= preview_container width: :md do %>
+    <div data-form-part="group">
+      <label data-component="label" for="country">Country</label>
+      <select id="country" data-component="select">
+        <option value="">Select a country...</option>
+        <option value="us">United States</option>
+        <option value="uk">United Kingdom</option>
+        <option value="ca">Canada</option>
+        <option value="au">Australia</option>
+        <option value="de">Germany</option>
+        <option value="fr">France</option>
+        <option value="mx">Mexico</option>
+      </select>
+    </div>
+  <% end %>
+
+  <%= preview_container width: :md do %>
+    <div data-form-part="group">
+      <label data-component="label" for="disabled-select">Disabled</label>
+      <select id="disabled-select" data-component="select" disabled>
+        <option value="">Disabled select</option>
+      </select>
+    </div>
+  <% end %>
+<% end %>

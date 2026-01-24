@@ -1,0 +1,9 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/empty" do %>
+    <%= render "components/empty/header" do %>
+      <%= render "components/empty/media", icon: :inbox %>
+      <%= render "components/empty/title", text: "No messages" %>
+      <%= render "components/empty/description", text: "Messages you receive will appear here." %>
+    <% end %>
+  <% end %>
+<% end %>

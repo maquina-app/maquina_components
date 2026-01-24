@@ -1,0 +1,17 @@
+<%= preview_container width: :md do %>
+  <%= render "components/card" do %>
+    <%= render "components/card/header" do %>
+      <%= render "components/card/title", text: "Card Title" %>
+      <%= render "components/card/description", text: "Card description goes here." %>
+    <% end %>
+    <%= render "components/card/content" do %>
+      <p class="text-sm text-muted-foreground">
+        This is the card content area where you can add any content.
+      </p>
+    <% end %>
+    <%= render "components/card/footer" do %>
+      <button data-component="button" data-variant="outline" data-size="sm">Cancel</button>
+      <button data-component="button" data-variant="primary" data-size="sm">Save</button>
+    <% end %>
+  <% end %>
+<% end %>

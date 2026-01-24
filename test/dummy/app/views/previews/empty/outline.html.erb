@@ -1,0 +1,9 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/empty", variant: :outline do %>
+    <%= render "components/empty/header" do %>
+      <%= render "components/empty/media", icon: :upload %>
+      <%= render "components/empty/title", text: "Drop files here" %>
+      <%= render "components/empty/description", text: "Or click to browse your files." %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -1,0 +1,7 @@
+<%= preview_container width: :md do %>
+  <%= render "components/date_picker",
+        mode: :single,
+        selected: Date.today,
+        disabled: true,
+        input_name: "locked_date" %>
+<% end %>

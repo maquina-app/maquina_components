@@ -1,0 +1,16 @@
+<%= preview_row do %>
+  <%= render "components/badge", variant: :success do %>
+    <%= icon_for :check, class: "size-3" %>
+    Verified
+  <% end %>
+
+  <%= render "components/badge", variant: :warning do %>
+    <%= icon_for :clock, class: "size-3" %>
+    Pending
+  <% end %>
+
+  <%= render "components/badge", variant: :destructive do %>
+    <%= icon_for :x, class: "size-3" %>
+    Failed
+  <% end %>
+<% end %>

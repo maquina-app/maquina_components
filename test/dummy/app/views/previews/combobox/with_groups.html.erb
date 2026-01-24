@@ -1,0 +1,28 @@
+<%= preview_container width: :md do %>
+  <%= render "components/combobox", placeholder: "Select language..." do |combobox_id| %>
+    <%= render "components/combobox/trigger", for_id: combobox_id, placeholder: "Select language..." %>
+
+    <%= render "components/combobox/content", id: combobox_id do %>
+      <%= render "components/combobox/input", placeholder: "Search languages..." %>
+
+      <%= render "components/combobox/list" do %>
+        <%= render "components/combobox/group" do %>
+          <%= render "components/combobox/label" do %>Backend<% end %>
+          <%= render "components/combobox/option", value: "ruby" do %>Ruby<% end %>
+          <%= render "components/combobox/option", value: "python" do %>Python<% end %>
+          <%= render "components/combobox/option", value: "go" do %>Go<% end %>
+        <% end %>
+
+        <%= render "components/combobox/separator" %>
+
+        <%= render "components/combobox/group" do %>
+          <%= render "components/combobox/label" do %>Frontend<% end %>
+          <%= render "components/combobox/option", value: "javascript" do %>JavaScript<% end %>
+          <%= render "components/combobox/option", value: "typescript" do %>TypeScript<% end %>
+        <% end %>
+      <% end %>
+
+      <%= render "components/combobox/empty" %>
+    <% end %>
+  <% end %>
+<% end %>

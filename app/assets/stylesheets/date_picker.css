@@ -1,0 +1,172 @@
+/* ===== DatePicker Component Styles ===== */
+/*
+ * A date picker with trigger button and popover calendar.
+ * Uses native Popover API for open/close without JavaScript.
+ * Supports single and range selection modes.
+ *
+ * Structure:
+ * - date-picker (root container)
+ *   - trigger (button with popovertarget)
+ *   - popover (native popover with calendar)
+ */
+
+/* ===== Root Container ===== */
+[data-component="date-picker"] {
+  position: relative;
+  display: inline-block;
+}
+
+/* ===== Trigger Button ===== */
+[data-date-picker-part="trigger"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 200px;
+  @apply h-9 px-3 py-2 text-sm rounded-md;
+  border: 1px solid var(--input);
+  background-color: var(--background);
+  color: var(--foreground);
+  cursor: pointer;
+  text-align: left;
+  @apply transition-colors duration-150;
+}
+
+[data-date-picker-part="trigger"]:hover:not(:disabled) {
+  background-color: var(--accent);
+}
+
+[data-date-picker-part="trigger"]:focus-visible {
+  @apply outline-none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--background),
+              0 0 0 4px var(--ring);
+}
+
+[data-date-picker-part="trigger"]:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+[data-date-picker-part="trigger"] svg {
+  @apply size-4 shrink-0;
+  color: var(--muted-foreground);
+}
+
+/* Placeholder state */
+[data-date-picker-part="trigger"]:has([data-date-picker-part="placeholder-indicator"]) {
+  color: var(--muted-foreground);
+}
+
+/* ===== Popover ===== */
+[data-date-picker-part="popover"] {
+  @apply p-0 rounded-lg border;
+  background-color: var(--background);
+  border-color: var(--border);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+              0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Reset default popover styles */
+  margin: 0;
+  overflow: visible;
+
+  /* Position below trigger */
+  position-area: bottom span-right;
+  position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+  margin-top: 0.25rem;
+
+  /* Entry animation */
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 150ms ease-out,
+              transform 150ms ease-out;
+}
+
+/* Closed state - for exit animation */
+[data-date-picker-part="popover"]:not(:popover-open) {
+  opacity: 0;
+  transform: translateY(-0.5rem) scale(0.95);
+}
+
+/* Entry animation starting state */
+@starting-style {
+  [data-date-picker-part="popover"]:popover-open {
+    opacity: 0;
+    transform: translateY(-0.5rem) scale(0.95);
+  }
+}
+
+/* Backdrop */
+[data-date-picker-part="popover"]::backdrop {
+  background-color: transparent;
+}
+
+/* ===== Calendar inside popover adjustments ===== */
+[data-date-picker-part="popover"] [data-component="calendar"] {
+  border: none;
+  box-shadow: none;
+}
+
+/* ===== Trigger aria-expanded state ===== */
+[data-date-picker-part="trigger"][aria-expanded="true"] {
+  border-color: var(--ring);
+}
+
+/* ===== Size Variants ===== */
+[data-component="date-picker"][data-size="sm"] [data-date-picker-part="trigger"] {
+  @apply h-8 px-2 py-1 text-xs;
+  min-width: 160px;
+}
+
+[data-component="date-picker"][data-size="sm"] [data-date-picker-part="trigger"] svg {
+  @apply size-3.5;
+}
+
+[data-component="date-picker"][data-size="lg"] [data-date-picker-part="trigger"] {
+  @apply h-11 px-4 py-3 text-base;
+  min-width: 240px;
+}
+
+[data-component="date-picker"][data-size="lg"] [data-date-picker-part="trigger"] svg {
+  @apply size-5;
+}
+
+/* ===== Full width variant ===== */
+[data-component="date-picker"][data-full-width] {
+  display: block;
+  width: 100%;
+}
+
+[data-component="date-picker"][data-full-width] [data-date-picker-part="trigger"] {
+  width: 100%;
+}
+
+/* ===== Error state ===== */
+[data-component="date-picker"]:has(input:invalid),
+[data-component="date-picker"]:has(input[aria-invalid="true"]) {
+  [data-date-picker-part="trigger"] {
+    border-color: var(--destructive);
+  }
+
+  [data-date-picker-part="trigger"]:focus-visible {
+    box-shadow: 0 0 0 2px var(--background),
+                0 0 0 4px var(--destructive);
+  }
+}
+
+/* ===== Fallback for browsers without anchor positioning ===== */
+@supports not (position-area: bottom) {
+  [data-date-picker-part="popover"] {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.25rem;
+  }
+}
+
+/* ===== Dark Mode ===== */
+/*
+ * Dark mode is handled automatically through CSS variables.
+ * The theme variables change based on the .dark class on html/body.
+ * No additional dark mode styles needed here.
+ */

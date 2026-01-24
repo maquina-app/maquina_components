@@ -60,7 +60,7 @@ module MaquinaComponents
     # @param variant [Symbol, nil] Table variant (:striped)
     # @return [Hash] Data attributes hash
     def table_data_attrs(variant: nil)
-      attrs = { data: { component: "table" } }
+      attrs = {data: {component: "table"}}
       attrs[:data][:variant] = variant.to_s if variant
       attrs
     end
@@ -70,7 +70,7 @@ module MaquinaComponents
     # @param variant [Symbol, nil] Container variant (:bordered)
     # @return [Hash] Data attributes hash
     def table_container_data_attrs(variant: nil)
-      attrs = { data: { table_part: "container" } }
+      attrs = {data: {table_part: "container"}}
       attrs[:data][:variant] = variant.to_s if variant
       attrs
     end
@@ -80,7 +80,7 @@ module MaquinaComponents
     # @param selected [Boolean] Whether the row is selected
     # @return [Hash] Data attributes hash
     def table_row_data_attrs(selected: false)
-      attrs = { data: { table_part: "row" } }
+      attrs = {data: {table_part: "row"}}
       attrs[:data][:state] = "selected" if selected
       attrs
     end
@@ -90,7 +90,7 @@ module MaquinaComponents
     # @param sticky [Boolean] Whether the header is sticky
     # @return [Hash] Data attributes hash
     def table_header_data_attrs(sticky: false)
-      attrs = { data: { table_part: "header" } }
+      attrs = {data: {table_part: "header"}}
       attrs[:data][:sticky] = "true" if sticky
       attrs
     end
@@ -98,7 +98,7 @@ module MaquinaComponents
     # Generate data attributes for table head cell
     # @return [Hash] Data attributes hash
     def table_head_data_attrs
-      { data: { table_part: "head" } }
+      {data: {table_part: "head"}}
     end
 
     # Generate data attributes for table cell
@@ -106,7 +106,7 @@ module MaquinaComponents
     # @param empty [Boolean] Whether this is an empty state cell
     # @return [Hash] Data attributes hash
     def table_cell_data_attrs(empty: false)
-      attrs = { data: { table_part: "cell" } }
+      attrs = {data: {table_part: "cell"}}
       attrs[:data][:empty] = "true" if empty
       attrs
     end
@@ -114,19 +114,19 @@ module MaquinaComponents
     # Generate data attributes for table body
     # @return [Hash] Data attributes hash
     def table_body_data_attrs
-      { data: { table_part: "body" } }
+      {data: {table_part: "body"}}
     end
 
     # Generate data attributes for table footer
     # @return [Hash] Data attributes hash
     def table_footer_data_attrs
-      { data: { table_part: "footer" } }
+      {data: {table_part: "footer"}}
     end
 
     # Generate data attributes for table caption
     # @return [Hash] Data attributes hash
     def table_caption_data_attrs
-      { data: { table_part: "caption" } }
+      {data: {table_part: "caption"}}
     end
 
     # Convert alignment symbol to CSS class
@@ -137,7 +137,6 @@ module MaquinaComponents
       case align&.to_sym
       when :right then "text-right"
       when :center then "text-center"
-      else nil
       end
     end
   end

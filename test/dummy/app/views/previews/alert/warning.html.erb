@@ -1,0 +1,6 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/alert", variant: :warning, icon: :triangle_alert do %>
+    <%= render "components/alert/title", text: "Warning" %>
+    <%= render "components/alert/description", text: "This action cannot be undone. Proceed with caution." %>
+  <% end %>
+<% end %>

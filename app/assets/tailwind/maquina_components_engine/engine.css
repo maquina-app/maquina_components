@@ -1,18 +1,18 @@
 @source "../../../views/";
 
-@layer components {
-  @import "../../stylesheets/alert.css";
-  @import "../../stylesheets/badge.css";
-  @import "../../stylesheets/breadcrumbs.css";
-  @import "../../stylesheets/card.css";
-  @import "../../stylesheets/combobox.css";
-  @import "../../stylesheets/dropdown_menu.css";
-  @import "../../stylesheets/empty.css";
-  @import "../../stylesheets/form.css";
-  @import "../../stylesheets/header.css";
-  @import "../../stylesheets/pagination.css";
-  @import "../../stylesheets/sidebar.css";
-  @import "../../stylesheets/table.css";
-  @import "../../stylesheets/toast.css";
-  @import "../../stylesheets/toggle_group.css";
-}
+@import "../../stylesheets/alert.css";
+@import "../../stylesheets/badge.css";
+@import "../../stylesheets/breadcrumbs.css";
+@import "../../stylesheets/calendar.css";
+@import "../../stylesheets/card.css";
+@import "../../stylesheets/combobox.css";
+@import "../../stylesheets/date_picker.css";
+@import "../../stylesheets/dropdown_menu.css";
+@import "../../stylesheets/empty.css";
+@import "../../stylesheets/form.css";
+@import "../../stylesheets/header.css";
+@import "../../stylesheets/pagination.css";
+@import "../../stylesheets/sidebar.css";
+@import "../../stylesheets/table.css";
+@import "../../stylesheets/toast.css";
+@import "../../stylesheets/toggle_group.css";

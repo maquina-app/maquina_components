@@ -1,0 +1,24 @@
+<%= render "components/breadcrumbs" do %>
+  <%= render "components/breadcrumbs/list" do %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/link", href: "#" do %>
+        <%= icon_for(:home, class: "size-4") %>
+        Home
+      <% end %>
+    <% end %>
+    <%= render "components/breadcrumbs/separator" %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/link", href: "#" do %>
+        <%= icon_for(:folder, class: "size-4") %>
+        Projects
+      <% end %>
+    <% end %>
+    <%= render "components/breadcrumbs/separator" %>
+    <%= render "components/breadcrumbs/item" do %>
+      <%= render "components/breadcrumbs/page" do %>
+        <%= icon_for(:file_text, class: "size-4") %>
+        Document
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

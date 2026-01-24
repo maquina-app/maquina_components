@@ -1,0 +1,6 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/alert", variant: :success, icon: :check_circle do %>
+    <%= render "components/alert/title", text: "Success" %>
+    <%= render "components/alert/description", text: "Your changes have been saved successfully." %>
+  <% end %>
+<% end %>

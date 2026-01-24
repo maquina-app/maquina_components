@@ -1,0 +1,58 @@
+# Git
+.git
+.gitignore
+
+# Logs
+log/*
+test/dummy/log/*
+
+# Temp files
+tmp/*
+test/dummy/tmp/*
+
+# Storage (will be mounted as volume)
+storage/*
+test/dummy/storage/*
+
+# Test files
+test/
+spec/
+.rspec
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Documentation
+*.md
+!README.md
+/docs/
+/references/
+
+# Development files
+.ruby-version
+.ruby-gemset
+.rvmrc
+.bundle/
+
+# Kamal secrets
+.kamal/secrets
+
+# Node (if any)
+node_modules/
+
+# Assets builds (will be generated during docker build)
+app/assets/builds/*
+
+# Misc
+.env*
+.byebug_history

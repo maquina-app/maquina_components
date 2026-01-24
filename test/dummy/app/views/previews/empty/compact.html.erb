@@ -1,0 +1,9 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/empty", size: :compact do %>
+    <%= render "components/empty/header" do %>
+      <%= render "components/empty/media", icon: :search %>
+      <%= render "components/empty/title", text: "No results found" %>
+      <%= render "components/empty/description", text: "Try adjusting your search terms." %>
+    <% end %>
+  <% end %>
+<% end %>

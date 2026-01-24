@@ -1,0 +1,21 @@
+<%= preview_stack gap: 4 do %>
+  <div data-form-part="group" data-layout="inline">
+    <input type="checkbox" id="terms" data-component="checkbox">
+    <label data-component="label" for="terms">Accept terms and conditions</label>
+  </div>
+
+  <div data-form-part="group" data-layout="inline">
+    <input type="checkbox" id="checked" data-component="checkbox" checked>
+    <label data-component="label" for="checked">Checked by default</label>
+  </div>
+
+  <div data-form-part="group" data-layout="inline">
+    <input type="checkbox" id="disabled-checkbox" data-component="checkbox" disabled>
+    <label data-component="label" for="disabled-checkbox">Disabled checkbox</label>
+  </div>
+
+  <div data-form-part="group" data-layout="inline">
+    <input type="checkbox" id="disabled-checked" data-component="checkbox" disabled checked>
+    <label data-component="label" for="disabled-checked">Disabled checked</label>
+  </div>
+<% end %>

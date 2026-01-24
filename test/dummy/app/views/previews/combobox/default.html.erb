@@ -1,0 +1,19 @@
+<%= preview_container width: :md do %>
+  <%= render "components/combobox", placeholder: "Select framework..." do |combobox_id| %>
+    <%= render "components/combobox/trigger", for_id: combobox_id, placeholder: "Select framework..." %>
+
+    <%= render "components/combobox/content", id: combobox_id do %>
+      <%= render "components/combobox/input", placeholder: "Search frameworks..." %>
+
+      <%= render "components/combobox/list" do %>
+        <%= render "components/combobox/option", value: "rails" do %>Ruby on Rails<% end %>
+        <%= render "components/combobox/option", value: "phoenix" do %>Phoenix<% end %>
+        <%= render "components/combobox/option", value: "django" do %>Django<% end %>
+        <%= render "components/combobox/option", value: "laravel" do %>Laravel<% end %>
+        <%= render "components/combobox/option", value: "nextjs" do %>Next.js<% end %>
+      <% end %>
+
+      <%= render "components/combobox/empty" %>
+    <% end %>
+  <% end %>
+<% end %>

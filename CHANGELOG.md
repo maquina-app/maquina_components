@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2025-01-19
+
+### Added
+
+#### Interactive Components
+- **Calendar** — Inline date picker calendar
+  - Single and range date selection modes
+  - Min/max date constraints
+  - Disabled dates support
+  - Configurable week start (Sunday/Monday)
+  - Show/hide outside days
+  - Hidden inputs for form integration
+  - Full keyboard navigation (arrow keys, Home, End)
+  - Stimulus controller with month navigation
+  - ARIA-compliant accessibility (`role="grid"`)
+
+- **Date Picker** — Popover-based date selection
+  - Uses native HTML5 Popover API for light-dismiss behavior
+  - Wraps Calendar component in a popover
+  - Single and range selection modes
+  - Customizable placeholder text
+  - Size variants (sm, default, lg)
+  - Full-width option
+  - Error state styling
+  - Auto-close on selection (single mode) or range completion
+  - Smooth open/close animations with CSS transitions
+  - Fallback positioning for browsers without anchor positioning
+
+### Technical Details
+- Calendar uses CSS custom property `--cell-size` for responsive sizing
+- Date Picker uses `position-area` with fallbacks for cross-browser support
+- Both components support dark mode via CSS variables
+- Added `chevron_left` and `calendar` icons to icons helper
+
 ## [0.3.0] - 2025-01-07
 
 ### Added
@@ -101,7 +135,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/maquina-app/maquina_components/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/maquina-app/maquina_components/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/maquina-app/maquina_components/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/maquina-app/maquina_components/releases/tag/v0.1.0

@@ -783,6 +783,62 @@
       <% end %>
     <% end %>
   </div>
+
+  <%# Date Pickers - Second Row %>
+  <div class="grid gap-4 lg:grid-cols-2 mt-4">
+    <%# Date Picker %>
+    <%= render "components/card" do %>
+      <%= render "components/card/header" do %>
+        <%= render "components/card/title", text: "Date Picker" %>
+        <%= render "components/card/description", text: "Popover-based date selection using native Popover API." %>
+      <% end %>
+
+      <%= render "components/card/content", css_classes: "space-y-4" do %>
+        <div>
+          <p class="text-sm text-muted-foreground mb-2">Single date:</p>
+          <%= render "components/date_picker",
+            selected: Date.current + 3.days,
+            min_date: Date.current,
+            placeholder: "Select a date" %>
+        </div>
+
+        <div>
+          <p class="text-sm text-muted-foreground mb-2">Date range:</p>
+          <%= render "components/date_picker",
+            mode: :range,
+            selected: Date.current + 7.days,
+            selected_end: Date.current + 14.days,
+            min_date: Date.current,
+            placeholder: "Select dates" %>
+        </div>
+
+        <div>
+          <p class="text-sm text-muted-foreground mb-2">With constraints:</p>
+          <%= render "components/date_picker",
+            min_date: Date.current,
+            max_date: Date.current + 30.days,
+            placeholder: "Next 30 days only" %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%# Inline Calendar %>
+    <%= render "components/card" do %>
+      <%= render "components/card/header" do %>
+        <%= render "components/card/title", text: "Inline Calendar" %>
+        <%= render "components/card/description", text: "Always-visible calendar for scheduling views." %>
+      <% end %>
+
+      <%= render "components/card/content" do %>
+        <div class="flex justify-center">
+          <%= render "components/calendar",
+            mode: :single,
+            selected: Date.current + 5.days,
+            min_date: Date.current %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
 </div>
 
 <%# Toast Examples %>

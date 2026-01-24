@@ -4,6 +4,10 @@ source "https://rubygems.org"
 gemspec
 
 gem "puma"
+gem "thruster", ">= 0.1.1"
+
+# Reduces boot times through caching; required in config/boot.rb
+gem "bootsnap", require: false
 
 gem "sqlite3"
 
@@ -20,3 +24,6 @@ gem "tailwindcss-rails", "~> 4.4"
 # Hotwire
 gem "turbo-rails"
 gem "stimulus-rails"
+
+# CORS for preview embeds
+gem "rack-cors"
