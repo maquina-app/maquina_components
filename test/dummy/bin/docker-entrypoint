@@ -7,10 +7,4 @@ if [ -z "${LD_PRELOAD+x}" ]; then
   export LD_PRELOAD
 fi
 
-# Ensure storage directory exists
-mkdir -p /rails/storage
-
-# Prepare database (create if not exists, run migrations)
-./bin/rails db:prepare
-
 exec "${@}"

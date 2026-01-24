@@ -6,6 +6,9 @@ gemspec
 gem "puma"
 gem "thruster", ">= 0.1.1"
 
+# Reduces boot times through caching; required in config/boot.rb
+gem "bootsnap", require: false
+
 gem "sqlite3"
 
 # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]

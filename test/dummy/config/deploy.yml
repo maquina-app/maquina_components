@@ -1,45 +1,49 @@
-# Kamal 2.x deployment configuration for maquina_components demo app
-# See: https://kamal-deploy.org/docs/configuration/overview/
-
+# Name of your application. Used to uniquely configure containers.
 service: maquina-components-demo
 
 # Docker image registry
-image: your-registry/maquina-components-demo
+image: maquina-app/maquina-components-demo
+
+ssh:
+  user: zzyzx
+  port: 4422
 
 # Deploy to these servers
 servers:
   web:
     hosts:
-      - your-server-ip
+      - 192.168.1.128
     options:
       # Mount persistent storage for SQLite database
       volume:
-        - /var/lib/maquina-components-demo/storage:/rails/test/dummy/storage
+        - maquina-components-demo_storage:/rails/test/dummy/storage
 
 # Kamal proxy configuration (replaces Traefik in Kamal 2.x)
 proxy:
-  ssl: true
-  host: your-domain.com
+  ssl: false
+  host: demo.maquina.app
+  app_port: 80
   # Health check configuration
   healthcheck:
     interval: 3
     path: /up
-    timeout: 3
+    timeout: 60
 
 # Docker registry credentials
 registry:
-  username: your-registry-username
+  server: ghcr.io
+  username: maquina-app
   password:
     - KAMAL_REGISTRY_PASSWORD
 
 # Docker build configuration
 builder:
   # Build from project root to include the engine
-  context: ../..
+  context: .
   dockerfile: test/dummy/Dockerfile
   # Multiplatform builds (optional, uncomment for ARM support)
   # multiarch: false
-  # arch:
+  arch: amd64
   #   - amd64
   #   - arm64
 
@@ -52,6 +56,7 @@ env:
   clear:
     RAILS_LOG_TO_STDOUT: "true"
     RAILS_SERVE_STATIC_FILES: "true"
+    SOLID_QUEUE_IN_PUMA: false
 
 # Asset bridging for zero-downtime deploys
 # Keeps old assets available during deployment

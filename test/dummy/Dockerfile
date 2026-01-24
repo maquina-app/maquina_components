@@ -49,11 +49,10 @@ WORKDIR /rails/test/dummy
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
-# Compile Tailwind CSS
-RUN bundle exec rails tailwindcss:build
-
-# Precompile assets
-RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
+# Create engine CSS entry points and precompile assets
+RUN mkdir -p app/assets/builds/tailwind && \
+    SECRET_KEY_BASE_DUMMY=1 bundle exec rails tailwindcss:engines && \
+    SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
 
 # Final stage for app image
 FROM base
@@ -68,9 +67,8 @@ WORKDIR /rails/test/dummy
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    chown -R rails:rails /rails/test/dummy/db /rails/test/dummy/log /rails/test/dummy/tmp && \
-    mkdir -p /rails/test/dummy/storage && \
-    chown -R rails:rails /rails/test/dummy/storage
+    mkdir -p /rails/test/dummy/log /rails/test/dummy/tmp /rails/test/dummy/storage && \
+    chown -R rails:rails /rails/test/dummy/log /rails/test/dummy/tmp /rails/test/dummy/storage
 
 USER 1000:1000
 
