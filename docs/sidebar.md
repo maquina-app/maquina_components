@@ -117,7 +117,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| icon_name | Symbol | :panel_left | Icon name for toggle button |
+| icon_name | Symbol | :left_panel | Icon name for toggle button |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
