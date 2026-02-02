@@ -56,8 +56,8 @@
 
 /* Primary variant - brand color */
 [data-component="badge"][data-variant="primary"] {
-  background-color: var(--primary-color);
-  color: var(--primary-foreground-color);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 [data-component="badge"][data-variant="primary"]:hover {
