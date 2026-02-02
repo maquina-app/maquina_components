@@ -72,7 +72,8 @@ export default class extends Controller {
 
     // Update caption
     if (caption) {
-      caption.textContent = firstOfMonth.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
+      const locale = document.documentElement.lang || undefined
+      caption.textContent = firstOfMonth.toLocaleDateString(locale, { month: 'long', year: 'numeric' })
     }
 
     // Calculate start of calendar grid

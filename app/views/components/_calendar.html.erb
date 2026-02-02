@@ -49,10 +49,11 @@
   # Build weeks array
   weeks = (calendar_start..calendar_end).each_slice(7).to_a
 
-  # Weekday names
+  # Weekday names (localized)
+  abbr_day_names = I18n.t('date.abbr_day_names')
   weekday_names = week_starts_on == :monday ?
-    %w[Mo Tu We Th Fr Sa Su] :
-    %w[Su Mo Tu We Th Fr Sa]
+    abbr_day_names.rotate(1) :
+    abbr_day_names
 
   merged_data = (html_options.delete(:data) || {}).merge(
     controller: "calendar",
