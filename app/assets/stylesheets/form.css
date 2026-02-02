@@ -532,7 +532,7 @@
    =================================================================== */
 [data-form-part="error"] {
   @apply text-sm font-medium;
-  color: var(--destructive);
+  color: var(--destructive-foreground);
 }
 
 /* Rails error wrapper compatibility */
