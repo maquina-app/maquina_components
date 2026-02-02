@@ -176,7 +176,8 @@ export default class extends Controller {
         ? { month: "short", day: "numeric", year: "numeric" }
         : { weekday: "long", month: "long", day: "numeric", year: "numeric" }
 
-      return date.toLocaleDateString(undefined, options)
+      const locale = document.documentElement.lang || undefined
+      return date.toLocaleDateString(locale, options)
     } catch {
       return dateStr
     }
