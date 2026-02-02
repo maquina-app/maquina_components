@@ -113,6 +113,14 @@
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
+### Trigger
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| icon_name | Symbol | :panel_left | Icon name for toggle button |
+| css_classes | String | "" | Additional CSS classes |
+| html_options | Hash | {} | Additional HTML attributes |
+
 ### Other Parts
 
 | Partial | Description |
