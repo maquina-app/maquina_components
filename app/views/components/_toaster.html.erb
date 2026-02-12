@@ -1,4 +1,4 @@
-<%# locals: (position: :bottom_right, css_classes: "", **html_options) %>
+<%# locals: (position: :bottom_right, content: nil, css_classes: "", **html_options) %>
 <% merged_data = (html_options.delete(:data) || {}).merge(
     component: :toaster,
     controller: "toaster",
@@ -13,5 +13,5 @@
       class: css_classes.presence,
       data: merged_data,
       **html_options do %>
-  <%= yield if block_given? %>
+  <%= content if content %>
 <% end %>

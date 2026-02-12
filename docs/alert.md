@@ -63,7 +63,8 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| text | String | nil | Title text, or use block |
+| text | String | nil | Title text |
+| content | String | nil | HTML content via `capture` |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -71,6 +72,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| text | String | nil | Description text, or use block |
+| text | String | nil | Description text |
+| content | String | nil | HTML content via `capture` |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |

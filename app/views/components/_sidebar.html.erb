@@ -1,5 +1,5 @@
 <%# locals: (id: nil, state: :collapsed, collapsible: :offcanvas, variant: :inset, side: :left, css_classes: "", **html_options) %>
-<% random_id = id || "sidebar-#{SecureRandom.hex(6)}"
+<% stable_id = id || "sidebar-#{side}"
   
   merged_data = (html_options.delete(:data) || {}).merge(
     sidebar_part: :root,
@@ -11,16 +11,16 @@
   ) %>
 
 <aside
-  id="<%= random_id %>"
+  id="<%= stable_id %>"
   class="group peer sidebar-loading <%= css_classes %>"
   <%= tag.attributes(data: merged_data, **html_options) %>
 >
   <%# Sidebar gap (creates space for sidebar on desktop) %>
-  <div id="<%= random_id %>-gap" data-sidebar-part="gap"></div>
+  <div id="<%= stable_id %>-gap" data-sidebar-part="gap"></div>
 
   <%# Mobile backdrop overlay %>
   <div
-    id="<%= random_id %>-overlay"
+    id="<%= stable_id %>-overlay"
     data-sidebar-part="backdrop"
     data-sidebar-target="backdrop"
     data-action="click->sidebar#backdropClick"
@@ -28,12 +28,12 @@
 
   <%# Sidebar container (fixed positioned) %>
   <div
-    id="<%= random_id %>-container"
+    id="<%= stable_id %>-container"
     data-sidebar-part="container"
     data-sidebar-target="container"
   >
     <%# Inner sidebar content wrapper %>
-    <div id="<%= random_id %>-inner" data-sidebar-part="inner">
+    <div id="<%= stable_id %>-inner" data-sidebar-part="inner">
       <%= yield %>
     </div>
   </div>

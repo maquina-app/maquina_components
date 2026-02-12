@@ -23,6 +23,18 @@
   transition: none !important;
 }
 
+/* Prevent layout shift before Stimulus initializes.
+   The server renders collapsible="offcanvas" (gap=0) but JS immediately
+   sets collapsible="none" (gap=sidebar-width) for expanded desktop sidebars.
+   This rule keeps the gap at the correct width during loading so the main
+   content doesn't jump from left to right. Desktop-only — on mobile JS
+   forces the sidebar closed and the gap should stay at 0. */
+@media (min-width: 768px) {
+  [data-sidebar-part="root"].sidebar-loading[data-state="expanded"] [data-sidebar-part="gap"] {
+    width: var(--sidebar-width);
+  }
+}
+
 /* ===== Sidebar Gap (creates space on desktop) ===== */
 [data-sidebar-part="gap"] {
   @apply relative bg-transparent;

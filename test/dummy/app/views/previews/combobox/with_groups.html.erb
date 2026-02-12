@@ -7,7 +7,7 @@
 
       <%= render "components/combobox/list" do %>
         <%= render "components/combobox/group" do %>
-          <%= render "components/combobox/label" do %>Backend<% end %>
+          <%= render "components/combobox/label", text: "Backend" %>
           <%= render "components/combobox/option", value: "ruby" do %>Ruby<% end %>
           <%= render "components/combobox/option", value: "python" do %>Python<% end %>
           <%= render "components/combobox/option", value: "go" do %>Go<% end %>
@@ -16,7 +16,7 @@
         <%= render "components/combobox/separator" %>
 
         <%= render "components/combobox/group" do %>
-          <%= render "components/combobox/label" do %>Frontend<% end %>
+          <%= render "components/combobox/label", text: "Frontend" %>
           <%= render "components/combobox/option", value: "javascript" do %>JavaScript<% end %>
           <%= render "components/combobox/option", value: "typescript" do %>TypeScript<% end %>
         <% end %>

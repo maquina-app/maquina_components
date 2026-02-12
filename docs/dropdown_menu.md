@@ -72,6 +72,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
+| auto_close | Boolean | false | Close on item click before Turbo navigates |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -136,3 +137,24 @@
 | text | String | nil | Shortcut text, or use block |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
+
+## Turbo Drive
+
+The dropdown menu controller automatically resets to a closed state before Turbo caches the page. This prevents stale open menus from appearing when the user navigates back.
+
+### Auto Close for Navigation Menus
+
+When a dropdown contains navigation links, use `auto_close: true` so the menu closes immediately on item click — before Turbo starts navigating:
+
+```erb
+<%%= render "components/dropdown_menu", auto_close: true do %>
+  <%%= render "components/dropdown_menu/trigger" do %>Navigate<%% end %>
+
+  <%%= render "components/dropdown_menu/content" do %>
+    <%%= render "components/dropdown_menu/item", href: dashboard_path do %>Dashboard<%% end %>
+    <%%= render "components/dropdown_menu/item", href: settings_path do %>Settings<%% end %>
+  <%% end %>
+<%% end %>
+```
+
+Without `auto_close`, the dropdown stays open during navigation and Turbo may cache the page with it visible. With `auto_close: true`, clicking an item closes the dropdown instantly, so the cached snapshot is always clean.

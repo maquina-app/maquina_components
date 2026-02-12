@@ -1,6 +1,6 @@
-<%# locals: (text: nil, css_classes: "", **html_options) %>
+<%# locals: (text: nil, content: nil, css_classes: "", **html_options) %>
 <% merged_data = (html_options.delete(:data) || {}).merge(card_part: :description) %>
 
 <%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
-  <%= text || yield %>
+  <%= text || content %>
 <% end %>

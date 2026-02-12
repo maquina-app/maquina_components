@@ -81,3 +81,7 @@
 | required | Boolean | false | Mark input as required |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
+
+## Turbo Drive
+
+The date picker controller automatically closes the popover before Turbo caches the page. No configuration is needed — pressing the browser back button will always show the date picker in its closed state.

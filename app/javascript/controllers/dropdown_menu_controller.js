@@ -15,19 +15,25 @@ export default class extends Controller {
   static targets = ["trigger", "content", "chevron"]
 
   static values = {
-    open: { type: Boolean, default: false }
+    open: { type: Boolean, default: false },
+    autoClose: { type: Boolean, default: false }
   }
 
   connect() {
     this.handleClickOutside = this.handleClickOutside.bind(this)
     this.handleKeydown = this.handleKeydown.bind(this)
+    this.boundTeardown = this.teardown.bind(this)
 
     // Set initial state on root element
     this.element.dataset.state = "closed"
+    this.element.addEventListener("click", this.handleItemClick)
+    document.addEventListener("turbo:before-cache", this.boundTeardown)
   }
 
   disconnect() {
     this.removeEventListeners()
+    this.element.removeEventListener("click", this.handleItemClick)
+    document.removeEventListener("turbo:before-cache", this.boundTeardown)
   }
 
   toggle(event) {
@@ -71,7 +77,8 @@ export default class extends Controller {
     // Wait for animation to complete
     const animationDuration = 100 // matches CSS animation duration
 
-    setTimeout(() => {
+    this._closeTimeout = setTimeout(() => {
+      this._closeTimeout = null
       this.openValue = false
       this.element.dataset.state = "closed"
       this.contentTarget.dataset.state = "closed"
@@ -90,6 +97,39 @@ export default class extends Controller {
         this.triggerTarget.focus()
       }
     }, animationDuration)
+  }
+
+  // Turbo Cache Teardown
+
+  teardown() {
+    if (this._closeTimeout) {
+      clearTimeout(this._closeTimeout)
+      this._closeTimeout = null
+    }
+
+    this.openValue = false
+    this.element.dataset.state = "closed"
+
+    if (this.hasContentTarget) {
+      this.contentTarget.dataset.state = "closed"
+      this.contentTarget.hidden = true
+    }
+
+    if (this.hasTriggerTarget) {
+      this.triggerTarget.setAttribute("aria-expanded", "false")
+    }
+
+    this.removeEventListeners()
+  }
+
+  handleItemClick = (event) => {
+    if (!this.autoCloseValue || !this.openValue) return
+
+    const item = event.target.closest('[data-dropdown-menu-part="item"]')
+    if (!item) return
+    if (item.disabled || item.getAttribute("aria-disabled") === "true") return
+
+    this.teardown()
   }
 
   // Event Handlers

@@ -41,14 +41,14 @@
 ```erb
 <%%= render "components/combobox/list" do %>
   <%%= render "components/combobox/group" do %>
-    <%%= render "components/combobox/label" do %>Backend<%% end %>
+    <%%= render "components/combobox/label", text: "Backend" %>
     <%%= render "components/combobox/option", value: "ruby" do %>Ruby<%% end %>
   <%% end %>
 
   <%%= render "components/combobox/separator" %>
 
   <%%= render "components/combobox/group" do %>
-    <%%= render "components/combobox/label" do %>Frontend<%% end %>
+    <%%= render "components/combobox/label", text: "Frontend" %>
     <%%= render "components/combobox/option", value: "js" do %>JavaScript<%% end %>
   <%% end %>
 <%% end %>
@@ -125,7 +125,8 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| text | String | nil | Label text, or use block |
+| text | String | nil | Label text |
+| content | String | nil | HTML content via `capture` |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 

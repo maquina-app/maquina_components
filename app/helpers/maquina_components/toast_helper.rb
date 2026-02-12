@@ -15,9 +15,9 @@ module MaquinaComponents
   #   <%= toast :error, "Save failed", description: "Please check your connection." %>
   #
   # @example Toast with action
-  #   <%= toast :info, "New version available" do %>
+  #   <%= toast :info, "New version available", content: capture { %>
   #     <%= render "components/toast/action", label: "Refresh", href: root_path %>
-  #   <% end %>
+  #   <% } %>
   #
   module ToastHelper
     # Flash type to toast variant mapping
@@ -55,15 +55,14 @@ module MaquinaComponents
     # @param title [String] Toast title
     # @param description [String, nil] Optional description
     # @param options [Hash] Additional options passed to the toast partial
-    # @yield Optional block for custom content (e.g., action button)
+    # @param content [String, nil] HTML content via `capture` (e.g., action button)
     # @return [String] HTML-safe toast element
-    def toast(variant, title, description: nil, **options, &block)
+    def toast(variant, title, description: nil, **options)
       render "components/toast",
         variant: variant,
         title: title,
         description: description,
-        **options,
-        &block
+        **options
     end
 
     # Render a success toast
@@ -71,8 +70,8 @@ module MaquinaComponents
     # @param title [String] Toast title
     # @param options [Hash] Additional options
     # @return [String] HTML-safe toast element
-    def toast_success(title, **options, &block)
-      toast(:success, title, **options, &block)
+    def toast_success(title, **options)
+      toast(:success, title, **options)
     end
 
     # Render an error toast
@@ -80,8 +79,8 @@ module MaquinaComponents
     # @param title [String] Toast title
     # @param options [Hash] Additional options
     # @return [String] HTML-safe toast element
-    def toast_error(title, **options, &block)
-      toast(:error, title, **options, &block)
+    def toast_error(title, **options)
+      toast(:error, title, **options)
     end
 
     # Render a warning toast
@@ -89,8 +88,8 @@ module MaquinaComponents
     # @param title [String] Toast title
     # @param options [Hash] Additional options
     # @return [String] HTML-safe toast element
-    def toast_warning(title, **options, &block)
-      toast(:warning, title, **options, &block)
+    def toast_warning(title, **options)
+      toast(:warning, title, **options)
     end
 
     # Render an info toast
@@ -98,8 +97,8 @@ module MaquinaComponents
     # @param title [String] Toast title
     # @param options [Hash] Additional options
     # @return [String] HTML-safe toast element
-    def toast_info(title, **options, &block)
-      toast(:info, title, **options, &block)
+    def toast_info(title, **options)
+      toast(:info, title, **options)
     end
 
     private
