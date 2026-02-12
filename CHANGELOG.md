@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-02-12
+
+### Fixed
+
+#### Sidebar: Turbo Morph & Turbo Frame compatibility
+- Replace random IDs (`sidebar-<random_hex>`) with deterministic `sidebar-left` / `sidebar-right` to fix idiomorph element matching across renders
+- Add `turbo:before-morph-element` listener with `_morphing` guard flag to prevent stale server values from overwriting cookie state during morph
+- Enhance `handleMorph()` to read the cookie (client truth), reassert correct state, and remove the `sidebar-loading` class that morph re-adds from server HTML
+- Add stable `id` to sidebar provider (`sidebar-provider` by default)
+
+#### Sidebar: Layout shift fix
+- Add CSS rule scoped to `@media (min-width: 768px)` that overrides the gap width during `sidebar-loading` phase when sidebar state is `expanded`, eliminating the layout shift before Stimulus initializes
+
+#### Partials: Replace yield with explicit content parameter
+- Add `content: nil` parameter to 9 partials and replace `yield` with `content` to fix Rails partial rendering bug where `yield` silently renders entire page content when no explicit block is passed
+  - card/title, card/description
+  - alert/title, alert/description
+  - toast/title, toast/description
+  - combobox/label
+  - toast (main), toaster
+- Remove `&block` from all 5 toast helper methods (`toast`, `toast_success`, `toast_error`, `toast_warning`, `toast_info`)
+
+### Changed
+
+- Updated documentation for sidebar, card, alert, toast, combobox, date picker, and dropdown menu components
+
+### Breaking Changes
+
+- Block syntax no longer works for affected partials — use `content: capture { ... }` instead of `do ... end`
+- Toast helper methods no longer accept blocks — use `content:` parameter instead
+- Sidebar IDs changed from `sidebar-<random_hex>` to `sidebar-left` / `sidebar-right`
+- Sidebar provider now has an `id` attribute (`sidebar-provider` by default)
+
 ## [0.3.1.1] - 2025-02-02
 
 ### Fixed
@@ -144,7 +177,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.3.1.1...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/maquina-app/maquina_components/compare/v0.3.1.1...v0.4.0
 [0.3.1.1]: https://github.com/maquina-app/maquina_components/compare/v0.3.1...v0.3.1.1
 [0.3.1]: https://github.com/maquina-app/maquina_components/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/maquina-app/maquina_components/compare/v0.2.0...v0.3.0
