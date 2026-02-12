@@ -1,4 +1,4 @@
-<%# locals: (variant: :default, title: nil, description: nil, icon: nil, duration: 5000, dismissible: true, css_classes: "", **html_options) %>
+<%# locals: (variant: :default, title: nil, description: nil, icon: nil, duration: 5000, dismissible: true, content: nil, css_classes: "", **html_options) %>
 <%
   # Auto-select icon based on variant if not provided
   default_icons = {
@@ -39,7 +39,7 @@
       <%= render "components/toast/description", text: description %>
     <% end %>
 
-    <%= yield if block_given? %>
+    <%= content if content %>
   </div>
 
   <% if dismissible %>

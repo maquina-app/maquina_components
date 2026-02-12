@@ -31,12 +31,12 @@
   <div class="mt-8">
     <%= render "components/alert", variant: :default, icon: :info do %>
       <%= render "components/alert/title", text: "Query Parameters" %>
-      <%= render "components/alert/description" do %>
+      <%= render "components/alert/description", content: capture { %>
         <ul class="text-sm space-y-1 mt-2">
           <li><code class="bg-muted px-1 rounded">?theme=dark</code> - Enable dark mode</li>
           <li><code class="bg-muted px-1 rounded">?color_theme=blue</code> - Set color theme (neutral, green, rose, blue)</li>
         </ul>
-      <% end %>
+      <% } %>
     <% end %>
   </div>
 </div>

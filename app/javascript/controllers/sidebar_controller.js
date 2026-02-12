@@ -33,6 +33,9 @@ export default class extends Controller {
 
     // Track if we're on mobile
     this._isMobile = null
+
+    // Guard flag for morph-triggered attribute changes
+    this._morphing = false
   }
 
   connect() {
@@ -43,12 +46,62 @@ export default class extends Controller {
     this.resizeHandler = this.debounce(this.checkScreenSize.bind(this), 150)
     window.addEventListener("resize", this.resizeHandler)
 
+    this.boundTeardown = this.teardown.bind(this)
+    this.boundBeforeMorphElement = this.beforeMorphElement.bind(this)
+    this.boundHandleMorph = this.handleMorph.bind(this)
+    document.addEventListener("turbo:before-cache", this.boundTeardown)
+    document.addEventListener("turbo:before-morph-element", this.boundBeforeMorphElement)
+    document.addEventListener("turbo:morph", this.boundHandleMorph)
+
     // Apply initial state without animation
     this.updateStateImmediate()
   }
 
   disconnect() {
     window.removeEventListener("resize", this.resizeHandler)
+    document.removeEventListener("turbo:before-cache", this.boundTeardown)
+    document.removeEventListener("turbo:before-morph-element", this.boundBeforeMorphElement)
+    document.removeEventListener("turbo:morph", this.boundHandleMorph)
+  }
+
+  // ============================================================================
+  // Turbo Cache Teardown
+  // ============================================================================
+
+  teardown() {
+    if (this.isMobile()) {
+      this.openValue = false
+    }
+
+    if (this.hasBackdropTarget) {
+      this.backdropTarget.setAttribute("data-state", "hidden")
+      this.backdropTarget.classList.add("hidden")
+    }
+
+    this.unlockScroll()
+  }
+
+  beforeMorphElement(event) {
+    if (event.target === this.element) {
+      this._morphing = true
+    }
+  }
+
+  handleMorph() {
+    const cookieValue = this.getCookie(this.cookieNameValue)
+
+    if (this.isMobile()) {
+      this.openValue = false
+    } else if (cookieValue !== null) {
+      this.openValue = cookieValue === "true"
+    }
+
+    if (this.hasSidebarTarget) {
+      this.sidebarTarget.classList.remove("sidebar-loading")
+    }
+
+    this.updateState()
+    this._morphing = false
   }
 
   // ============================================================================
@@ -70,6 +123,7 @@ export default class extends Controller {
 
   openValueChanged(new_value, old_value) {
     if (new_value === old_value) return
+    if (this._morphing) return
 
     this.updateState()
     this.persistState()

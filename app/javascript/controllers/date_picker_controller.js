@@ -28,12 +28,35 @@ export default class extends Controller {
   }
 
   connect() {
+    this.boundTeardown = this.teardown.bind(this)
+
     this.setupPopoverEvents()
     this.updateDisplay()
+    document.addEventListener("turbo:before-cache", this.boundTeardown)
   }
 
   disconnect() {
     this.teardownPopoverEvents()
+    document.removeEventListener("turbo:before-cache", this.boundTeardown)
+  }
+
+  /**
+   * Reset to closed state before Turbo caches the page
+   */
+  teardown() {
+    if (this.hasPopoverTarget) {
+      try {
+        if (this.popoverTarget.matches(":popover-open")) {
+          this.popoverTarget.hidePopover()
+        }
+      } catch {
+        // Popover API not supported
+      }
+    }
+
+    if (this.hasTriggerTarget) {
+      this.triggerTarget.setAttribute("aria-expanded", "false")
+    }
   }
 
   /**
