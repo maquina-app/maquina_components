@@ -3,7 +3,7 @@ module MaquinaComponents
     def icon_for(name, options = {})
       return nil unless name
 
-      svg = icon_svg_for(name.to_sym) || main_icon_svg_for(name.to_sym)
+      svg = main_icon_svg_for(name.to_sym) || icon_svg_for(name.to_sym)
       return nil unless svg
 
       css_classes = options[:class]
