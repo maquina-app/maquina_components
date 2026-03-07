@@ -6,7 +6,7 @@
           data-action="click->calendar#previousMonth"
           data-calendar-target="prevButton"
           aria-label="Previous month">
-    <%= icon_for :chevron_left, class: "size-4" %>
+    <%= builtin_icon_for :chevron_left, class: "size-4" %>
   </button>
 
   <div data-calendar-part="caption">
@@ -17,6 +17,6 @@
           data-action="click->calendar#nextMonth"
           data-calendar-target="nextButton"
           aria-label="Next month">
-    <%= icon_for :chevron_right, class: "size-4" %>
+    <%= builtin_icon_for :chevron_right, class: "size-4" %>
   </button>
 <% end %>

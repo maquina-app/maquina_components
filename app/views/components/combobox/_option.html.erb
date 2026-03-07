@@ -18,7 +18,7 @@
       data: merged_data,
       **html_options do %>
   <span data-combobox-part="check" class="<%= 'invisible' unless selected %>">
-    <%= icon_for :check, class: "size-4" %>
+    <%= builtin_icon_for :check, class: "size-4" %>
   </span>
   <%= yield %>
 <% end %>

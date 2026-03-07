@@ -26,7 +26,7 @@
       **html_options do %>
   <% if toast_icon %>
     <div data-toast-part="icon">
-      <%= icon_for toast_icon, class: "size-5" %>
+      <%= builtin_icon_for toast_icon, class: "size-5" %>
     </div>
   <% end %>
 
@@ -47,7 +47,7 @@
             data-toast-part="close"
             data-action="toast#dismiss"
             aria-label="Dismiss notification">
-      <%= icon_for :x, class: "size-4" %>
+      <%= builtin_icon_for :x, class: "size-4" %>
     </button>
   <% end %>
 <% end %>
