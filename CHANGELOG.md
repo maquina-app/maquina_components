@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3] - 2026-03-08
+
+### Fixed
+
+- Fix responsive breadcrumb collapsing and add ellipsis dropdown (#15)
+  - Toggle adjacent separators when hiding/showing items to prevent orphaned double separators
+  - Allow last breadcrumb item to truncate with text-overflow ellipsis instead of hard-clipping
+  - Add portal dropdown on ellipsis click showing hidden items as clickable links, with click-outside and Escape to close
+
 ## [0.4.2] - 2026-03-08
 
 ### Changed
@@ -192,7 +201,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/maquina-app/maquina_components/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/maquina-app/maquina_components/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/maquina-app/maquina_components/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/maquina-app/maquina_components/compare/v0.3.1.1...v0.4.0
