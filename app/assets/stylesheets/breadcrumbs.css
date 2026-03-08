@@ -107,6 +107,29 @@
 }
 
 /* ===== Responsive Behavior ===== */
+/* Force nowrap when responsive controller is active so scrollWidth detects overflow */
+[data-controller="breadcrumb"] [data-breadcrumb-part="list"] {
+  @apply flex-nowrap overflow-hidden;
+}
+
+/* Items must not shrink or wrap text, otherwise flex compresses them and scrollWidth never exceeds clientWidth */
+[data-controller="breadcrumb"] [data-breadcrumb-part="item"],
+[data-controller="breadcrumb"] [data-breadcrumb-part="separator"] {
+  @apply shrink-0 whitespace-nowrap;
+}
+
+/* Allow the last item (current page) to truncate gracefully instead of hard-clipping */
+[data-controller="breadcrumb"] [data-breadcrumb-part="item"]:last-child {
+  @apply shrink min-w-0 overflow-hidden;
+  text-overflow: ellipsis;
+}
+
+[data-controller="breadcrumb"] [data-breadcrumb-part="item"]:last-child [data-breadcrumb-part="page"],
+[data-controller="breadcrumb"] [data-breadcrumb-part="item"]:last-child [data-breadcrumb-part="link"] {
+  @apply overflow-hidden;
+  text-overflow: ellipsis;
+}
+
 /* Items hidden by Stimulus controller */
 [data-controller="breadcrumb"] [data-breadcrumb-target="item"].hidden,
 [data-controller="breadcrumb"] [data-breadcrumb-target="ellipsisSeparator"].hidden {
