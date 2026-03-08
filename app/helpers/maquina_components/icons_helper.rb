@@ -3,20 +3,37 @@ module MaquinaComponents
     def icon_for(name, options = {})
       return nil unless name
 
-      svg = icon_svg_for(name.to_sym) || main_icon_svg_for(name.to_sym)
+      svg = main_icon_svg_for(name.to_sym) || icon_svg_for(name.to_sym)
       return nil unless svg
 
+      apply_icon_options(svg, options)
+    end
+
+    # Internal icon helper for engine components. Always uses built-in SVGs
+    # so components work reliably regardless of the app's icon configuration.
+    def builtin_icon_for(name, options = {})
+      return nil unless name
+
+      svg = icon_svg_for(name.to_sym)
+      return nil unless svg
+
+      apply_icon_options(svg, options)
+    end
+
+    def main_icon_svg_for(name)
+    end
+
+    private
+
+    def apply_icon_options(svg, options)
       css_classes = options[:class]
-      svg = svg.gsub('class="', "class=\"#{css_classes} ")
+      svg = svg.gsub('class="', "class=\"#{css_classes} ") if css_classes
 
       if options[:stroke_width]
         svg = svg.gsub('stroke-width="2"', "stroke-width=\"#{options[:stroke_width]}\"")
       end
 
       svg.html_safe
-    end
-
-    def main_icon_svg_for(name)
     end
 
     def icon_svg_for(name)
