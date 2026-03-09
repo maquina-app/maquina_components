@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-03-09
+
+### Added
+
+- Add configurable `collapse_after` threshold to responsive breadcrumbs (#16)
+  - New `collapse_after:` parameter on `responsive_breadcrumbs` helper and `_breadcrumbs.html.erb` partial
+  - Count-based collapsing force-hides middle items when total breadcrumb count exceeds the threshold, fixing cases where CSS text truncation absorbs overflow before JS can detect it
+  - Works alongside existing overflow detection: count-based collapse runs first, then overflow check handles any remaining items
+
 ## [0.4.3] - 2026-03-08
 
 ### Fixed
@@ -201,7 +210,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.4.3...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.4.4...HEAD
+[0.4.4]: https://github.com/maquina-app/maquina_components/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/maquina-app/maquina_components/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/maquina-app/maquina_components/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/maquina-app/maquina_components/compare/v0.4.0...v0.4.1
