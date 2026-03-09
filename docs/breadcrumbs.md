@@ -71,6 +71,23 @@
 ) %>
 ```
 
+### Responsive with Collapse Threshold
+
+Force-collapse middle items when total breadcrumb count exceeds a threshold, regardless of available space. Useful when items have long text that CSS truncation absorbs before overflow detection kicks in.
+
+```erb
+<%%= responsive_breadcrumbs(
+  {"Home" => "/", "Docs" => "/docs", "Components" => "/components"},
+  "Breadcrumbs",
+  collapse_after: 2
+) %>
+```
+
+`collapse_after` is the maximum number of visible items (first + last count as visible):
+- `collapse_after: 2` — show first + last, collapse all middle into ellipsis
+- `collapse_after: 3` — show first + one middle + last, collapse the rest
+- `collapse_after: 0` or omitted — current behavior (pure overflow-based)
+
 ## API Reference
 
 ### Breadcrumbs
@@ -78,6 +95,7 @@
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | responsive | Boolean | false | Enable auto-collapse on narrow screens |
+| collapse_after | Integer | 0 | Max visible items before force-collapsing (0 = pure overflow-based) |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 

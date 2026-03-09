@@ -1,10 +1,13 @@
-<%# locals: (css_classes: "", responsive: false, **html_options) %>
+<%# locals: (css_classes: "", responsive: false, collapse_after: 0, **html_options) %>
 <% merged_data = (html_options.delete(:data) || {}).merge(
     component: :breadcrumbs
   )
-  
+
   if responsive
     merged_data[:controller] = "breadcrumb"
+    if collapse_after > 0
+      merged_data[:breadcrumb_collapse_after_value] = collapse_after
+    end
   end %>
 
 <nav
