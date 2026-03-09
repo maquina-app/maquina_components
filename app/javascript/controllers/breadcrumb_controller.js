@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["item", "ellipsis", "ellipsisSeparator"]
+  static values = { collapseAfter: { type: Number, default: 0 } }
 
   connect() {
     this._dropdown = null
@@ -59,15 +60,35 @@ export default class extends Controller {
       if (sep) sep.classList.remove('hidden')
     })
 
+    // Count-based collapsing: force-collapse when total items exceed threshold
+    // items are middle targets only; total visible = middle targets + first + last (2)
+    const totalItems = items.length + 2
+    if (this.collapseAfterValue > 0 && totalItems > this.collapseAfterValue) {
+      ellipsis.classList.remove('hidden')
+      if (ellipsisSeparator) ellipsisSeparator.classList.remove('hidden')
+
+      // collapseAfterValue includes first + last, so middle budget = collapseAfterValue - 2
+      const maxMiddleVisible = Math.max(this.collapseAfterValue - 2, 0)
+      let visibleMiddle = items.length
+
+      for (let i = items.length - 1; i >= 0 && visibleMiddle > maxMiddleVisible; i--) {
+        items[i].classList.add('hidden')
+        const sep = this._adjacentSeparator(items[i])
+        if (sep) sep.classList.add('hidden')
+        visibleMiddle--
+      }
+    }
+
     // Check overflow using scrollWidth vs clientWidth
     if (list.scrollWidth > list.clientWidth) {
       ellipsis.classList.remove('hidden')
       if (ellipsisSeparator) ellipsisSeparator.classList.remove('hidden')
 
       // Hide middle items one at a time until it fits
-      for (let i = items.length - 1; i >= 0; i--) {
-        items[i].classList.add('hidden')
-        const sep = this._adjacentSeparator(items[i])
+      const visibleItems = items.filter(item => !item.classList.contains('hidden'))
+      for (let i = visibleItems.length - 1; i >= 0; i--) {
+        visibleItems[i].classList.add('hidden')
+        const sep = this._adjacentSeparator(visibleItems[i])
         if (sep) sep.classList.add('hidden')
         if (list.scrollWidth <= list.clientWidth) break
       }

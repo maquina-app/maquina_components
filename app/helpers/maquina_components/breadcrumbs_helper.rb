@@ -44,8 +44,8 @@ module MaquinaComponents
     #     "Button"
     #   )
     #
-    def responsive_breadcrumbs(links = {}, current_page = nil, css_classes: "")
-      render "components/breadcrumbs", css_classes: css_classes, responsive: true do
+    def responsive_breadcrumbs(links = {}, current_page = nil, css_classes: "", collapse_after: 0)
+      render "components/breadcrumbs", css_classes: css_classes, responsive: true, collapse_after: collapse_after do
         render "components/breadcrumbs/list" do
           build_breadcrumb_items(links, current_page, responsive: true)
         end
