@@ -26,8 +26,17 @@ module MaquinaComponents
     private
 
     def apply_icon_options(svg, options)
+      return svg.html_safe unless options&.any?
+
       css_classes = options[:class]
-      svg = svg.gsub('class="', "class=\"#{css_classes} ") if css_classes
+      if css_classes&.is_a?(String)
+        escaped_css_classes = ERB::Util.html_escape(css_classes)
+        svg = if /\bclass\s*=\s*(['"])(.*?)\1/.match?(svg)
+          svg.sub(/\bclass\s*=\s*(['"])(.*?)\1/, "class=\\1#{escaped_css_classes}\\1")
+        else
+          svg.sub(/<svg(?=(\s|>))/, "<svg class=\"#{escaped_css_classes}\"")
+        end
+      end
 
       if options[:stroke_width]
         svg = svg.gsub('stroke-width="2"', "stroke-width=\"#{options[:stroke_width]}\"")
