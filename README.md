@@ -76,6 +76,8 @@ This will:
 - Add theme variables (light + dark mode)
 - Create a helper file for icon customization
 
+All engine helpers (`icon_for`, `sidebar_open?`, `toast_flash_messages`, etc.) are automatically available in your views without any additional configuration.
+
 ### 3. Use Components
 
 ```erb

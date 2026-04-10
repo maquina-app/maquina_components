@@ -6,9 +6,16 @@
 # Override methods here to integrate with your application's icon system,
 # sidebar state management, and other customizations.
 #
+# Engine helper modules are included below to make their methods available
+# in your views (icon_for, sidebar_open?, toast_flash_messages, etc.).
+#
 # Documentation: https://github.com/maquina-app/maquina_components
 #
 module MaquinaComponentsHelper
+  include MaquinaComponents::IconsHelper
+  include MaquinaComponents::SidebarHelper
+  include MaquinaComponents::ToastHelper
+
   # Icon Override
   #
   # Override this method to use your own icon system (Heroicons, Lucide, etc.)

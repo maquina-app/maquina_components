@@ -142,6 +142,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/helpers/maquina_components_helper.rb" do |content|
       assert_match %r{module MaquinaComponentsHelper}, content
+      assert_match %r{include MaquinaComponents::IconsHelper}, content
+      assert_match %r{include MaquinaComponents::SidebarHelper}, content
+      assert_match %r{include MaquinaComponents::ToastHelper}, content
       assert_match %r{def main_icon_svg_for\(name\)}, content
       assert_match %r{def app_sidebar_state}, content
       assert_match %r{def app_sidebar_open\?}, content
