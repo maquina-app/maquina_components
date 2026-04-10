@@ -1,0 +1,49 @@
+<%%= form_with(model: <%= model_resource_name %>, class: "space-y-4") do |form| %>
+  <%% if <%= singular_table_name %>.errors.any? %>
+    <%%= render "components/alert", variant: :destructive do %>
+      <%%= render "components/alert/title", text: "<%%= pluralize(<%= singular_table_name %>.errors.count, 'error') %> prohibited this <%= singular_table_name %> from being saved:" %>
+      <%%= render "components/alert/description" do %>
+        <ul class="list-disc list-inside mt-2">
+          <%% <%= singular_table_name %>.errors.each do |error| %>
+            <li><%%= error.full_message %></li>
+          <%% end %>
+        </ul>
+      <%% end %>
+    <%% end %>
+  <%% end %>
+
+<% attributes.each do |attribute| -%>
+  <div class="space-y-2">
+<% if attribute.password_digest? -%>
+    <%%= form.label :password %>
+    <%%= form.password_field :password, data: { component: "input" } %>
+  </div>
+
+  <div class="space-y-2">
+    <%%= form.label :password_confirmation %>
+    <%%= form.password_field :password_confirmation, data: { component: "input" } %>
+<% elsif attribute.attachments? -%>
+    <%%= form.label :<%= attribute.column_name %> %>
+    <%%= form.<%= attribute.field_type %> :<%= attribute.column_name %>, multiple: true, data: { component: "input" } %>
+<% elsif attribute.field_type == :text_area -%>
+    <%%= form.label :<%= attribute.column_name %> %>
+    <%%= form.<%= attribute.field_type %> :<%= attribute.column_name %>, data: { component: "textarea" } %>
+<% elsif attribute.field_type == :check_box -%>
+    <div class="flex items-center gap-2">
+      <%%= form.<%= attribute.field_type %> :<%= attribute.column_name %>, data: { component: "checkbox" } %>
+      <%%= form.label :<%= attribute.column_name %> %>
+    </div>
+<% elsif attribute.field_type == :select -%>
+    <%%= form.label :<%= attribute.column_name %> %>
+    <%%= form.<%= attribute.field_type %> :<%= attribute.column_name %>, [], {}, data: { component: "select" } %>
+<% else -%>
+    <%%= form.label :<%= attribute.column_name %> %>
+    <%%= form.<%= attribute.field_type %> :<%= attribute.column_name %>, data: { component: "input" } %>
+<% end -%>
+  </div>
+
+<% end -%>
+  <div class="flex items-center gap-4 pt-4">
+    <%%= form.submit data: { component: "button", variant: "primary" } %>
+  </div>
+<%% end %>

@@ -1,0 +1,58 @@
+<%% content_for :title, "<%= human_name.pluralize %>" %>
+
+<div class="space-y-6">
+  <%%= render "components/card" do %>
+    <%%= render "components/card/header", layout: :row do %>
+      <div>
+        <%%= render "components/card/title", text: "<%= human_name.pluralize %>" %>
+        <%%= render "components/card/description", text: "<%%= @<%= plural_table_name %>.size %> record(s)" %>
+      </div>
+      <%%= render "components/card/action" do %>
+        <%%= link_to "New <%= human_name.downcase %>", <%= new_helper(type: :path) %>, data: { component: "button", variant: "primary", size: "sm" } %>
+      <%% end %>
+    <%% end %>
+
+    <%%= render "components/card/content" do %>
+      <%% if @<%= plural_table_name %>.any? %>
+        <%%= render "components/table" do %>
+          <%%= render "components/table/header" do %>
+            <%%= render "components/table/row" do %>
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+              <%%= render "components/table/head" do %><%= attribute.human_name %><%% end %>
+<% end -%>
+              <%%= render "components/table/head" do %><%% end %>
+            <%% end %>
+          <%% end %>
+          <%%= render "components/table/body" do %>
+            <%% @<%= plural_table_name %>.each do |<%= singular_table_name %>| %>
+              <%%= render "components/table/row" do %>
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+<% if attribute.attachment? -%>
+                <%%= render "components/table/cell" do %><%%= link_to <%= singular_table_name %>.<%= attribute.column_name %>.filename, <%= singular_table_name %>.<%= attribute.column_name %> if <%= singular_table_name %>.<%= attribute.column_name %>.attached? %><%% end %>
+<% elsif attribute.attachments? -%>
+                <%%= render "components/table/cell" do %><%%= <%= singular_table_name %>.<%= attribute.column_name %>.count %> file(s)<%% end %>
+<% else -%>
+                <%%= render "components/table/cell" do %><%%= <%= singular_table_name %>.<%= attribute.column_name %> %><%% end %>
+<% end -%>
+<% end -%>
+                <%%= render "components/table/cell" do %>
+                  <%%= link_to "Show this <%= human_name.downcase %>", <%= model_resource_name(singular_table_name) %>, data: { component: "button", variant: "ghost", size: "sm" } %>
+                <%% end %>
+              <%% end %>
+            <%% end %>
+          <%% end %>
+        <%% end %>
+      <%% else %>
+        <%%= render "components/empty" do %>
+          <%%= render "components/empty/header" do %>
+            <%%= render "components/empty/title", text: "No <%= human_name.pluralize.downcase %> yet" %>
+            <%%= render "components/empty/description", text: "Get started by creating a new <%= human_name.downcase %>." %>
+          <%% end %>
+          <%%= render "components/empty/content" do %>
+            <%%= link_to "New <%= human_name.downcase %>", <%= new_helper(type: :path) %>, data: { component: "button", variant: "primary" } %>
+          <%% end %>
+        <%% end %>
+      <%% end %>
+    <%% end %>
+  <%% end %>
+</div>
