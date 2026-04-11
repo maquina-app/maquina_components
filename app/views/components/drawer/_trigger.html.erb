@@ -1,0 +1,14 @@
+<%# locals: (variant: :default, size: :default, icon_name: nil, css_classes: "", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    drawer_part: :trigger,
+    controller: "drawer-trigger",
+    action: "click->drawer-trigger#triggerClick",
+    drawer_trigger_drawer_outlet: "[data-outlet='drawer']"
+  ) %>
+<% button_data = merged_data.merge(
+    component: "button"
+  ) %>
+<%= content_tag :button, type: :button, class: css_classes, data: button_data, **html_options do %>
+  <%= icon_for(icon_name) if icon_name %>
+  <%= yield %>
+<% end %>

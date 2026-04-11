@@ -1,0 +1,14 @@
+<%# locals: (id: nil, default_open: false, css_classes: "", cookie_name: "drawer_state", keyboard_shortcut: "d", **html_options) %>
+<% merged_data = (html_options.delete(:data) || {}).merge(
+    component: :drawer,
+    controller: "drawer",
+    outlet: "drawer",
+    drawer_default_open_value: default_open,
+    drawer_open_value: default_open,
+    drawer_cookie_name_value: cookie_name,
+    drawer_keyboard_shortcut_value: keyboard_shortcut,
+    action: "keydown.meta+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard keydown.ctrl+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard"
+  ) %>
+<%= content_tag :div, id: id || "drawer-provider", class: css_classes, data: merged_data, **html_options do %>
+  <%= yield %>
+<% end %>

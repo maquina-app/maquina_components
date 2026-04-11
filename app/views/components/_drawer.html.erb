@@ -1,0 +1,31 @@
+<%# locals: (id: nil, state: :closed, side: :right, css_classes: "", **html_options) %>
+<% stable_id = id || "drawer-#{side}"
+   merged_data = (html_options.delete(:data) || {}).merge(
+     drawer_part: :root,
+     drawer_target: "drawer",
+     state: state,
+     side: side
+   ) %>
+<aside
+  id="<%= stable_id %>"
+  class="group peer drawer-loading <%= css_classes %>"
+  <%= tag.attributes(data: merged_data, **html_options) %>
+>
+  <%# Backdrop overlay %>
+  <div
+    id="<%= stable_id %>-backdrop"
+    data-drawer-part="backdrop"
+    data-drawer-target="backdrop"
+    data-action="click->drawer#backdropClick"
+    ></div>
+  <%# Drawer container (fixed positioned) %>
+  <div
+    id="<%= stable_id %>-panel"
+    data-drawer-part="panel"
+  >
+    <%# Inner drawer content wrapper %>
+    <div id="<%= stable_id %>-inner" data-drawer-part="inner">
+      <%= yield %>
+    </div>
+  </div>
+</aside>
