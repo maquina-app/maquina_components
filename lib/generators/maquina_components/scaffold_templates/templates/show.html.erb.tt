@@ -1,0 +1,53 @@
+<%% content_for :title, "<%= human_name %>" %>
+
+<%% content_for :breadcrumbs do %>
+  <%%= render "components/breadcrumbs" do %>
+    <%%= render "components/breadcrumbs/list" do %>
+      <%%= render "components/breadcrumbs/item" do %>
+        <%%= render "components/breadcrumbs/link", href: <%= index_helper(type: :path) %>, text: "<%= human_name.pluralize %>" %>
+      <%% end %>
+      <%%= render "components/breadcrumbs/item" do %>
+        <%%= render "components/breadcrumbs/page", text: "<%= human_name %>" %>
+      <%% end %>
+    <%% end %>
+  <%% end %>
+<%% end %>
+
+<div class="space-y-6">
+  <%%= render "components/card" do %>
+    <%%= render "components/card/header", layout: :row do %>
+      <div>
+        <%%= render "components/card/title", text: "<%= human_name %>" %>
+      </div>
+      <%%= render "components/card/action" do %>
+        <%%= link_to "Edit this <%= human_name.downcase %>", <%= edit_helper(type: :path) %>, data: { component: "button", variant: "outline", size: "sm" } %>
+      <%% end %>
+    <%% end %>
+
+    <%%= render "components/card/content" do %>
+      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+        <div>
+          <dt class="text-sm font-medium text-muted-foreground"><%= attribute.human_name %></dt>
+<% if attribute.attachment? -%>
+          <dd class="mt-1"><%%= link_to @<%= singular_table_name %>.<%= attribute.column_name %>.filename, @<%= singular_table_name %>.<%= attribute.column_name %> if @<%= singular_table_name %>.<%= attribute.column_name %>.attached? %></dd>
+<% elsif attribute.attachments? -%>
+          <dd class="mt-1">
+            <%% @<%= singular_table_name %>.<%= attribute.column_name %>.each do |<%= attribute.singular_name %>| %>
+              <div><%%= link_to <%= attribute.singular_name %>.filename, <%= attribute.singular_name %> %></div>
+            <%% end %>
+          </dd>
+<% else -%>
+          <dd class="mt-1"><%%= @<%= singular_table_name %>.<%= attribute.column_name %> %></dd>
+<% end -%>
+        </div>
+<% end -%>
+      </dl>
+    <%% end %>
+
+    <%%= render "components/card/footer" do %>
+      <%%= link_to "Back to <%= human_name.pluralize.downcase %>", <%= index_helper(type: :path) %>, data: { component: "button", variant: "ghost" } %>
+      <%%= button_to "Destroy this <%= human_name.downcase %>", <%= model_resource_name(prefix: "@") %>, method: :delete, data: { component: "button", variant: "destructive" } %>
+    <%% end %>
+  <%% end %>
+</div>

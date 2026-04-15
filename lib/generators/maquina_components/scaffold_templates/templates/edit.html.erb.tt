@@ -1,0 +1,29 @@
+<%% content_for :title, "Editing <%= human_name.downcase %>" %>
+
+<%% content_for :breadcrumbs do %>
+  <%%= render "components/breadcrumbs" do %>
+    <%%= render "components/breadcrumbs/list" do %>
+      <%%= render "components/breadcrumbs/item" do %>
+        <%%= render "components/breadcrumbs/link", href: <%= index_helper(type: :path) %>, text: "<%= human_name.pluralize %>" %>
+      <%% end %>
+      <%%= render "components/breadcrumbs/item" do %>
+        <%%= render "components/breadcrumbs/link", href: <%= model_resource_name(prefix: "@") %>, text: "<%= human_name %>" %>
+      <%% end %>
+      <%%= render "components/breadcrumbs/item" do %>
+        <%%= render "components/breadcrumbs/page", text: "Edit" %>
+      <%% end %>
+    <%% end %>
+  <%% end %>
+<%% end %>
+
+<div class="space-y-6">
+  <%%= render "components/card" do %>
+    <%%= render "components/card/header" do %>
+      <%%= render "components/card/title", text: "Editing <%= human_name.downcase %>" %>
+    <%% end %>
+
+    <%%= render "components/card/content" do %>
+      <%%= render "form", <%= singular_table_name %>: @<%= singular_table_name %> %>
+    <%% end %>
+  <%% end %>
+</div>
