@@ -1,0 +1,46 @@
+<%= preview_container width: :md do %>
+  <p class="text-sm text-muted-foreground mb-4">
+    Click the button below or press <kbd class="kbd">CTRL</kbd> +
+    <kbd class="kbd">D</kbd> to open the drawer.
+  </p>
+
+  <%= render "components/drawer/provider", default_open: false, keyboard_shortcut: "d" do %>
+    <%= render "components/drawer/trigger", icon_name: :panel_left do %>
+      Open Drawer
+    <% end %>
+
+    <%= render "components/drawer", id: "drawer", state: :closed, side: :right do %>
+      <%= render "components/drawer/header" do %>
+        <h3 class="text-lg font-semibold">Drawer Title</h3>
+        <p class="text-sm text-muted-foreground">Slide-out panel example</p>
+      <% end %>
+
+      <%= render "components/drawer/content" do %>
+        <div class="space-y-4">
+          <p class="text-sm">
+            This is a drawer component that slides in from the right side of the
+            screen. It provides additional content without leaving the current page.
+          </p>
+          <div class="space-y-2">
+            <p class="text-sm font-medium">Features:</p>
+            <ul class="text-sm text-muted-foreground list-disc pl-4 space-y-1">
+              <li>Keyboard shortcut support (CTRL + D)</li>
+              <li>Cookie state persistence</li>
+              <li>Backdrop click to close</li>
+              <li>Escape key to close</li>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+
+      <%= render "components/drawer/footer" do %>
+        <%= render "components/drawer/close", show_icon: false, variant: :outline do %>
+          Cancel
+        <% end %>
+        <button type="button" data-component="button" data-variant="default">
+          Save Changes
+        </button>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

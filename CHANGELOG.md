@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-12
+
+### Added
+
+- Add Drawer component with trigger and keyboard shortcut support (#21)
+  - Slide-out panel with `provider`, `header`, `content`, `footer`, `trigger`, and `close` sub-partials; left/right side, overlay backdrop, cookie persistence
+  - `Cmd/Ctrl+D` keyboard shortcut and full Turbo Drive/Morph compatibility
+  - `drawer_state`, `drawer_open?`, `drawer_closed?` helpers; `docs/drawer.md`
+- Add `scaffold_templates` generator (#20)
+  - `rails g maquina_components:scaffold_templates` copies ERB scaffold templates to `lib/templates/erb/scaffold/` so `rails g scaffold` produces maquina_components-styled views (index, show, new, edit, _form, partial)
+- Include engine helper modules in the generated helper template (#19)
+  - `MaquinaComponentsHelper` now includes `IconsHelper`, `SidebarHelper`, and `ToastHelper`, so `icon_for`, `sidebar_open?`, `toast_flash_messages`, etc. are available in host-app views without extra configuration
+
+### Fixed
+
+- Improve icon class handling in `apply_icon_options` (#17)
+  - Guard against nil options and non-string `class` values; HTML-escape classes
+  - Inject a `class` attribute on `<svg>` elements that don't already have one
+
+### Contributors
+
+Thanks to the contributors who made this release possible:
+
+- [@GregorioNeto](https://github.com/GregorioNeto) — Drawer component (#21), icon class handling (#17)
+- [@JuanVqz](https://github.com/JuanVqz) — scaffold_templates generator (#20), engine helper modules in generated helper (#19)
+
 ## [0.4.4] - 2026-03-09
 
 ### Added
@@ -210,7 +236,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.4.4...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/maquina-app/maquina_components/compare/v0.4.4...v0.5.0
 [0.4.4]: https://github.com/maquina-app/maquina_components/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/maquina-app/maquina_components/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/maquina-app/maquina_components/compare/v0.4.1...v0.4.2
