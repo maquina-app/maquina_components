@@ -1,4 +1,17 @@
-<%# locals: (cards: [], columns: 3, container_class: "", action: nil, action_position: "end") -%>
+<%# locals: (cards: [], columns: 3, container_class: "", action: nil, action_position: :end) -%>
+<%
+  # Tailwind v4 scans sources statically: interpolated class names like
+  # "sm:grid-cols-#{columns}" are never generated. Map to literal classes.
+  columns_class = {
+    1 => "sm:grid-cols-1",
+    2 => "sm:grid-cols-2",
+    3 => "sm:grid-cols-3",
+    4 => "sm:grid-cols-4",
+    5 => "sm:grid-cols-5",
+    6 => "sm:grid-cols-6"
+  }.fetch(columns.to_i, "sm:grid-cols-3")
+  action_position = action_position.to_s
+%>
 
 <div
   class="<%= class_names("flex flex-col lg:flex-row lg:items-center gap-4": action.present?) %>"
@@ -13,7 +26,7 @@
     class="<%= class_names(
     "grid gap-4", 
     "grid-cols-1",
-    "sm:grid-cols-#{columns}",
+    columns_class,
     container_class,
     "flex-1": action.present?
   ) %>"
