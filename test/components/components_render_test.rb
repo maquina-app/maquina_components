@@ -202,6 +202,16 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     assert_includes close_area.to_s, "<svg", "missing dismiss icon"
   end
 
+  test "sidebar menu_link styles via data parts instead of inline utilities" do
+    html = view.render("components/sidebar/menu_link", url: "/settings",
+      title: "Settings", subtitle: "Workspace")
+
+    assert_includes html, %(data-sidebar-part="menu-link-text")
+    assert_includes html, %(data-sidebar-part="menu-link-title")
+    assert_includes html, %(data-sidebar-part="menu-link-subtitle")
+    refute_includes html, "flex flex-col gap-0.5"
+  end
+
   test "toaster renders a polite live region" do
     html = view.render("components/toaster")
 

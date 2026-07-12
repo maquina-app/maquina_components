@@ -236,19 +236,17 @@ export default class extends Controller {
   // Scroll Lock
   // ============================================================================
 
+  // Styling lives in drawer.css (body[data-maquina-scroll-locked]); the
+  // controller only records the scroll offset and flips the attribute
   lockScroll() {
     this.scrollPosition = window.pageYOffset
-    document.body.style.overflow = "hidden"
-    document.body.style.position = "fixed"
-    document.body.style.top = `-${this.scrollPosition}px`
-    document.body.style.width = "100%"
+    document.body.style.setProperty("--maquina-scroll-lock-top", `-${this.scrollPosition}px`)
+    document.body.setAttribute("data-maquina-scroll-locked", "")
   }
 
   unlockScroll() {
-    document.body.style.overflow = ""
-    document.body.style.position = ""
-    document.body.style.top = ""
-    document.body.style.width = ""
+    document.body.removeAttribute("data-maquina-scroll-locked")
+    document.body.style.removeProperty("--maquina-scroll-lock-top")
     if (this.scrollPosition !== undefined) {
       window.scrollTo(0, this.scrollPosition)
     }

@@ -94,6 +94,7 @@
 [data-breadcrumb-part="ellipsis"] {
   @apply inline-flex size-9 items-center justify-center;
   color: var(--muted-foreground);
+  cursor: pointer;
 }
 
 [data-breadcrumb-part="ellipsis"] svg {
@@ -104,6 +105,26 @@
 [data-breadcrumb-part="ellipsis"][data-state="open"],
 [data-breadcrumb-part="ellipsis"]:hover {
   color: var(--foreground);
+}
+
+/* ===== Overflow Dropdown (top-layer popover) ===== */
+/* Visual styling comes from dropdown_menu.css via data-dropdown-menu-part.
+   Anchor positioning places the popover in modern browsers;
+   breadcrumb_controller falls back to measured coordinates elsewhere.
+   The doubled attribute selector outranks dropdown_menu.css's
+   position: absolute regardless of import order. */
+@supports (anchor-name: --a) and (position-area: block-end) {
+  [data-breadcrumb-part="ellipsis"] {
+    anchor-name: --maquina-breadcrumbs;
+  }
+
+  [data-breadcrumb-part="dropdown"][data-dropdown-menu-part="content"] {
+    position: fixed;
+    position-anchor: --maquina-breadcrumbs;
+    position-area: block-end span-inline-end;
+    margin-block-start: 4px;
+    position-try-fallbacks: flip-block;
+  }
 }
 
 /* ===== Responsive Behavior ===== */

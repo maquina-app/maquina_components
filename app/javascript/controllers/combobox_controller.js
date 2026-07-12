@@ -72,7 +72,16 @@ export default class extends Controller {
     }
   }
 
+  // True when CSS anchor positioning (combobox.css) places the popover
+  static supportsAnchorPositioning =
+    typeof CSS !== "undefined" &&
+    CSS.supports("anchor-name: --a") &&
+    CSS.supports("position-area: block-end")
+
   positionPopover() {
+    // Modern browsers position the popover declaratively via anchor CSS
+    if (this.constructor.supportsAnchorPositioning) return
+
     if (!this.hasTriggerTarget || !this.hasContentTarget) return
 
     const trigger = this.triggerTarget

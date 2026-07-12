@@ -4,10 +4,15 @@ export default class extends Controller {
   static targets = ["item", "ellipsis", "ellipsisSeparator"]
   static values = { collapseAfter: { type: Number, default: 0 } }
 
+  // True when CSS anchor positioning (breadcrumbs.css) places the popover
+  static supportsAnchorPositioning =
+    typeof CSS !== "undefined" &&
+    CSS.supports("anchor-name: --a") &&
+    CSS.supports("position-area: block-end")
+
   connect() {
     this._dropdown = null
-    this._clickOutsideHandler = this._closeDropdown.bind(this)
-    this._escapeHandler = this._handleEscape.bind(this)
+    this._popoverToggleHandler = this._handlePopoverToggle.bind(this)
     this._teardownHandler = this._teardown.bind(this)
 
     document.addEventListener("turbo:before-cache", this._teardownHandler)
@@ -29,7 +34,6 @@ export default class extends Controller {
       this._ellipsisTrigger = trigger
       this._toggleHandler = this._toggleDropdown.bind(this)
       trigger.addEventListener('click', this._toggleHandler)
-      trigger.style.cursor = 'pointer'
     }
   }
 
@@ -133,7 +137,7 @@ export default class extends Controller {
   _toggleDropdown(event) {
     event.stopPropagation()
 
-    if (this._dropdown && this._dropdown.dataset.state === "open") {
+    if (this._dropdown && this._dropdown.matches(":popover-open")) {
       this._closeDropdown()
     } else {
       this._openDropdown()
@@ -144,46 +148,54 @@ export default class extends Controller {
     if (!this._hiddenLinks || this._hiddenLinks.length === 0) return
 
     if (!this._dropdown) {
+      // popover="auto" gives top-layer rendering, light dismiss, and
+      // Escape-to-close natively — no document listeners needed
       this._dropdown = document.createElement('div')
       this._dropdown.setAttribute('role', 'menu')
+      this._dropdown.setAttribute('popover', 'auto')
       this._dropdown.dataset.dropdownMenuPart = 'content'
-      this._dropdown.style.position = 'fixed'
-      this._dropdown.style.zIndex = '50'
-      document.body.appendChild(this._dropdown)
+      this._dropdown.dataset.breadcrumbPart = 'dropdown'
+      this._dropdown.addEventListener('beforetoggle', this._popoverToggleHandler)
+      // Next to the trigger so CSS anchor positioning can resolve it
+      this._ellipsisTrigger.insertAdjacentElement('afterend', this._dropdown)
     }
 
     this._buildDropdownContent()
     this._positionDropdown()
-    this._dropdown.dataset.state = 'open'
-
-    if (this._ellipsisTrigger) {
-      this._ellipsisTrigger.dataset.state = 'open'
-    }
-
-    // Defer listeners so the current click doesn't immediately close
-    requestAnimationFrame(() => {
-      document.addEventListener('click', this._clickOutsideHandler)
-      document.addEventListener('keydown', this._escapeHandler)
-    })
+    this._dropdown.showPopover()
   }
 
   _closeDropdown() {
-    if (this._dropdown) {
-      this._dropdown.dataset.state = 'closed'
+    if (this._dropdown && this._dropdown.matches(":popover-open")) {
+      this._dropdown.hidePopover()
     }
-    if (this._ellipsisTrigger) {
-      delete this._ellipsisTrigger.dataset.state
-    }
+  }
 
-    document.removeEventListener('click', this._clickOutsideHandler)
-    document.removeEventListener('keydown', this._escapeHandler)
+  // Mirrors the native popover state onto the data attributes the CSS
+  // animations and the trigger styling key on
+  _handlePopoverToggle(event) {
+    const open = event.newState === 'open'
+
+    this._dropdown.dataset.state = open ? 'open' : 'closed'
+
+    if (this._ellipsisTrigger) {
+      if (open) {
+        this._ellipsisTrigger.dataset.state = 'open'
+      } else {
+        delete this._ellipsisTrigger.dataset.state
+      }
+    }
   }
 
   _removeDropdown() {
     this._closeDropdown()
     if (this._dropdown) {
+      this._dropdown.removeEventListener('beforetoggle', this._popoverToggleHandler)
       this._dropdown.remove()
       this._dropdown = null
+    }
+    if (this._ellipsisTrigger) {
+      delete this._ellipsisTrigger.dataset.state
     }
   }
 
@@ -203,17 +215,14 @@ export default class extends Controller {
   }
 
   _positionDropdown() {
+    // Modern browsers position the popover declaratively via anchor CSS
+    if (this.constructor.supportsAnchorPositioning) return
     if (!this._dropdown || !this._ellipsisTrigger) return
 
     const rect = this._ellipsisTrigger.getBoundingClientRect()
+    this._dropdown.style.position = 'fixed'
     this._dropdown.style.top = `${rect.bottom + 4}px`
     this._dropdown.style.left = `${rect.left}px`
-  }
-
-  _handleEscape(event) {
-    if (event.key === 'Escape') {
-      this._closeDropdown()
-    }
   }
 
   _teardown() {

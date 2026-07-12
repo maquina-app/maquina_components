@@ -57,10 +57,25 @@
   @apply flex h-full w-full flex-col;
 }
 
+/* ===== Body Scroll Lock ===== */
+/* Shared by drawer_controller and sidebar_controller: the controllers set
+   the data attribute and the --maquina-scroll-lock-top offset on <body>;
+   all styling lives here. */
+body[data-maquina-scroll-locked] {
+  position: fixed;
+  top: var(--maquina-scroll-lock-top, 0px);
+  width: 100%;
+  overflow: hidden;
+}
+
 /* ===== Drawer Header ===== */
 [data-drawer-part="header"] {
   @apply flex shrink-0 items-center justify-between gap-2 border-b px-4 py-3;
   border-color: var(--border);
+}
+
+[data-drawer-part="header-content"] {
+  @apply flex-1;
 }
 
 /* ===== Drawer Content (scrollable area) ===== */
