@@ -59,7 +59,8 @@ module MaquinaComponents
     # @return [String] Rendered HTML
     def combobox(id: nil, name: nil, value: nil, placeholder: "Select...", css_classes: "", **html_options, &block)
       builder = ComboboxBuilder.new(self, placeholder: placeholder)
-      combobox_id = id || "combobox-#{SecureRandom.hex(4)}"
+      # Deterministic fallback id: random ids break idiomorph matching across Turbo morphs
+      combobox_id = id || "combobox-#{name.to_s.parameterize.presence || "default"}"
       builder.combobox_id = combobox_id
 
       capture(builder, &block)

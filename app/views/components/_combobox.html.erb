@@ -1,5 +1,6 @@
 <%# locals: (id: nil, name: nil, value: nil, placeholder: "Select...", css_classes: "", **html_options) %>
-<% combobox_id = id || "combobox-#{SecureRandom.hex(4)}" %>
+<%# Deterministic fallback id: random ids break idiomorph matching across Turbo morphs %>
+<% combobox_id = id || "combobox-#{name.to_s.parameterize.presence || "default"}" %>
 <% merged_data = (html_options.delete(:data) || {}).merge(
     component: :combobox,
     controller: "combobox",

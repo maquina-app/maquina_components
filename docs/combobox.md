@@ -60,7 +60,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| id | String | nil | Custom ID, auto-generated if nil |
+| id | String | nil | Custom ID; defaults to a deterministic id derived from the input name |
 | name | String | nil | Form input name |
 | value | String | nil | Pre-selected value |
 | placeholder | String | "Select..." | Placeholder text |
