@@ -152,4 +152,14 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     assert_includes icon, "<svg"
     assert_includes content, "<img>"
   end
+
+  test "empty title and description accept text, content, and block" do
+    text = view.render("components/empty/title", text: "Nothing here")
+    content = view.render("components/empty/description", content: "<em>Try again</em>".html_safe)
+    block = view.render("components/empty/title") { "Block title" }
+
+    assert_includes text, "Nothing here"
+    assert_includes content, "<em>Try again</em>"
+    assert_includes block, "Block title"
+  end
 end
