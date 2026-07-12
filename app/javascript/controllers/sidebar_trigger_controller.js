@@ -2,12 +2,13 @@ import { Controller } from "@hotwired/stimulus"
 
 /**
  * Sidebar Trigger Controller
- * 
- * Triggers sidebar toggle via Stimulus outlets.
+ *
+ * Triggers sidebar toggle via Stimulus outlets and mirrors the sidebar's
+ * state on the trigger (aria-expanded, aria-controls).
  * Can be placed anywhere on the page - finds sidebar via outlet selector.
- * 
+ *
  * @example
- * <button 
+ * <button
  *   data-controller="sidebar-trigger"
  *   data-action="click->sidebar-trigger#triggerClick"
  *   data-sidebar-trigger-sidebar-outlet="[data-outlet='sidebar']"
@@ -17,6 +18,23 @@ import { Controller } from "@hotwired/stimulus"
  */
 export default class extends Controller {
   static outlets = ["sidebar"]
+
+  connect() {
+    this.handleStateChanged = this.handleStateChanged.bind(this)
+    window.addEventListener("sidebar:stateChanged", this.handleStateChanged)
+  }
+
+  disconnect() {
+    window.removeEventListener("sidebar:stateChanged", this.handleStateChanged)
+  }
+
+  sidebarOutletConnected(outlet) {
+    this.syncExpanded(outlet.openValue)
+
+    if (outlet.hasSidebarTarget && outlet.sidebarTarget.id) {
+      this.element.setAttribute("aria-controls", outlet.sidebarTarget.id)
+    }
+  }
 
   /**
    * Toggle sidebar when trigger is clicked
@@ -28,5 +46,16 @@ export default class extends Controller {
         outlet.toggle()
       })
     }
+  }
+
+  handleStateChanged(event) {
+    if (!this.hasSidebarOutlet) return
+    if (!this.sidebarOutletElements.includes(event.target)) return
+
+    this.syncExpanded(event.detail.open)
+  }
+
+  syncExpanded(open) {
+    this.element.setAttribute("aria-expanded", open ? "true" : "false")
   }
 }

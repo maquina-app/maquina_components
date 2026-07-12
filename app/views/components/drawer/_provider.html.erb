@@ -7,7 +7,7 @@
     drawer_open_value: default_open,
     drawer_cookie_name_value: cookie_name,
     drawer_keyboard_shortcut_value: keyboard_shortcut,
-    action: "keydown.meta+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard keydown.ctrl+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard"
+    action: "keydown.meta+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard keydown.ctrl+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard keydown.esc@window->drawer#closeOnEscape"
   ) %>
 <%= content_tag :div, id: id || "drawer-provider", class: css_classes, data: merged_data, **html_options do %>
   <%= yield %>

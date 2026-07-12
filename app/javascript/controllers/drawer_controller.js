@@ -20,7 +20,7 @@ export default class extends Controller {
     keyboardShortcut: { type: String, default: "d" }
   }
 
-  static targets = ["drawer", "container", "backdrop"]
+  static targets = ["drawer", "container", "backdrop", "panel"]
 
   initialize() {
     const cookieValue = this.getCookie(this.cookieNameValue)
@@ -96,6 +96,12 @@ export default class extends Controller {
     this.toggle()
   }
 
+  closeOnEscape(event) {
+    if (this.openValue) {
+      this.close()
+    }
+  }
+
   // ============================================================================
   // State Management
   // ============================================================================
@@ -107,6 +113,25 @@ export default class extends Controller {
     this.updateState()
     this.persistState()
     this.dispatchStateChange()
+
+    // Only manage focus on user-driven changes, not the initial sync
+    if (old_value !== undefined) {
+      this.manageFocus(new_value)
+    }
+  }
+
+  manageFocus(isOpen) {
+    if (!this.hasPanelTarget) return
+
+    if (isOpen) {
+      this._previouslyFocused = document.activeElement
+      this.panelTarget.focus()
+    } else {
+      if (this._previouslyFocused?.isConnected) {
+        this._previouslyFocused.focus()
+      }
+      this._previouslyFocused = null
+    }
   }
 
   updateState() {
@@ -129,6 +154,17 @@ export default class extends Controller {
             this.backdropTarget.classList.add("hidden")
           }
         }, 300)
+      }
+    }
+
+    if (this.hasPanelTarget) {
+      // The closed panel stays in the DOM: hide it from AT and block focus
+      if (isOpen) {
+        this.panelTarget.removeAttribute("aria-hidden")
+        this.panelTarget.removeAttribute("inert")
+      } else {
+        this.panelTarget.setAttribute("aria-hidden", "true")
+        this.panelTarget.setAttribute("inert", "")
       }
     }
 

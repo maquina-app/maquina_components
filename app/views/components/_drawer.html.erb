@@ -1,4 +1,4 @@
-<%# locals: (id: nil, state: :closed, side: :right, css_classes: "", **html_options) %>
+<%# locals: (id: nil, state: :closed, side: :right, aria_label: "Drawer", css_classes: "", **html_options) %>
 <% stable_id = id || "drawer-#{side}"
    merged_data = (html_options.delete(:data) || {}).merge(
      drawer_part: :root,
@@ -22,6 +22,12 @@
   <div
     id="<%= stable_id %>-panel"
     data-drawer-part="panel"
+    data-drawer-target="panel"
+    role="dialog"
+    aria-modal="true"
+    aria-label="<%= aria_label %>"
+    tabindex="-1"
+    <%= tag.attributes(aria: {hidden: true}, inert: true) if state.to_s == "closed" %>
   >
     <%# Inner drawer content wrapper %>
     <div id="<%= stable_id %>-inner" data-drawer-part="inner">
