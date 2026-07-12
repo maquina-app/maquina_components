@@ -162,6 +162,22 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     refute_includes html, "inert"
   end
 
+  test "caller data-controller and data-action concatenate with the component's" do
+    html = view.render("components/combobox", name: "country",
+      data: {controller: "analytics", action: "change->analytics#track", testid: "cb"}) { |_id| "" }
+
+    assert_includes html, %(data-controller="combobox analytics")
+    assert_includes html, %(data-testid="cb")
+
+    provider = view.render("components/drawer/provider",
+      data: {action: "click->analytics#track"}) { "" }
+    assert_match(/data-action="keydown[^"]*closeOnEscape click-&gt;analytics#track"/, provider)
+
+    # component identity keys still win over caller data
+    badge = view.render("components/badge", data: {component: "hijack"}) { "B" }
+    assert_includes badge, %(data-component="badge")
+  end
+
   test "variant and size vocabulary aliases normalize across components" do
     badge_size = view.render("components/badge", size: :default) { "B" }
     badge_variant = view.render("components/badge", variant: :error) { "B" }

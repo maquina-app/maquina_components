@@ -1,5 +1,5 @@
 <%# locals: (css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(component: :card) %>
+<% merged_data = merge_component_data(html_options, component: :card) %>
 
 <%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
   <%= yield %>

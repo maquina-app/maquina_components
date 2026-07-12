@@ -15,7 +15,7 @@
   }
   toast_icon = icon || default_icons[variant]
 %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     component: :toast,
     controller: "toast",
     variant: variant,

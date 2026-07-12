@@ -1,5 +1,5 @@
 <%# locals: (position: :bottom_right, content: nil, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     component: :toaster,
     controller: "toaster",
     position: position.to_s.dasherize,

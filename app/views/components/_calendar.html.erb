@@ -55,7 +55,7 @@
     abbr_day_names.rotate(1) :
     abbr_day_names
 
-  merged_data = (html_options.delete(:data) || {}).merge(
+  merged_data = merge_component_data(html_options,
     controller: "calendar",
     component: "calendar",
     "calendar-mode-value": mode,

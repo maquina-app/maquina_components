@@ -1,6 +1,6 @@
 <%# locals: (title: "", subtitle: nil, icon: nil, text_icon: nil, icon_classes: "", submenu: false, id: nil, css_classes: "", **html_options) %>
 <% menu_button_id = id || "menu-button-#{title.to_s.parameterize.presence || "menu"}" %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     component: "menu-button"
   ) %>
 

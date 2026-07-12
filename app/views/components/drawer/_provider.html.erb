@@ -1,5 +1,5 @@
 <%# locals: (id: nil, default_open: false, css_classes: "", cookie_name: "drawer_state", keyboard_shortcut: "d", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     component: :drawer,
     controller: "drawer",
     outlet: "drawer",

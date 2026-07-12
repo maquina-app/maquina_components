@@ -1,5 +1,5 @@
 <%# locals: (placeholder: "Search...", css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     combobox_part: "input",
     combobox_target: "input",
     action: "input->combobox#filter"

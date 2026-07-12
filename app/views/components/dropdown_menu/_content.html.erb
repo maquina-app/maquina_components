@@ -1,5 +1,5 @@
 <%# locals: (align: :start, side: :bottom, width: :default, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     "dropdown-menu-part": "content",
     "dropdown-menu-target": "content",
     align: align,

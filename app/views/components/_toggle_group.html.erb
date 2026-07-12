@@ -5,7 +5,7 @@
                     else [value.to_s]
                     end
   
-  merged_data = (html_options.delete(:data) || {}).merge(
+  merged_data = merge_component_data(html_options,
     controller: "toggle-group",
     component: "toggle-group",
     variant: variant,

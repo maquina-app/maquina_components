@@ -19,7 +19,7 @@
   }
   icon_name = icon.is_a?(Symbol) ? icon : legacy_icons[icon.to_s]
 
-  merged_data = (html_options.delete(:data) || {}).merge(component: "stats-card")
+  merged_data = merge_component_data(html_options, component: "stats-card")
 %>
 <%= tag.div class: css_classes.presence, data: merged_data, **html_options do %>
   <div data-stats-part="body">

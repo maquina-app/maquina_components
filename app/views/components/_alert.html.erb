@@ -1,7 +1,7 @@
 <%# locals: (variant: :default, icon: nil, css_classes: "", **html_options) %>
 <%# :error is accepted as an alias of the canonical :destructive variant %>
 <% variant = :destructive if variant.to_s == "error" %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     component: :alert,
     variant: variant,
     has_icon: icon.present? || nil

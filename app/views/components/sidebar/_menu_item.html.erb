@@ -1,6 +1,6 @@
 <%# locals: (css_classes: "", **html_options) %>
 <% merged_data =
-  (html_options.delete(:data) || {}).merge(sidebar_part: "menu-item") %>
+  merge_component_data(html_options, sidebar_part: "menu-item") %>
 
 <%= content_tag :li, class: "group/menu-item #{css_classes}", data: merged_data, **html_options do %>
   <%= yield %>

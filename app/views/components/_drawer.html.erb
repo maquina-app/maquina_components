@@ -1,6 +1,6 @@
 <%# locals: (id: nil, state: :closed, side: :right, aria_label: "Drawer", css_classes: "", **html_options) %>
 <% stable_id = id || "drawer-#{side}"
-   merged_data = (html_options.delete(:data) || {}).merge(
+   merged_data = merge_component_data(html_options,
      drawer_part: :root,
      drawer_target: "drawer",
      state: state,

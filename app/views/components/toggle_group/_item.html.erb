@@ -1,5 +1,5 @@
 <%# locals: (value:, pressed: false, disabled: false, aria_label: nil, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     "toggle-group-part": "item",
     "toggle-group-target": "item",
     value: value,

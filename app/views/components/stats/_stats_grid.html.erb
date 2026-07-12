@@ -5,7 +5,7 @@
   action_position = action_position.to_s
   columns = columns.to_i.clamp(1, 6)
 
-  merged_data = (html_options.delete(:data) || {}).merge(
+  merged_data = merge_component_data(html_options,
     component: "stats-grid",
     columns: columns
   )

@@ -12,6 +12,7 @@
 # Documentation: https://github.com/maquina-app/maquina_components
 #
 module MaquinaComponentsHelper
+  include MaquinaComponents::ComponentsHelper
   include MaquinaComponents::IconsHelper
   include MaquinaComponents::SidebarHelper
   include MaquinaComponents::ToastHelper

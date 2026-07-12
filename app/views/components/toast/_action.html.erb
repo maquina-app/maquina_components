@@ -1,5 +1,5 @@
 <%# locals: (label:, href: nil, method: nil, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     toast_part: "action"
   ) %>
 

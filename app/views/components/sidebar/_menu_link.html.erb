@@ -1,5 +1,5 @@
 <%# locals: (url: "#", active: false, title: nil, subtitle: nil, icon: nil, text_icon: nil, icon_classes: "", css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     sidebar_part: "menu-link",
     active: active
   ) %>

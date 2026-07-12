@@ -1,5 +1,5 @@
 <%# locals: (icon_name: :left_panel, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     sidebar_part: :trigger,
     controller: "sidebar-trigger",
     action: "click->sidebar-trigger#triggerClick",

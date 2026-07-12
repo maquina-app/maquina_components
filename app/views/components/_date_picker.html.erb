@@ -29,7 +29,7 @@
 
   default_placeholder = mode == :range ? "Select date range" : "Select date"
 
-  merged_data = (html_options.delete(:data) || {}).merge(
+  merged_data = merge_component_data(html_options,
     controller: "date-picker",
     component: "date-picker",
     "date-picker-mode-value": mode,

@@ -1,5 +1,5 @@
 <%# locals: (month:, year:, month_name:, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge("calendar-part": "header") %>
+<% merged_data = merge_component_data(html_options, "calendar-part": "header") %>
 
 <%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
   <button type="button"

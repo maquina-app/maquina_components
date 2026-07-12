@@ -5,7 +5,7 @@
   size = :md if size.to_s == "default"
   variant = :destructive if variant.to_s == "error"
 %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     component: :badge,
     variant: variant,
     size: size
