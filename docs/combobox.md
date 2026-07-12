@@ -111,6 +111,7 @@
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | text | String | "No results found." | Empty state message |
+| content | String | nil | HTML content via `capture` |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 

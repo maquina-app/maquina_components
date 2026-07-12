@@ -177,6 +177,16 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     assert_includes content, "<img>"
   end
 
+  test "remaining leaf partials accept the content parameter" do
+    combobox_empty = view.render("components/combobox/empty", content: "<b>Nothing</b>".html_safe)
+    dd_label = view.render("components/dropdown_menu/label", content: "<i>Group</i>".html_safe)
+    dd_shortcut = view.render("components/dropdown_menu/shortcut", text: "⌘K")
+
+    assert_includes combobox_empty, "<b>Nothing</b>"
+    assert_includes dd_label, "<i>Group</i>"
+    assert_includes dd_shortcut, "⌘K"
+  end
+
   test "empty title and description accept text, content, and block" do
     text = view.render("components/empty/title", text: "Nothing here")
     content = view.render("components/empty/description", content: "<em>Try again</em>".html_safe)
