@@ -1,59 +1,137 @@
 import { Controller } from "@hotwired/stimulus"
 
+/**
+ * MenuButton Controller
+ *
+ * Sidebar-flavored button that toggles a dropdown panel with:
+ * - Click to toggle
+ * - Click outside to close
+ * - Escape key to close
+ * - aria-expanded state on the trigger
+ * - Animation states via data-state
+ */
 export default class extends Controller {
   static targets = ["button", "content"]
 
+  static values = {
+    open: { type: Boolean, default: false }
+  }
+
   connect() {
-    if (!this.hasContentTarget) {
-      return
-    }
+    this.handleClickOutside = this.handleClickOutside.bind(this)
+    this.handleKeydown = this.handleKeydown.bind(this)
+    this.boundTeardown = this.teardown.bind(this)
 
-    this.clickOutside = this.clickOutside.bind(this)
-    this.isOpen = this.buttonTarget.dataset.state === "open"
+    document.addEventListener("turbo:before-cache", this.boundTeardown)
 
-    if (this.isOpen) {
-      this.addClickOutsideListener()
+    if (this.hasContentTarget) {
+      this.contentTarget.hidden = !this.openValue
     }
   }
 
   disconnect() {
-    this.removeClickOutsideListener()
+    this.removeEventListeners()
+    document.removeEventListener("turbo:before-cache", this.boundTeardown)
   }
 
-  toggle() {
-    if (!this.hasContentTarget) {
-      return
-    }
+  toggle(event) {
+    event?.preventDefault()
 
-    this.contentTarget.classList.remove("hidden")
-
-    this.isOpen = !this.isOpen
-    this.buttonTarget.dataset.state = this.isOpen ? "open" : "closed"
-
-    if (this.isOpen) {
-      // Add a small delay before adding the click outside listener
-      setTimeout(() => {
-        this.addClickOutsideListener()
-      }, 100)
+    if (this.openValue) {
+      this.close()
     } else {
-      this.removeClickOutsideListener()
+      this.open()
     }
   }
 
-  clickOutside(event) {
-    if (!this.isOpen) return
-    if (event.target === this.element) return
+  open() {
+    if (this.openValue || !this.hasContentTarget) return
 
-    if (!this.contentTarget.contains(event.target)) {
-      this.toggle()
+    this.openValue = true
+    this.buttonTarget.dataset.state = "open"
+    this.buttonTarget.setAttribute("aria-expanded", "true")
+    this.contentTarget.dataset.state = "open"
+    this.contentTarget.classList.remove("hidden")
+    this.contentTarget.hidden = false
+
+    this.addEventListeners()
+  }
+
+  close() {
+    if (!this.openValue || !this.hasContentTarget) return
+
+    // Start closing animation, then hide once it finishes
+    this.contentTarget.dataset.state = "closing"
+
+    const animationDuration = 100 // matches CSS animation duration
+
+    this._closeTimeout = setTimeout(() => {
+      this._closeTimeout = null
+      this.openValue = false
+      this.buttonTarget.dataset.state = "closed"
+      this.buttonTarget.setAttribute("aria-expanded", "false")
+      this.contentTarget.dataset.state = "closed"
+      this.contentTarget.hidden = true
+
+      this.removeEventListeners()
+      this.buttonTarget.focus()
+    }, animationDuration)
+  }
+
+  // Turbo Cache Teardown
+
+  teardown() {
+    if (this._closeTimeout) {
+      clearTimeout(this._closeTimeout)
+      this._closeTimeout = null
+    }
+
+    this.openValue = false
+
+    if (this.hasButtonTarget) {
+      this.buttonTarget.dataset.state = "closed"
+      this.buttonTarget.setAttribute("aria-expanded", "false")
+    }
+
+    if (this.hasContentTarget) {
+      this.contentTarget.dataset.state = "closed"
+      this.contentTarget.hidden = true
+    }
+
+    this.removeEventListeners()
+  }
+
+  // Event Handlers
+
+  handleClickOutside(event) {
+    if (!this.openValue) return
+    if (this.element.contains(event.target)) return
+
+    this.close()
+  }
+
+  handleKeydown(event) {
+    if (!this.openValue) return
+
+    if (event.key === "Escape") {
+      event.preventDefault()
+      this.close()
     }
   }
 
-  addClickOutsideListener() {
-    document.addEventListener('click', this.clickOutside)
+  // Event Listener Management
+
+  addEventListeners() {
+    // Delay adding click outside listener to prevent immediate close
+    setTimeout(() => {
+      document.addEventListener("click", this.handleClickOutside)
+    }, 0)
+
+    document.addEventListener("keydown", this.handleKeydown)
   }
 
-  removeClickOutsideListener() {
-    document.removeEventListener('click', this.clickOutside)
+  removeEventListeners() {
+    document.removeEventListener("click", this.handleClickOutside)
+    document.removeEventListener("keydown", this.handleKeydown)
   }
 }
