@@ -155,6 +155,7 @@ generates views built with maquina_components. Customize the templates as needed
 | **Table** | Data tables with striped and bordered variants | [Table](https://maquina.app/documentation/components/table/) |
 | **Separator** | Horizontal or vertical divider | [Separator](https://maquina.app/documentation/components/separator/) |
 | **Empty State** | Placeholder for empty lists | [Empty State](https://maquina.app/documentation/components/empty/) |
+| **Stats** | Metric cards in a responsive grid | [Stats](https://maquina.app/documentation/components/stats/) |
 
 ### Navigation Components
 

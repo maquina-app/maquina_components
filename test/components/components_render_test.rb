@@ -104,11 +104,13 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     assert_equal first, second
   end
 
-  test "stats_grid emits literal responsive column classes" do
+  test "stats_grid renders data-attribute columns" do
     html = view.render("components/stats/stats_grid",
       cards: [{title: "Users", value: "42"}], columns: 4)
 
-    assert_includes html, "sm:grid-cols-4"
+    assert_includes html, %(data-component="stats-grid")
+    assert_includes html, %(data-columns="4")
+    assert_includes html, %(data-stats-part="grid")
     refute_includes html, "sm:grid-cols-#" # regression: interpolated class
   end
 
@@ -116,8 +118,30 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     sym = view.render("components/stats/stats_grid", cards: [], action: "A", action_position: :start)
     str = view.render("components/stats/stats_grid", cards: [], action: "A", action_position: "start")
 
-    assert_includes sym, "justify-start"
-    assert_includes str, "justify-start"
+    assert_includes sym, %(data-position="start")
+    assert_includes str, %(data-position="start")
+    assert_includes sym, %(data-with-action="true")
+  end
+
+  test "stats_card follows conventions and keeps legacy aliases" do
+    legacy = view.render("components/stats/stats_card", title: "Errors", value: "3",
+      icon: "exclamation-circle", icon_class: "text-red-500",
+      value_class: "text-red-600", container_class: "legacy-extra")
+    modern = view.render("components/stats/stats_card", title: "Users", value: "42",
+      icon: :users, subtitle: "This month", css_classes: "extra",
+      data: {testid: "sc"})
+
+    assert_includes legacy, "<svg" # legacy string icon name maps to a builtin icon
+    assert_includes legacy, "text-red-500"
+    assert_includes legacy, "text-red-600"
+    assert_includes legacy, "legacy-extra"
+
+    assert_includes modern, %(data-component="stats-card")
+    assert_includes modern, %(data-testid="sc")
+    assert_includes modern, %(data-stats-part="value")
+    assert_includes modern, "This month"
+    assert_includes modern, "<svg"
+    assert_includes modern, "extra"
   end
 
   test "closed drawer panel is a hidden, inert dialog" do

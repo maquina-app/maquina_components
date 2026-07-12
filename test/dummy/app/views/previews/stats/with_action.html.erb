@@ -1,0 +1,9 @@
+<%= render "components/stats/stats_grid",
+      columns: 3,
+      cards: [
+        {title: "Messages", value: "128", icon: :message_square},
+        {title: "Tasks Done", value: "87", icon: :clipboard_list},
+        {title: "Automations", value: "9", icon: :lightning_bolt}
+      ],
+      action: link_to("View report", "#", data: {component: "button", variant: "outline"}),
+      action_position: :end %>

@@ -1,4 +1,6 @@
-<%# locals: (collection:, columns:, caption: nil, variant: nil, table_variant: nil, empty_message: "No data available", row_id: nil, html_options: {}) %>
+<%# locals: (collection:, columns:, caption: nil, variant: nil, table_variant: nil, empty_message: "No data available", row_id: nil, html_options: {}, **extra_html_options) %>
+<%# html_options: {} is the legacy call style; bare keyword passthrough is the standard one %>
+<% html_options = html_options.merge(extra_html_options) %>
 <%= render "components/table", variant: variant, table_variant: table_variant, **html_options do %>
   <% if caption.present? %>
     <%= render "components/table/caption" do %><%= caption %><% end %>

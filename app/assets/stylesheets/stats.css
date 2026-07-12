@@ -1,0 +1,101 @@
+/* ===== Stats Component Styles ===== */
+/*
+ * Dashboard stat cards and their responsive grid.
+ *
+ * Structure:
+ * - stats-grid (root, optional action slot)
+ *   - action (leading or trailing action area)
+ *   - grid (responsive card grid, columns via data-columns)
+ * - stats-card
+ *   - body
+ *     - text (title, value, subtitle)
+ *     - icon
+ */
+
+/* ===== Card ===== */
+[data-component="stats-card"] {
+  @apply rounded-lg border p-4 shadow-sm;
+  background-color: var(--card);
+  border-color: var(--border);
+}
+
+[data-component="stats-card"] [data-stats-part="body"] {
+  @apply flex items-center justify-between;
+}
+
+[data-component="stats-card"] [data-stats-part="title"] {
+  @apply text-sm;
+  color: var(--muted-foreground);
+}
+
+[data-component="stats-card"] [data-stats-part="value"] {
+  @apply text-2xl font-bold;
+}
+
+[data-component="stats-card"] [data-stats-part="subtitle"] {
+  @apply mt-1 text-xs;
+  color: var(--muted-foreground);
+}
+
+[data-component="stats-card"] [data-stats-part="icon"] svg {
+  @apply size-8 shrink-0;
+}
+
+/* Color defaults live in the components layer so caller utility classes
+   (value_classes / icon_classes, e.g. text-green-600) always win — the
+   utilities layer is defined to beat the components layer, and unlayered
+   rules would beat utilities regardless of specificity */
+@layer components {
+  [data-component="stats-card"] [data-stats-part="value"] {
+    color: var(--foreground);
+  }
+
+  [data-component="stats-card"] [data-stats-part="icon"] {
+    color: var(--muted-foreground);
+  }
+}
+
+/* ===== Grid ===== */
+[data-component="stats-grid"][data-with-action="true"] {
+  @apply flex flex-col gap-4 lg:flex-row lg:items-center;
+}
+
+[data-component="stats-grid"] [data-stats-part="grid"] {
+  @apply grid grid-cols-1 gap-4;
+}
+
+[data-component="stats-grid"][data-with-action="true"] [data-stats-part="grid"] {
+  @apply flex-1;
+}
+
+[data-component="stats-grid"][data-columns="2"] [data-stats-part="grid"] {
+  @apply sm:grid-cols-2;
+}
+
+[data-component="stats-grid"][data-columns="3"] [data-stats-part="grid"] {
+  @apply sm:grid-cols-3;
+}
+
+[data-component="stats-grid"][data-columns="4"] [data-stats-part="grid"] {
+  @apply sm:grid-cols-4;
+}
+
+[data-component="stats-grid"][data-columns="5"] [data-stats-part="grid"] {
+  @apply sm:grid-cols-5;
+}
+
+[data-component="stats-grid"][data-columns="6"] [data-stats-part="grid"] {
+  @apply sm:grid-cols-6;
+}
+
+[data-component="stats-grid"] [data-stats-part="action"] {
+  @apply flex justify-center;
+}
+
+[data-component="stats-grid"] [data-stats-part="action"][data-position="start"] {
+  @apply lg:justify-start;
+}
+
+[data-component="stats-grid"] [data-stats-part="action"][data-position="end"] {
+  @apply lg:justify-end;
+}
