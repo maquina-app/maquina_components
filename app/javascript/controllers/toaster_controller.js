@@ -60,6 +60,10 @@ export default class extends Controller {
         return controller.createToast({ title, variant: "error", ...options })
       },
 
+      destructive(title, options = {}) {
+        return controller.createToast({ title, variant: "error", ...options })
+      },
+
       dismiss(toastId) {
         controller.dismissToast(toastId)
       },
@@ -117,6 +121,8 @@ export default class extends Controller {
   buildToastHtml({ id, title, description, variant, duration, dismissible, action }) {
     // Titles/descriptions are escaped below; variant and duration are
     // interpolated into attributes, so constrain them to safe values.
+    // :destructive is the library-wide alias for toast's error variant.
+    if (variant === "destructive") variant = "error"
     const knownVariants = ["default", "success", "info", "warning", "error"]
     variant = knownVariants.includes(variant) ? variant : "default"
     duration = Number(duration) || 0

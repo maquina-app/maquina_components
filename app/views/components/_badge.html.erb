@@ -1,4 +1,10 @@
 <%# locals: (variant: :default, size: :md, css_classes: "", **html_options) %>
+<%
+  # Library-wide vocabulary aliases: :default is the canonical middle
+  # size (badge's own is :md), :destructive the canonical danger variant
+  size = :md if size.to_s == "default"
+  variant = :destructive if variant.to_s == "error"
+%>
 <% merged_data = (html_options.delete(:data) || {}).merge(
     component: :badge,
     variant: variant,

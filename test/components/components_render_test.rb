@@ -162,6 +162,30 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     refute_includes html, "inert"
   end
 
+  test "variant and size vocabulary aliases normalize across components" do
+    badge_size = view.render("components/badge", size: :default) { "B" }
+    badge_variant = view.render("components/badge", variant: :error) { "B" }
+    alert = view.render("components/alert", variant: :error) { "A" }
+    toast = view.render("components/toast", variant: :destructive, title: "Boom")
+
+    assert_includes badge_size, %(data-size="md")
+    assert_includes badge_variant, %(data-variant="destructive")
+    assert_includes alert, %(data-variant="destructive")
+    assert_includes toast, %(data-variant="error")
+    assert_includes toast, "<svg" # error icon auto-selected for the alias
+  end
+
+  test "server-rendered toast icons and dismiss button render" do
+    %i[success info warning error].each do |variant|
+      html = view.render("components/toast", variant: variant, title: "T")
+      icon_area = html[/data-toast-part="icon".*?<\/div>/m]
+      assert_includes icon_area.to_s, "<svg", "missing icon for #{variant} toast"
+    end
+
+    close_area = view.render("components/toast", title: "T")[/data-toast-part="close".*?<\/button>/m]
+    assert_includes close_area.to_s, "<svg", "missing dismiss icon"
+  end
+
   test "toaster renders a polite live region" do
     html = view.render("components/toaster")
 

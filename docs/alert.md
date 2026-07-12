@@ -54,7 +54,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| variant | Symbol | :default | :default, :destructive, :success, :warning |
+| variant | Symbol | :default | :default, :destructive, :success, :warning; :error is accepted as an alias of :destructive |
 | icon | Symbol | nil | Icon name to display |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
