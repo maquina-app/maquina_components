@@ -1,0 +1,20 @@
+/* ===== Separator Component Styles ===== */
+/*
+ * Decorative divider, horizontal or vertical.
+ * Styled via data attributes; colors come from theme variables.
+ */
+
+[data-component="separator"] {
+  @apply mx-2 shrink-0;
+  background-color: var(--border);
+}
+
+[data-component="separator"][data-orientation="horizontal"] {
+  height: 1px;
+  width: 100%;
+}
+
+[data-component="separator"][data-orientation="vertical"] {
+  width: 1px;
+  height: 1rem;
+}
