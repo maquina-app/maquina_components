@@ -119,6 +119,19 @@ bin/rails generate maquina_components:install --skip-theme
 bin/rails generate maquina_components:install --skip-helper
 ```
 
+### Scaffold Templates
+
+Copy ERB scaffold templates into your application so Rails' built-in `scaffold`
+generator produces maquina_components-styled views:
+
+```bash
+bin/rails generate maquina_components:scaffold_templates
+```
+
+This installs `index`, `show`, `new`, `edit`, `_form`, and partial templates to
+`lib/templates/erb/scaffold/`. After running it, `rails generate scaffold ModelName field:type`
+generates views built with maquina_components. Customize the templates as needed.
+
 **Prerequisite:** [tailwindcss-rails](https://github.com/rails/tailwindcss-rails) must be installed first.
 
 ---
@@ -157,6 +170,7 @@ bin/rails generate maquina_components:install --skip-helper
 | **Calendar** | Inline date picker with single/range selection | [Calendar](https://maquina.app/documentation/components/calendar/) |
 | **Combobox** | Searchable dropdown with keyboard navigation | [Combobox](https://maquina.app/documentation/components/combobox/) |
 | **Date Picker** | Popover-based date selection | [Date Picker](https://maquina.app/documentation/components/date-picker/) |
+| **Drawer** | Slide-out panel with overlay and keyboard shortcut | [Drawer](https://maquina.app/documentation/components/drawer/) |
 | **Toggle Group** | Single/multiple selection button group | [Toggle Group](https://maquina.app/documentation/components/toggle-group/) |
 
 ### Feedback Components
