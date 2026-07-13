@@ -43,6 +43,11 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Build dummy app CSS
+        env:
+          RAILS_ENV: test
+        run: cd test/dummy && bin/rails tailwindcss:build
+
       - name: Run tests
         env:
           RAILS_ENV: test
