@@ -76,7 +76,7 @@
 | placeholder | String | nil | Placeholder text |
 | input_name | String | nil | Name for hidden form input |
 | input_name_end | String | nil | End date input name (range mode) |
-| id | String | nil | Custom ID, auto-generated if nil |
+| id | String | nil | Custom ID; defaults to a deterministic id derived from the input name |
 | disabled | Boolean | false | Whether disabled |
 | required | Boolean | false | Mark input as required |
 | css_classes | String | "" | Additional CSS classes |

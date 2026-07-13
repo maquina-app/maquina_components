@@ -1,5 +1,5 @@
 <%# locals: (layout: :column, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     card_part: :header,
     layout: (layout == :row ? :row : nil)
   ).compact %>

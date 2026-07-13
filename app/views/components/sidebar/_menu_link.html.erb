@@ -1,5 +1,5 @@
 <%# locals: (url: "#", active: false, title: nil, subtitle: nil, icon: nil, text_icon: nil, icon_classes: "", css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     sidebar_part: "menu-link",
     active: active
   ) %>
@@ -16,16 +16,13 @@
   <% end %>
 
   <% if title.present? || subtitle.present? %>
-    <div
-      class="flex flex-col gap-0.5 leading-none"
-      data-sidebar-hide-on-collapse
-    >
+    <div data-sidebar-part="menu-link-text" data-sidebar-hide-on-collapse>
       <% if title.present? %>
-        <span class="font-medium"><%= title %></span>
+        <span data-sidebar-part="menu-link-title"><%= title %></span>
       <% end %>
 
       <% if subtitle.present? %>
-        <span class="text-xs text-sidebar-foreground/70"><%= subtitle %></span>
+        <span data-sidebar-part="menu-link-subtitle"><%= subtitle %></span>
       <% end %>
     </div>
   <% end %>

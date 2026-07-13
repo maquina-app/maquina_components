@@ -58,7 +58,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| variant | Symbol | :default | :default, :success, :info, :warning, :error |
+| variant | Symbol | :default | :default, :success, :info, :warning, :error; :destructive is accepted as an alias of :error |
 | title | String | nil | Toast title text |
 | description | String | nil | Toast description text |
 | icon | Symbol | nil | Icon name (auto-selected by variant) |

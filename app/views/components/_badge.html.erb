@@ -1,5 +1,11 @@
 <%# locals: (variant: :default, size: :md, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<%
+  # Library-wide vocabulary aliases: :default is the canonical middle
+  # size (badge's own is :md), :destructive the canonical danger variant
+  size = :md if size.to_s == "default"
+  variant = :destructive if variant.to_s == "error"
+%>
+<% merged_data = merge_component_data(html_options,
     component: :badge,
     variant: variant,
     size: size

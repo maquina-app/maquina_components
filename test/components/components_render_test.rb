@@ -1,0 +1,249 @@
+require "test_helper"
+
+# Renders component partials directly and asserts the conventions every
+# component must honor: data-component attributes, variant/size data
+# attributes, css_classes passthrough, and merging of the caller's data:
+# hash. Also locks in regressions fixed on the audit branch.
+class ComponentsRenderTest < ActiveSupport::TestCase
+  def view
+    @view ||= ApplicationController.new.view_context
+  end
+
+  test "badge exposes component data attributes and merges user data" do
+    html = view.render("components/badge", variant: :success, size: :sm,
+      css_classes: "extra", data: {testid: "b"}) { "Done" }
+
+    assert_includes html, %(data-component="badge")
+    assert_includes html, %(data-variant="success")
+    assert_includes html, %(data-size="sm")
+    assert_includes html, %(data-testid="b")
+    assert_includes html, "extra"
+    assert_includes html, "Done"
+  end
+
+  test "card container renders block and title accepts text parameter" do
+    html = view.render("components/card") do
+      view.render("components/card/title", text: "Projects")
+    end
+
+    assert_includes html, %(data-component="card")
+    assert_includes html, "Projects"
+  end
+
+  test "alert renders variant and role" do
+    html = view.render("components/alert", variant: :destructive) { "Careful" }
+
+    assert_includes html, %(role="alert")
+    assert_includes html, %(data-variant="destructive")
+    assert_includes html, "Careful"
+  end
+
+  test "table cell and head accept text parameter and keep block path" do
+    with_text = view.render("components/table/cell", text: "Param")
+    with_block = view.render("components/table/cell") { "Block" }
+    head = view.render("components/table/head", text: "Name")
+
+    assert_includes with_text, "Param"
+    assert_includes with_block, "Block"
+    assert_includes head, "Name"
+    assert_includes head, %(scope="col")
+  end
+
+  test "simple_table renders empty state" do
+    html = view.render("components/simple_table", collection: [],
+      columns: [{key: :name, label: "Name"}])
+
+    assert_includes html, "No data available"
+  end
+
+  test "separator renders data attributes and merges user data" do
+    html = view.render("components/separator", orientation: :vertical,
+      css_classes: "mx-4", data: {testid: "sep"})
+
+    assert_includes html, %(data-component="separator")
+    assert_includes html, %(data-orientation="vertical")
+    assert_includes html, %(data-testid="sep")
+    assert_includes html, "mx-4"
+    refute_includes html, "{" # regression: options hash rendered as content
+  end
+
+  test "menu_button renders valid markup with aria state" do
+    html = view.render("components/menu_button", title: "Acme Inc", subtitle: "Pro") { "" }
+
+    assert_includes html, %(data-component="menu-button")
+    assert_includes html, %(id="menu-button-acme-inc-trigger")
+    assert_includes html, %(aria-haspopup="menu")
+    assert_includes html, %(aria-expanded="false")
+    refute_includes html, "}" # regression: stray brace inside the button tag
+  end
+
+  test "dropdown panel wires aria to the menu_button trigger" do
+    html = view.render("components/menu_button", title: "Acme") do |menu_id|
+      view.render("components/dropdown", id: menu_id) { "Items" }
+    end
+
+    assert_includes html, %(id="menu-button-acme-content")
+    assert_includes html, %(aria-labelledby="menu-button-acme-trigger")
+    assert_includes html, %(role="menu")
+    assert_includes html, "hidden"
+  end
+
+  test "combobox falls back to a deterministic id" do
+    first = view.render("components/combobox", name: "user[country]") { |id| "id:#{id}" }
+    second = view.render("components/combobox", name: "user[country]") { |id| "id:#{id}" }
+
+    assert_includes first, "id:combobox-user-country"
+    assert_equal first, second
+  end
+
+  test "date_picker falls back to a deterministic id" do
+    first = view.render("components/date_picker", input_name: "event[due_on]")
+    second = view.render("components/date_picker", input_name: "event[due_on]")
+
+    assert_includes first, %(id="date-picker-event-due_on")
+    assert_equal first, second
+  end
+
+  test "stats_grid renders data-attribute columns" do
+    html = view.render("components/stats/stats_grid",
+      cards: [{title: "Users", value: "42"}], columns: 4)
+
+    assert_includes html, %(data-component="stats-grid")
+    assert_includes html, %(data-columns="4")
+    assert_includes html, %(data-stats-part="grid")
+    refute_includes html, "sm:grid-cols-#" # regression: interpolated class
+  end
+
+  test "stats_grid accepts action_position as symbol or string" do
+    sym = view.render("components/stats/stats_grid", cards: [], action: "A", action_position: :start)
+    str = view.render("components/stats/stats_grid", cards: [], action: "A", action_position: "start")
+
+    assert_includes sym, %(data-position="start")
+    assert_includes str, %(data-position="start")
+    assert_includes sym, %(data-with-action="true")
+  end
+
+  test "stats_card follows conventions and keeps legacy aliases" do
+    legacy = view.render("components/stats/stats_card", title: "Errors", value: "3",
+      icon: "exclamation-circle", icon_class: "text-red-500",
+      value_class: "text-red-600", container_class: "legacy-extra")
+    modern = view.render("components/stats/stats_card", title: "Users", value: "42",
+      icon: :users, subtitle: "This month", css_classes: "extra",
+      data: {testid: "sc"})
+
+    assert_includes legacy, "<svg" # legacy string icon name maps to a builtin icon
+    assert_includes legacy, "text-red-500"
+    assert_includes legacy, "text-red-600"
+    assert_includes legacy, "legacy-extra"
+
+    assert_includes modern, %(data-component="stats-card")
+    assert_includes modern, %(data-testid="sc")
+    assert_includes modern, %(data-stats-part="value")
+    assert_includes modern, "This month"
+    assert_includes modern, "<svg"
+    assert_includes modern, "extra"
+  end
+
+  test "closed drawer panel is a hidden, inert dialog" do
+    html = view.render("components/drawer") { "Body" }
+
+    assert_includes html, %(role="dialog")
+    assert_includes html, %(aria-modal="true")
+    assert_includes html, %(aria-label="Drawer")
+    assert_includes html, "aria-hidden"
+    assert_includes html, "inert"
+  end
+
+  test "open drawer panel is exposed to assistive tech" do
+    html = view.render("components/drawer", state: :open, aria_label: "Filters") { "Body" }
+
+    assert_includes html, %(aria-label="Filters")
+    refute_includes html, "aria-hidden"
+    refute_includes html, "inert"
+  end
+
+  test "caller data-controller and data-action concatenate with the component's" do
+    html = view.render("components/combobox", name: "country",
+      data: {controller: "analytics", action: "change->analytics#track", testid: "cb"}) { |_id| "" }
+
+    assert_includes html, %(data-controller="combobox analytics")
+    assert_includes html, %(data-testid="cb")
+
+    provider = view.render("components/drawer/provider",
+      data: {action: "click->analytics#track"}) { "" }
+    assert_match(/data-action="keydown[^"]*closeOnEscape click-&gt;analytics#track"/, provider)
+
+    # component identity keys still win over caller data
+    badge = view.render("components/badge", data: {component: "hijack"}) { "B" }
+    assert_includes badge, %(data-component="badge")
+  end
+
+  test "variant and size vocabulary aliases normalize across components" do
+    badge_size = view.render("components/badge", size: :default) { "B" }
+    badge_variant = view.render("components/badge", variant: :error) { "B" }
+    alert = view.render("components/alert", variant: :error) { "A" }
+    toast = view.render("components/toast", variant: :destructive, title: "Boom")
+
+    assert_includes badge_size, %(data-size="md")
+    assert_includes badge_variant, %(data-variant="destructive")
+    assert_includes alert, %(data-variant="destructive")
+    assert_includes toast, %(data-variant="error")
+    assert_includes toast, "<svg" # error icon auto-selected for the alias
+  end
+
+  test "server-rendered toast icons and dismiss button render" do
+    %i[success info warning error].each do |variant|
+      html = view.render("components/toast", variant: variant, title: "T")
+      icon_area = html[/data-toast-part="icon".*?<\/div>/m]
+      assert_includes icon_area.to_s, "<svg", "missing icon for #{variant} toast"
+    end
+
+    close_area = view.render("components/toast", title: "T")[/data-toast-part="close".*?<\/button>/m]
+    assert_includes close_area.to_s, "<svg", "missing dismiss icon"
+  end
+
+  test "sidebar menu_link styles via data parts instead of inline utilities" do
+    html = view.render("components/sidebar/menu_link", url: "/settings",
+      title: "Settings", subtitle: "Workspace")
+
+    assert_includes html, %(data-sidebar-part="menu-link-text")
+    assert_includes html, %(data-sidebar-part="menu-link-title")
+    assert_includes html, %(data-sidebar-part="menu-link-subtitle")
+    refute_includes html, "flex flex-col gap-0.5"
+  end
+
+  test "toaster renders a polite live region" do
+    html = view.render("components/toaster")
+
+    assert_includes html, %(role="region")
+    assert_includes html, %(aria-live="polite")
+  end
+
+  test "empty media renders icon or explicit content" do
+    icon = view.render("components/empty/media", icon: :search)
+    content = view.render("components/empty/media", content: "<img>".html_safe)
+
+    assert_includes icon, "<svg"
+    assert_includes content, "<img>"
+  end
+
+  test "remaining leaf partials accept the content parameter" do
+    combobox_empty = view.render("components/combobox/empty", content: "<b>Nothing</b>".html_safe)
+    dd_label = view.render("components/dropdown_menu/label", content: "<i>Group</i>".html_safe)
+    dd_shortcut = view.render("components/dropdown_menu/shortcut", text: "⌘K")
+
+    assert_includes combobox_empty, "<b>Nothing</b>"
+    assert_includes dd_label, "<i>Group</i>"
+    assert_includes dd_shortcut, "⌘K"
+  end
+
+  test "empty title and description accept text, content, and block" do
+    text = view.render("components/empty/title", text: "Nothing here")
+    content = view.render("components/empty/description", content: "<em>Try again</em>".html_safe)
+    block = view.render("components/empty/title") { "Block title" }
+
+    assert_includes text, "Nothing here"
+    assert_includes content, "<em>Try again</em>"
+    assert_includes block, "Block title"
+  end
+end

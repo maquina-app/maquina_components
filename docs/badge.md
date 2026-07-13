@@ -59,7 +59,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| variant | Symbol | :default | :default, :primary, :secondary, :destructive, :success, :warning, :outline |
-| size | Symbol | :md | :sm, :md, :lg |
+| variant | Symbol | :default | :default, :primary, :secondary, :destructive, :success, :warning, :outline; :error is accepted as an alias of :destructive |
+| size | Symbol | :md | :sm, :md, :lg; :default is accepted as an alias of :md |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |

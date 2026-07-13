@@ -152,8 +152,10 @@ generates views built with maquina_components. Customize the templates as needed
 | **Card** | Content container with header, content, footer | [Card](https://maquina.app/documentation/components/card/) |
 | **Alert** | Callout messages (info, warning, error) | [Alert](https://maquina.app/documentation/components/alert/) |
 | **Badge** | Status indicators and labels | [Badge](https://maquina.app/documentation/components/badge/) |
-| **Table** | Data tables with sorting support | [Table](https://maquina.app/documentation/components/table/) |
+| **Table** | Data tables with striped and bordered variants | [Table](https://maquina.app/documentation/components/table/) |
+| **Separator** | Horizontal or vertical divider | [Separator](https://maquina.app/documentation/components/separator/) |
 | **Empty State** | Placeholder for empty lists | [Empty State](https://maquina.app/documentation/components/empty/) |
+| **Stats** | Metric cards in a responsive grid | [Stats](https://maquina.app/documentation/components/stats/) |
 
 ### Navigation Components
 

@@ -1,38 +1,32 @@
-<%# locals: (cards: [], columns: 3, container_class: "", action: nil, action_position: "end") -%>
+<%# locals: (cards: [], columns: 3, action: nil, action_position: :end, css_classes: "", container_class: "", **html_options) %>
+<%
+  # container_class is a legacy alias
+  css_classes = css_classes.presence || container_class
+  action_position = action_position.to_s
+  columns = columns.to_i.clamp(1, 6)
 
-<div
-  class="<%= class_names("flex flex-col lg:flex-row lg:items-center gap-4": action.present?) %>"
->
+  merged_data = merge_component_data(html_options,
+    component: "stats-grid",
+    columns: columns
+  )
+  merged_data[:"with-action"] = true if action.present?
+%>
+<%= tag.div class: css_classes.presence, data: merged_data, **html_options do %>
   <% if action.present? && action_position == "start" %>
-    <div class="flex justify-center lg:justify-start">
+    <div data-stats-part="action" data-position="start">
       <%= action %>
     </div>
   <% end %>
 
-  <div
-    class="<%= class_names(
-    "grid gap-4", 
-    "grid-cols-1",
-    "sm:grid-cols-#{columns}",
-    container_class,
-    "flex-1": action.present?
-  ) %>"
-  >
+  <div data-stats-part="grid">
     <% cards.each do |card| %>
-      <%= render "components/stats/stats_card",
-      title: card[:title],
-      value: card[:value],
-      icon: card[:icon],
-      icon_class: card[:icon_class] || "",
-      subtitle: card[:subtitle],
-      value_class: card[:value_class] || "",
-      container_class: card[:container_class] || "" %>
+      <%= render "components/stats/stats_card", **card.symbolize_keys %>
     <% end %>
   </div>
 
   <% if action.present? && action_position == "end" %>
-    <div class="flex justify-center lg:justify-end">
+    <div data-stats-part="action" data-position="end">
       <%= action %>
     </div>
   <% end %>
-</div>
+<% end %>

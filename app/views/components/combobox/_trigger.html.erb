@@ -1,5 +1,5 @@
 <%# locals: (for_id:, placeholder: "Select...", variant: :outline, size: :default, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     component: :button,
     variant: variant,
     size: size,

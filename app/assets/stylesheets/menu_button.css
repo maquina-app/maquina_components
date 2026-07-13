@@ -1,0 +1,155 @@
+/* ===== Menu Button Component Styles ===== */
+/*
+ * Sidebar-flavored button that opens a dropdown panel.
+ * Pairs _menu_button.html.erb (trigger) with _dropdown.html.erb (content)
+ * and menu_button_controller.js.
+ *
+ * Structure:
+ * - menu-button (root ul)
+ *   - item (li with Stimulus controller)
+ *     - trigger (button)
+ *       - avatar (text icon square)
+ *       - text (title + subtitle)
+ *     - content (positioned dropdown panel)
+ */
+
+/* ===== Root Container ===== */
+[data-component="menu-button"] {
+  @apply flex w-full min-w-0 flex-col gap-1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-menu-button-part="item"] {
+  position: relative;
+  list-style: none;
+}
+
+/* ===== Trigger Button ===== */
+[data-menu-button-part="trigger"] {
+  @apply flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm;
+  @apply transition-[width,height,padding] duration-150;
+  height: 3rem;
+  background-color: transparent;
+  color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+[data-menu-button-part="trigger"]:hover,
+[data-menu-button-part="trigger"]:active,
+[data-menu-button-part="trigger"][data-state="open"] {
+  background-color: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+}
+
+[data-menu-button-part="trigger"]:focus-visible {
+  box-shadow: 0 0 0 2px var(--sidebar-ring);
+}
+
+[data-menu-button-part="trigger"]:disabled,
+[data-menu-button-part="trigger"][aria-disabled="true"] {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+[data-menu-button-part="trigger"] svg {
+  @apply size-4 shrink-0;
+}
+
+[data-menu-button-part="trigger"] img {
+  @apply shrink-0;
+}
+
+/* Icon-collapsed sidebar squeezes the trigger to an icon square */
+[data-sidebar-part="root"][data-collapsible="icon"] [data-menu-button-part="trigger"] {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+}
+
+/* ===== Avatar (text icon) ===== */
+[data-menu-button-part="avatar"] {
+  @apply flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg;
+  background-color: var(--sidebar-primary);
+  color: var(--sidebar-primary-foreground);
+}
+
+/* ===== Text (title + subtitle) ===== */
+[data-menu-button-part="text"] {
+  @apply grid flex-1 text-left text-sm leading-tight;
+}
+
+[data-menu-button-part="title"] {
+  @apply truncate font-semibold;
+}
+
+[data-menu-button-part="subtitle"] {
+  @apply truncate text-xs;
+}
+
+/* ===== Content Panel ===== */
+[data-menu-button-part="content"] {
+  position: absolute;
+  z-index: 50;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 14rem;
+  max-width: 14rem;
+  background-color: var(--popover, var(--background));
+  color: var(--popover-foreground, var(--foreground));
+  @apply rounded-lg border p-1 shadow-md;
+  border-color: var(--border);
+}
+
+[data-menu-button-part="content"][data-side="top"] {
+  bottom: calc(100% + 4px);
+}
+
+[data-menu-button-part="content"][data-side="bottom"] {
+  top: calc(100% + 4px);
+}
+
+[data-menu-button-part="content"][data-align="start"] {
+  left: 0;
+}
+
+[data-menu-button-part="content"][data-align="end"] {
+  right: 0;
+}
+
+/* Animation states */
+[data-menu-button-part="content"][data-state="open"] {
+  display: flex;
+  animation: menu-button-in 150ms ease-out;
+}
+
+[data-menu-button-part="content"][data-state="closing"] {
+  display: flex;
+  animation: menu-button-out 100ms ease-in forwards;
+}
+
+@keyframes menu-button-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes menu-button-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(4px);
+  }
+}

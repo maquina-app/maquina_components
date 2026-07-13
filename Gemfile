@@ -17,13 +17,11 @@ gem "standard", require: false
 # Start debugger with binding.b [https://github.com/ruby/debug]
 # gem "debug", ">= 1.0.0"
 
-gem "importmap-rails", "~> 2.1"
 gem "propshaft", "~> 1.1"
 gem "tailwindcss-rails", "~> 4.4"
 
-# Hotwire
+# Hotwire (importmap-rails and stimulus-rails come from the gemspec)
 gem "turbo-rails"
-gem "stimulus-rails"
 
 # CORS for preview embeds
 gem "rack-cors"

@@ -1,5 +1,5 @@
 <%# locals: (variant: :default, size: :default, icon_name: nil, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     drawer_part: :trigger,
     controller: "drawer-trigger",
     action: "click->drawer-trigger#triggerClick",

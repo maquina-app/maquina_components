@@ -111,7 +111,8 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| text | String | nil | Label text, or use block |
+| text | String | nil | Label text |
+| content | String | nil | HTML content via `capture`, or use block |
 | inset | Boolean | false | Align with icon items |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
@@ -134,7 +135,8 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| text | String | nil | Shortcut text, or use block |
+| text | String | nil | Shortcut text |
+| content | String | nil | HTML content via `capture`, or use block |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 

@@ -1,11 +1,10 @@
-<%# locals: (orientation: :horizontal) -%>
+<%# locals: (orientation: :horizontal, css_classes: "", **html_options) %>
+<% merged_data = merge_component_data(html_options,
+    component: :separator,
+    orientation: orientation
+  ) %>
 
-<div
-  data-orientation="<%= orientation %>"
-  role="none"
-  class="
-    bg-border shrink-0 data-[orientation=horizontal]:h-px
-    data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px mx-2
-    data-[orientation=vertical]:h-4
-  "
-></div>
+<%= tag.div role: "none",
+      class: css_classes.presence,
+      data: merged_data,
+      **html_options %>

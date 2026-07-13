@@ -1,5 +1,10 @@
 <%# locals: (variant: :default, title: nil, description: nil, icon: nil, duration: 5000, dismissible: true, content: nil, css_classes: "", **html_options) %>
 <%
+  # :destructive is the library-wide danger variant; toast renders it
+  # with its existing error styling
+  variant = variant.to_s.to_sym
+  variant = :error if variant == :destructive
+
   # Auto-select icon based on variant if not provided
   default_icons = {
     default: nil,
@@ -10,7 +15,7 @@
   }
   toast_icon = icon || default_icons[variant]
 %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     component: :toast,
     controller: "toast",
     variant: variant,

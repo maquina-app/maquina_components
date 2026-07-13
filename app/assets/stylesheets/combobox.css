@@ -53,10 +53,45 @@
   @apply rounded-md border p-0 shadow-md outline-none;
   @apply min-w-[200px];
 
-  /* Reset popover defaults - positioning handled by JS */
+  /* Reset popover defaults - positioning below (anchor CSS) or in JS fallback */
   margin: 0;
   padding: 0;
   inset: unset;
+}
+
+/* ===== Anchor Positioning (modern browsers) ===== */
+/* Places the top-layer popover declaratively; combobox_controller skips its
+   measured fallback when these features are supported. flip-block flips the
+   popover above the trigger when there is no room below — something the JS
+   fallback never did. */
+@supports (anchor-name: --a) and (position-area: block-end) {
+  [data-combobox-part="trigger"] {
+    anchor-name: --maquina-combobox;
+  }
+
+  [data-combobox-part="content"] {
+    position: fixed;
+    position-anchor: --maquina-combobox;
+    margin-block-start: 4px;
+    position-try-fallbacks: flip-block;
+  }
+
+  [data-combobox-part="content"][data-align="start"] {
+    position-area: block-end span-inline-end;
+  }
+
+  [data-combobox-part="content"][data-align="center"] {
+    position-area: block-end;
+  }
+
+  [data-combobox-part="content"][data-align="end"] {
+    position-area: block-end span-inline-start;
+  }
+
+  [data-combobox-part="content"][data-width="default"] {
+    width: auto;
+    min-width: max(200px, anchor-size(inline));
+  }
 }
 
 /* Width variants */

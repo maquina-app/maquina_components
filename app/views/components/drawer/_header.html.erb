@@ -1,9 +1,9 @@
 <%# locals: (show_close: true, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     drawer_part: :header
   ) %>
 <%= content_tag :div, class: css_classes, data: merged_data, **html_options do %>
-  <div class="flex-1">
+  <div data-drawer-part="header-content">
     <%= yield %>
   </div>
   <% if show_close %>

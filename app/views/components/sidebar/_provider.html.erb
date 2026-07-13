@@ -1,5 +1,5 @@
 <%# locals: (id: nil, default_open: true, variant: :inset, css_classes: "", cookie_name: "sidebar_state", keyboard_shortcut: "b", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     component: :sidebar,
     variant: variant,
     controller: "sidebar",

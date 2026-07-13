@@ -1,5 +1,5 @@
 <%# locals: (css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(table_part: :footer) %>
+<% merged_data = merge_component_data(html_options, table_part: :footer) %>
 <%= content_tag :tfoot, class: css_classes.presence, data: merged_data, **html_options do %>
   <%= yield %>
 <% end %>

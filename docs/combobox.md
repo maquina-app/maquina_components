@@ -60,7 +60,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| id | String | nil | Custom ID, auto-generated if nil |
+| id | String | nil | Custom ID; defaults to a deterministic id derived from the input name |
 | name | String | nil | Form input name |
 | value | String | nil | Pre-selected value |
 | placeholder | String | "Select..." | Placeholder text |
@@ -111,6 +111,7 @@
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | text | String | "No results found." | Empty state message |
+| content | String | nil | HTML content via `capture` |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 

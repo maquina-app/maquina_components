@@ -67,6 +67,7 @@
 | id | String | auto | Element ID |
 | state | Symbol | :closed | :open or :closed |
 | side | Symbol | :right | :left or :right |
+| aria_label | String | "Drawer" | Accessible name for the dialog panel |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 

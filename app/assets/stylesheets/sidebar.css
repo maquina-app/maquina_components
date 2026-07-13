@@ -290,6 +290,18 @@
   @apply truncate;
 }
 
+[data-sidebar-part="menu-link-text"] {
+  @apply flex flex-col gap-0.5 leading-none;
+}
+
+[data-sidebar-part="menu-link-title"] {
+  @apply font-medium;
+}
+
+[data-sidebar-part="menu-link-subtitle"] {
+  @apply text-xs text-sidebar-foreground/70;
+}
+
 /* Has menu action - add padding */
 .group-has-data-\[sidebar-part\=menu-action\]\/menu-item [data-sidebar-part="menu-link"],
 [data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"]) [data-sidebar-part="menu-link"] {

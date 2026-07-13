@@ -1,12 +1,8 @@
-<%# locals: (text: nil, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<%# locals: (text: nil, content: nil, css_classes: "", **html_options) %>
+<% merged_data = merge_component_data(html_options,
     "empty-part": "title"
   ) %>
 
 <%= content_tag :h3, class: css_classes.presence, data: merged_data, **html_options do %>
-  <% if text.present? %>
-    <%= text %>
-  <% else %>
-    <%= yield %>
-  <% end %>
+  <%= text.presence || content || yield %>
 <% end %>

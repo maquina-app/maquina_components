@@ -1,5 +1,5 @@
 <%# locals: (value:, selected: false, disabled: false, css_classes: "", **html_options) %>
-<% merged_data = (html_options.delete(:data) || {}).merge(
+<% merged_data = merge_component_data(html_options,
     combobox_part: "option",
     combobox_target: "option",
     value: value,
