@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-07-20
+
+A bugfix release that polishes the component contract, tightens rendering edge cases, and aligns docs and tests with the actual library. No new public API and no breaking changes.
+
+### Fixed
+
+- Fix `stats_grid` responsive columns under Tailwind v4
+- Use deterministic fallback IDs in combobox and date_picker to avoid duplicate-ID collisions across re-renders
+- Fix `menu_button` component and remove the dead animations stylesheet that referenced it
+- Guard the importmap initializer and fix a typo in the assets initializer
+- Constrain toaster variant and duration interpolation to valid values; restore missing server-side toast icons
+- Add dialog accessibility to the drawer and sync open/close state with its triggers
+- Bring the separator up to the component conventions and document it
+- Bring stats and `simple_table` up to the component contract (attribute passthrough, variant split)
+- Give empty `title`/`description` the standard `content:` parameter so they render consistently
+- Replace `block_given?` fallbacks with the `text:`/`content:` parameter convention across leaf partials
+
+### Changed
+
+- Unify the variant and size vocabulary across components for consistent naming
+- Move imperative positioning to modern CSS and finish the inline-Tailwind cleanup
+- Declare `importmap-rails` and `stimulus-rails` as runtime dependencies so the engine boots without manual gem additions
+- Allow callers to extend `data-controller`/`data-action` on components instead of overwriting them
+
+### Docs / Tests / CI
+
+- Add component render tests and preview smoke tests
+- Build the dummy app's Tailwind CSS in CI before running tests
+- Align the README with the actual library
+- Clarify the table docs: attribute passthrough, variant split, `simple_table`
+
 ## [0.5.0] - 2026-07-12
 
 ### Added
