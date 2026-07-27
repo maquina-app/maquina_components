@@ -8,9 +8,9 @@ module MaquinaComponents
   # @example Basic usage
   #   <%= dropdown_menu do |menu| %>
   #     <% menu.trigger { "Options" } %>
-  #     <% menu.content do %>
-  #       <% menu.item "Profile", href: profile_path %>
-  #       <% menu.item "Settings", href: settings_path %>
+  #     <% menu.content do |content| %>
+  #       <% content.item "Profile", href: profile_path %>
+  #       <% content.item "Settings", href: settings_path %>
   #     <% end %>
   #   <% end %>
   #
@@ -19,13 +19,13 @@ module MaquinaComponents
   #     <% menu.trigger variant: :ghost, size: :icon do %>
   #       <%= icon_for :more_horizontal %>
   #     <% end %>
-  #     <% menu.content align: :end, width: :md do %>
-  #       <% menu.label "Actions" %>
-  #       <% menu.item "Edit", href: edit_path, icon: :pencil do |item| %>
+  #     <% menu.content align: :end, width: :md do |content| %>
+  #       <% content.label "Actions" %>
+  #       <% content.item "Edit", href: edit_path, icon: :pencil do |item| %>
   #         <% item.shortcut "⌘E" %>
   #       <% end %>
-  #       <% menu.separator %>
-  #       <% menu.item "Delete", href: delete_path, method: :delete, variant: :destructive, icon: :trash %>
+  #       <% content.separator %>
+  #       <% content.item "Delete", href: delete_path, method: :delete, variant: :destructive, icon: :trash %>
   #     <% end %>
   #   <% end %>
   #
@@ -62,15 +62,15 @@ module MaquinaComponents
       dropdown_menu do |menu|
         menu.trigger(**trigger_options) { trigger_text }
 
-        menu.content(**content_options) do
+        menu.content(**content_options) do |content|
           items.each do |item|
             if item[:separator]
-              menu.separator
+              content.separator
             elsif item[:label] && item[:href].nil? && item[:action].nil?
-              menu.label item[:label]
+              content.label item[:label]
             else
               variant = item[:destructive] ? :destructive : :default
-              menu.item(
+              content.item(
                 item[:label],
                 href: item[:href],
                 method: item[:method],

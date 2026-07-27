@@ -1,0 +1,311 @@
+<%= render "preview_support/specimen_support" %>
+
+<div class="space-y-8">
+  <p class="text-xs text-muted-foreground max-w-prose">
+    Every interactive component in each state it can be forced into from markup.
+    Cells labelled <em>hover</em> and <em>focus</em> are live — point at them or
+    tab into them; the <em>ring</em> cell paints the focus ring straight from the
+    focus tokens so it is visible without a keyboard.
+  </p>
+
+  <%= specimen_section "Button", note: "6 variants. Before 0.6.0 only the base rule carried a focus ring, so 5 of these never ringed." do %>
+    <% %w[primary secondary destructive outline ghost link].each do |variant| %>
+      <%= specimen_grid do %>
+        <%= specimen_cell variant do %>
+          <button data-component="button" data-variant="<%= variant %>">Save</button>
+        <% end %>
+        <%= specimen_cell "hover / focus" do %>
+          <button data-component="button" data-variant="<%= variant %>">Save</button>
+        <% end %>
+        <%= specimen_cell "ring" do %>
+          <button data-component="button" data-variant="<%= variant %>" data-specimen-ring>Save</button>
+        <% end %>
+        <%= specimen_cell "disabled" do %>
+          <button data-component="button" data-variant="<%= variant %>" disabled>Save</button>
+        <% end %>
+        <%= specimen_cell "aria-disabled" do %>
+          <button data-component="button" data-variant="<%= variant %>" aria-disabled="true">Save</button>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Button sizes" do %>
+    <%= specimen_grid do %>
+      <% %w[sm default lg].each do |size| %>
+        <%= specimen_cell size do %>
+          <button data-component="button" data-variant="primary" data-size="<%= size %>">Button</button>
+        <% end %>
+      <% end %>
+      <% %w[icon-sm icon icon-lg].each do |size| %>
+        <%= specimen_cell size do %>
+          <button data-component="button" data-variant="outline" data-size="<%= size %>">
+            <%= icon_for :settings, class: "size-4" %>
+            <span class="sr-only">Settings</span>
+          </button>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Input" do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "default" do %>
+        <input data-component="input" type="text" value="hello@maquina.app" class="w-48">
+      <% end %>
+      <%= specimen_cell "placeholder" do %>
+        <input data-component="input" type="text" placeholder="hello@maquina.app" class="w-48">
+      <% end %>
+      <%= specimen_cell "ring" do %>
+        <input data-component="input" type="text" value="focused" data-specimen-ring class="w-48">
+      <% end %>
+      <%= specimen_cell "aria-invalid" do %>
+        <input data-component="input" type="text" value="not-an-email" aria-invalid="true" class="w-48">
+      <% end %>
+      <%= specimen_cell "disabled" do %>
+        <input data-component="input" type="text" value="locked" disabled class="w-48">
+      <% end %>
+      <%= specimen_cell "readonly" do %>
+        <input data-component="input" type="text" value="read only" readonly class="w-48">
+      <% end %>
+    <% end %>
+    <%= specimen_grid do %>
+      <% %w[sm default lg].each do |size| %>
+        <%= specimen_cell "size #{size}" do %>
+          <input data-component="input" type="text" data-size="<%= size %>" value="<%= size %>" class="w-32">
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Textarea, select, label" do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "textarea" do %>
+        <textarea data-component="textarea" rows="2" class="w-48">Notes</textarea>
+      <% end %>
+      <%= specimen_cell "textarea invalid" do %>
+        <textarea data-component="textarea" rows="2" aria-invalid="true" class="w-48">Notes</textarea>
+      <% end %>
+      <%= specimen_cell "textarea disabled" do %>
+        <textarea data-component="textarea" rows="2" disabled class="w-48">Notes</textarea>
+      <% end %>
+      <%= specimen_cell "select" do %>
+        <select data-component="select" class="w-40"><option>Monthly</option></select>
+      <% end %>
+      <%= specimen_cell "select invalid" do %>
+        <select data-component="select" aria-invalid="true" class="w-40"><option>Monthly</option></select>
+      <% end %>
+      <%= specimen_cell "select disabled" do %>
+        <select data-component="select" disabled class="w-40"><option>Monthly</option></select>
+      <% end %>
+    <% end %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "label" do %>
+        <%= render "components/label", text: "Email" %>
+      <% end %>
+      <%= specimen_cell "label required" do %>
+        <%= render "components/label", text: "Email", required: true %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Checkbox, radio, switch", note: "Marks are images, not glyphs — see the marks specimen." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "unchecked" do %>
+        <input data-component="checkbox" type="checkbox">
+      <% end %>
+      <%= specimen_cell "checked" do %>
+        <input data-component="checkbox" type="checkbox" checked>
+      <% end %>
+      <%= specimen_cell "indeterminate" do %>
+        <input data-component="checkbox" type="checkbox" data-specimen-indeterminate>
+      <% end %>
+      <%= specimen_cell "ring" do %>
+        <input data-component="checkbox" type="checkbox" data-specimen-ring>
+      <% end %>
+      <%= specimen_cell "invalid" do %>
+        <input data-component="checkbox" type="checkbox" aria-invalid="true">
+      <% end %>
+      <%= specimen_cell "disabled" do %>
+        <input data-component="checkbox" type="checkbox" disabled>
+      <% end %>
+      <%= specimen_cell "checked disabled" do %>
+        <input data-component="checkbox" type="checkbox" checked disabled>
+      <% end %>
+    <% end %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "radio" do %>
+        <input data-component="radio" type="radio" name="specimen-radio">
+      <% end %>
+      <%= specimen_cell "radio checked" do %>
+        <input data-component="radio" type="radio" name="specimen-radio" checked>
+      <% end %>
+      <%= specimen_cell "radio ring" do %>
+        <input data-component="radio" type="radio" name="specimen-radio-2" data-specimen-ring>
+      <% end %>
+      <%= specimen_cell "radio disabled" do %>
+        <input data-component="radio" type="radio" name="specimen-radio-3" disabled>
+      <% end %>
+      <%= specimen_cell "switch off" do %>
+        <input data-component="switch" type="checkbox">
+      <% end %>
+      <%= specimen_cell "switch on" do %>
+        <input data-component="switch" type="checkbox" checked>
+      <% end %>
+      <%= specimen_cell "switch ring" do %>
+        <input data-component="switch" type="checkbox" checked data-specimen-ring>
+      <% end %>
+      <%= specimen_cell "switch disabled" do %>
+        <input data-component="switch" type="checkbox" checked disabled>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Badge" do %>
+    <%= specimen_grid do %>
+      <% %w[default secondary destructive outline success warning].each do |variant| %>
+        <%= specimen_cell variant do %>
+          <%= render "components/badge", variant: variant.to_sym do %><%= variant.capitalize %><% end %>
+        <% end %>
+      <% end %>
+      <%= specimen_cell "ring" do %>
+        <%= render "components/badge", variant: :default, "data-specimen-ring": true do %>Focused<% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Toggle group" do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "single, one item on" do %>
+        <%= render "components/toggle_group", type: :single, value: "list" do %>
+          <%= render "components/toggle_group/item", value: "list", pressed: true, aria_label: "List" do %>
+            <%= icon_for :list, class: "size-4" %>
+          <% end %>
+          <%= render "components/toggle_group/item", value: "grid", aria_label: "Grid" do %>
+            <%= icon_for :grid, class: "size-4" %>
+          <% end %>
+          <%= render "components/toggle_group/item", value: "board", aria_label: "Board", disabled: true do %>
+            <%= icon_for :chart_bar, class: "size-4" %>
+          <% end %>
+        <% end %>
+      <% end %>
+      <%= specimen_cell "outline variant" do %>
+        <%= render "components/toggle_group", type: :single, variant: :outline, size: :sm, value: "bold" do %>
+          <%= render "components/toggle_group/item", value: "bold", pressed: true, aria_label: "Bold" do %>B<% end %>
+          <%= render "components/toggle_group/item", value: "italic", aria_label: "Italic" do %>I<% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Pagination" do %>
+    <%= render "components/pagination" do %>
+      <%= render "components/pagination/content" do %>
+        <%= render "components/pagination/item" do %>
+          <%= render "components/pagination/previous", href: "#" %>
+        <% end %>
+        <%= render "components/pagination/item" do %>
+          <%= render "components/pagination/link", href: "#" do %>1<% end %>
+        <% end %>
+        <%= render "components/pagination/item" do %>
+          <%= render "components/pagination/link", href: "#", active: true do %>2<% end %>
+        <% end %>
+        <%= render "components/pagination/item" do %>
+          <%= render "components/pagination/link", href: "#", disabled: true do %>3<% end %>
+        <% end %>
+        <%= render "components/pagination/item" do %>
+          <%= render "components/pagination/ellipsis" %>
+        <% end %>
+        <%= render "components/pagination/item" do %>
+          <%= render "components/pagination/next", href: "#" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Menu items", note: "Rendered outside their popovers so the item states are visible at rest." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "dropdown item" do %>
+        <div class="w-52 rounded-md border p-1">
+          <%= render "components/dropdown_menu/item", href: "#" do %>Edit<% end %>
+          <%= render "components/dropdown_menu/item", href: "#", variant: :destructive do %>Delete<% end %>
+          <%= render "components/dropdown_menu/item", href: "#", disabled: true do %>Archive<% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "combobox option" do %>
+        <div class="w-52 rounded-md border p-1">
+          <%= render "components/combobox/option", value: "apple" do %>Apple<% end %>
+          <%= render "components/combobox/option", value: "banana", selected: true do %>Banana<% end %>
+          <%= render "components/combobox/option", value: "cherry", disabled: true do %>Cherry<% end %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Sidebar menu parts", note: "Badge and action pin inside the menu item; the item with an action reserves the button's right padding." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "plain button" do %>
+        <div class="w-52 rounded-md border p-1">
+          <%= render "components/sidebar/menu" do %>
+            <%= render "components/sidebar/menu_item" do %>
+              <%= render "components/sidebar/menu_button", url: "#", icon_name: :inbox, title: "Inbox" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "with badge" do %>
+        <div class="w-52 rounded-md border p-1">
+          <%= render "components/sidebar/menu" do %>
+            <%= render "components/sidebar/menu_item" do %>
+              <%= render "components/sidebar/menu_button", url: "#", icon_name: :inbox, title: "Inbox" %>
+              <%= render "components/sidebar/menu_badge", text: "24" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "with action" do %>
+        <div class="w-52 rounded-md border p-1">
+          <%= render "components/sidebar/menu" do %>
+            <%= render "components/sidebar/menu_item" do %>
+              <%= render "components/sidebar/menu_button", url: "#", icon_name: :calendar, title: "Calendar" %>
+              <%= render "components/sidebar/menu_action", label: "Calendar options" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "group action" do %>
+        <div class="w-52 rounded-md border">
+          <%= render "components/sidebar/group", title: "Projects" do %>
+            <%= render "components/sidebar/group_action", label: "Add project" %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "separator" do %>
+        <div class="w-52 rounded-md border py-2">
+          <%= render "components/sidebar/separator" %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Table row" do %>
+    <%= render "components/table" do %>
+      <%= render "components/table/header" do %>
+        <%= render "components/table/row" do %>
+          <%= render "components/table/head", text: "Invoice" %>
+          <%= render "components/table/head", text: "State" %>
+        <% end %>
+      <% end %>
+      <%= render "components/table/body" do %>
+        <%= render "components/table/row" do %>
+          <%= render "components/table/cell", text: "INV001" %>
+          <%= render "components/table/cell", text: "default" %>
+        <% end %>
+        <%= render "components/table/row", selected: true do %>
+          <%= render "components/table/cell", text: "INV002" %>
+          <%= render "components/table/cell", text: "selected" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

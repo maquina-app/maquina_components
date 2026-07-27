@@ -9,11 +9,11 @@
   container_data[:variant] = variant if variant
 %>
 <% if container %>
-<div data-table-part="container"<%= " data-variant=\"#{variant}\"" if variant %>>
+<%= tag.div data: container_data do %>
   <%= content_tag :table, class: css_classes.presence, data: table_data, **html_options do %>
     <%= yield %>
   <% end %>
-</div>
+<% end %>
 <% else %>
 <%= content_tag :table, class: css_classes.presence, data: table_data, **html_options do %>
   <%= yield %>

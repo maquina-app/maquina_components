@@ -1,10 +1,20 @@
 module MaquinaComponents
   module IconsHelper
+    # Renders an icon by name, preferring the host app's main_icon_svg_for
+    # override and falling back to the engine's built-in set.
+    #
+    # An unknown name used to render nothing at all, which is invisible in
+    # review and in production. When MaquinaComponents.strict_icons is on
+    # (development and test by default) it raises instead; production keeps
+    # the nil so a typo can never take a page down.
     def icon_for(name, options = {})
       return nil unless name
 
       svg = main_icon_svg_for(name.to_sym) || icon_svg_for(name.to_sym)
-      return nil unless svg
+      unless svg
+        raise MaquinaComponents::UnknownIconError, unknown_icon_message(name) if MaquinaComponents.strict_icons?
+        return nil
+      end
 
       apply_icon_options(svg, options)
     end
@@ -24,6 +34,13 @@ module MaquinaComponents
     end
 
     private
+
+    def unknown_icon_message(name)
+      "Unknown icon #{name.to_sym.inspect}. Define it in your app's " \
+      "main_icon_svg_for override, or use one of the engine's built-in icons " \
+      "(see app/helpers/maquina_components/icons_helper.rb). Set " \
+      "MaquinaComponents.strict_icons = false to fall back to rendering nothing."
+    end
 
     def apply_icon_options(svg, options)
       return svg.html_safe unless options&.any?
@@ -204,12 +221,19 @@ module MaquinaComponents
             <path d="M12 8h.01"/>
           </svg>
         SVG
-      when :triangle_alert
+      when :triangle_alert, :alert_triangle # :alert_triangle is a common lucide-era alias
         <<~SVG.freeze
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
             <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/>
             <path d="M12 9v4"/>
             <path d="M12 17h.01"/>
+          </svg>
+        SVG
+      when :briefcase
+        <<~SVG.freeze
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
+            <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            <rect width="20" height="14" x="2" y="6" rx="2"/>
           </svg>
         SVG
       when :check_circle

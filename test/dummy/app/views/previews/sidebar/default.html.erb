@@ -1,28 +1,96 @@
-<div class="text-sm text-muted-foreground p-4 bg-muted/50 rounded-lg">
-  <p class="font-medium mb-2">Sidebar Component</p>
-  <p>The sidebar component requires a full-page layout context with the sidebar provider.</p>
-  <p class="mt-2">See the <a href="/" class="text-primary underline" target="_blank">main application</a> for a live sidebar example.</p>
-</div>
+<%#
+  The real sidebar, not a mock-up: provider → sidebar → header / content /
+  footer → inset. Every element here comes from an engine partial, so this page
+  breaks the moment the component does.
 
-<div class="mt-6">
-  <p class="text-sm font-medium mb-3">Sidebar Menu Items Preview:</p>
+  The sidebar container is position: fixed, which resolves against this iframe's
+  viewport — that is what makes a full-page component previewable in a panel.
+  Below 768px the sidebar controller collapses the sidebar off-canvas, exactly
+  as it does in a real app; use the trigger in the header to bring it back.
+%>
+<%# -m-6 cancels the preview layout's body padding so the panel is full-bleed. %>
+<%= render "components/sidebar/provider", default_open: true, variant: :inset, css_classes: "-m-6" do %>
+  <%= render "components/sidebar", state: :expanded, variant: :inset do %>
+    <%= render "components/sidebar/header" do %>
+      <%= render "components/sidebar/menu" do %>
+        <%= render "components/sidebar/menu_item" do %>
+          <%= render "components/sidebar/menu_link",
+                url: "#",
+                text_icon: "MQ",
+                title: "Máquina",
+                subtitle: "Components" %>
+        <% end %>
+      <% end %>
+    <% end %>
 
-  <%= preview_stack gap: 2 do %>
-    <div class="flex items-center gap-2 px-3 py-2 rounded-md bg-accent text-accent-foreground">
-      <%= icon_for :layout_dashboard, class: "size-4" %>
-      <span class="text-sm">Dashboard</span>
-    </div>
-    <div class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent text-muted-foreground">
-      <%= icon_for :inbox, class: "size-4" %>
-      <span class="text-sm">Inbox</span>
-    </div>
-    <div class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent text-muted-foreground">
-      <%= icon_for :calendar, class: "size-4" %>
-      <span class="text-sm">Calendar</span>
-    </div>
-    <div class="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-accent text-muted-foreground">
-      <%= icon_for :settings, class: "size-4" %>
-      <span class="text-sm">Settings</span>
+    <%= render "components/sidebar/content" do %>
+      <%= render "components/sidebar/group", title: "Navigation" do %>
+        <%# The group action sits beside the group label, pushed right by ml-auto. %>
+        <%= render "components/sidebar/group_action", label: "Add navigation item" %>
+
+        <%= render "components/sidebar/menu" do %>
+          <%= render "components/sidebar/menu_item" do %>
+            <%= render "components/sidebar/menu_button",
+                  url: "#", icon_name: :layout_dashboard, title: "Dashboard", active: true %>
+          <% end %>
+          <%# The badge pins to the right edge of the item, over the button. %>
+          <%= render "components/sidebar/menu_item" do %>
+            <%= render "components/sidebar/menu_button",
+                  url: "#", icon_name: :inbox, title: "Inbox" %>
+            <%= render "components/sidebar/menu_badge", text: "24" %>
+          <% end %>
+          <%#
+            The action is a sibling of the button inside the same menu_item:
+            that nesting is what makes menu-item:has(menu-action) reserve the
+            button's right padding, so the two never overlap.
+          %>
+          <%= render "components/sidebar/menu_item" do %>
+            <%= render "components/sidebar/menu_button",
+                  url: "#", icon_name: :calendar, title: "Calendar" %>
+            <%= render "components/sidebar/menu_action", label: "Calendar options" %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <%= render "components/sidebar/separator" %>
+
+      <%= render "components/sidebar/group", title: "Settings" do %>
+        <%= render "components/sidebar/menu" do %>
+          <%= render "components/sidebar/menu_item" do %>
+            <%= render "components/sidebar/menu_button",
+                  url: "#", icon_name: :settings, title: "Settings" %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%= render "components/sidebar/footer" do %>
+      <%= render "components/sidebar/menu" do %>
+        <%= render "components/sidebar/menu_item" do %>
+          <%= render "components/sidebar/menu_link",
+                url: "#",
+                text_icon: "JD",
+                title: "John Doe",
+                subtitle: "john@example.com" %>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= render "components/sidebar/inset" do %>
+    <%= render "components/header" do %>
+      <%= render "components/sidebar/trigger", icon_name: :left_panel, css_classes: "size-7" %>
+      <%= render "components/separator", orientation: :vertical %>
+      <h1 class="text-sm font-medium">Dashboard</h1>
+    <% end %>
+
+    <div class="p-4">
+      <%= render "components/card" do %>
+        <%= render "components/card/header" do %>
+          <%= render "components/card/title", text: "Inset content" %>
+          <%= render "components/card/description", text: "The inset variant insets the main area inside the sidebar's background." %>
+        <% end %>
+      <% end %>
     </div>
   <% end %>
-</div>
+<% end %>

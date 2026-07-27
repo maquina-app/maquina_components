@@ -26,6 +26,11 @@ module MaquinaComponentsHelper
   # @param options [Hash] Options hash with :class, :stroke_width, etc.
   # @return [String, nil] SVG string or nil to fall back to engine's icons
   #
+  # A name neither this method nor the engine can resolve raises
+  # MaquinaComponents::UnknownIconError in development and test, and renders
+  # nothing in production. Set MaquinaComponents.strict_icons = false in an
+  # initializer to opt out of the raise.
+  #
   # @example Using Heroicons
   #   def main_icon_svg_for(name)
   #     heroicon_tag(name, variant: :outline)

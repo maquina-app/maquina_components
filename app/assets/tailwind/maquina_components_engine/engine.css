@@ -1,22 +1,61 @@
+/* Token defaults must come first: every component stylesheet reads them. */
+@import "./tokens.css";
+
 @source "../../../views/";
 
-@import "../../stylesheets/alert.css";
-@import "../../stylesheets/badge.css";
-@import "../../stylesheets/breadcrumbs.css";
-@import "../../stylesheets/calendar.css";
-@import "../../stylesheets/card.css";
-@import "../../stylesheets/combobox.css";
-@import "../../stylesheets/date_picker.css";
-@import "../../stylesheets/drawer.css";
-@import "../../stylesheets/dropdown_menu.css";
-@import "../../stylesheets/empty.css";
+/* ===================================================================
+   IMPORT ORDER IS LOAD-BEARING — DO NOT ALPHABETIZE
+   ===================================================================
+   Every component rule now lives in `@layer components` and is flattened to
+   specificity 0,1,0 with :where() (see form.css for the full contract). That is
+   what lets a caller's Tailwind utility — the documented `css_classes:`
+   parameter — win over the engine. The price is that specificity no longer
+   resolves anything: SOURCE ORDER is the only tie-breaker, across files as
+   well as inside them.
+
+   So the imports are grouped, primitives first:
+
+   1. PRIMITIVES — files that style bare `data-component` primitives which the
+      composites then reuse: button/input/select/checkbox/radio/switch/label
+      (form.css), badge, separator, card, table.
+
+   2. COMPOSITES — files that compose those primitives, or reach into another
+      composite's parts. Each must come after everything it overrides:
+        calendar    → before date_picker (the popover strips the calendar border)
+        sidebar     → before header and menu_button (both key off sidebar parts)
+        separator   → before header (header re-sizes the vertical separator)
+        form        → before drawer, dropdown_menu and combobox, whose triggers
+                      all carry data-component="button"
+        dropdown_menu → before breadcrumbs (the overflow popover has to beat
+                      dropdown_menu's `position: absolute`; it used to rely on a
+                      doubled attribute selector instead)
+
+   Adding a component? Put it in the group that matches, and after anything it
+   overrides. Alphabetical order used to put combobox, date_picker, drawer and
+   dropdown_menu ahead of form.css, which meant the button base silently won
+   over each of their triggers.
+   =================================================================== */
+
+/* ----- 1. Primitives ----- */
 @import "../../stylesheets/form.css";
+@import "../../stylesheets/badge.css";
+@import "../../stylesheets/separator.css";
+@import "../../stylesheets/card.css";
+@import "../../stylesheets/table.css";
+
+/* ----- 2. Composites ----- */
+@import "../../stylesheets/alert.css";
+@import "../../stylesheets/empty.css";
+@import "../../stylesheets/stats.css";
+@import "../../stylesheets/toggle_group.css";
+@import "../../stylesheets/pagination.css";
+@import "../../stylesheets/toast.css";
+@import "../../stylesheets/calendar.css";
+@import "../../stylesheets/date_picker.css";
+@import "../../stylesheets/sidebar.css";
 @import "../../stylesheets/header.css";
 @import "../../stylesheets/menu_button.css";
-@import "../../stylesheets/pagination.css";
-@import "../../stylesheets/separator.css";
-@import "../../stylesheets/sidebar.css";
-@import "../../stylesheets/stats.css";
-@import "../../stylesheets/table.css";
-@import "../../stylesheets/toast.css";
-@import "../../stylesheets/toggle_group.css";
+@import "../../stylesheets/drawer.css";
+@import "../../stylesheets/dropdown_menu.css";
+@import "../../stylesheets/combobox.css";
+@import "../../stylesheets/breadcrumbs.css";

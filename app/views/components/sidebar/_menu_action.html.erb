@@ -1,0 +1,28 @@
+<%# locals: (label:, url: nil, icon_name: :ellipsis, show_on_hover: false, css_classes: "", **html_options) %>
+<%#
+  Render this INSIDE a menu_item, as a sibling of the menu_button or
+  menu_link — the item is the positioning context this absolute action
+  resolves against, and `menu-item:has(menu-action)` is what reserves the
+  right-hand padding on the button so the two never overlap.
+
+  label: is required: the control is icon-only, so without it there is
+  nothing for a screen reader to announce.
+%>
+<% merged_data = merge_component_data(html_options,
+    sidebar_part: "menu-action",
+    show_on_hover: (show_on_hover ? true : nil)
+  ) %>
+<% action_content = capture do %>
+  <%= icon_for(icon_name) if icon_name.present? %>
+  <span class="sr-only"><%= label %></span>
+<% end %>
+<% if url.present? %>
+  <%= link_to url, class: css_classes.presence, data: merged_data,
+        "aria-label": label, **html_options do %>
+    <%= action_content %>
+  <% end %>
+<% else %>
+  <%= content_tag :button, action_content, type: :button,
+        class: css_classes.presence, data: merged_data,
+        "aria-label": label, **html_options %>
+<% end %>

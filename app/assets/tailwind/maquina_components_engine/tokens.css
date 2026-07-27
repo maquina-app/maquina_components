@@ -1,0 +1,101 @@
+/* ===== Engine Design Tokens ===== */
+/*
+ * Engine-level defaults for everything that is not a color: shape, focus ring,
+ * elevation and weight. Colors already flow through the host's theme variables;
+ * these tokens give the rest of the engine the same treatment, so theming is a
+ * short list of declarations instead of override CSS fighting the cascade.
+ *
+ * `static` is deliberate. The engine reads these from hand-written var() calls
+ * and never from a utility class, so they are exactly the kind of variable
+ * Tailwind prunes when nothing references them. Measured against Tailwind
+ * 4.1.16: dropping `static` leaves the output byte-identical *at these names*,
+ * because pruning applies to its own namespaces — rename --control-radius to
+ * --radius-control and it disappears without `static`. Keep `static` anyway; it
+ * makes the guarantee independent of the names and of Tailwind's version.
+ * test/stylesheets/compiled_css_test.rb asserts the tokens reach the output.
+ *
+ * `@theme` also emits into `@layer theme`, which loses unconditionally to a
+ * host's unlayered `:root` — so an engine default can never clobber a
+ * consumer's token regardless of import order. Do not move these to a bare
+ * `:root` (equal specificity with the host, silently order-dependent) and do
+ * not rename them into Tailwind's own namespaces (`--radius-*`, `--shadow-*`):
+ * a host doing `@theme { --radius-*: initial }` would wipe them, and
+ * size-named tokens can never theme controls and surfaces independently.
+ *
+ * Values that must stay redefinable inside a `.dark` scope are deliberately
+ * NOT here; they appear as use-site fallbacks instead:
+ *   --focus-ring-color        (per-state ring color, e.g. invalid fields)
+ *   --control-fill            (field background, re-set under .dark)
+ *   --*-hover                 (resolved hover colors)
+ *   --success / --warning / --info (and their -foreground pairs)
+ *   --checkbox-mark-image, --checkbox-indeterminate-image,
+ *   --radio-mark-image, --switch-thumb-image, --select-chevron-image
+ *
+ * Radius, elevation and mark images additionally accept a component-level
+ * escape hatch that falls back to the role token, e.g.
+ *   border-radius: var(--card-radius, var(--surface-radius, 0.5rem));
+ * Only the role tokens are public API; the component-level ones exist so an
+ * app can pin one component without redefining a role.
+ */
+
+@theme static {
+  /* Shape */
+  --control-radius: 0.375rem;   /* buttons, inputs, badges, menu items */
+  --surface-radius: 0.5rem;     /* cards, popovers, toasts, alerts */
+  --mark-radius: 4px;           /* checkbox */
+  --pill-radius: calc(infinity * 1px);
+
+  /* Focus */
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 0px;
+  --focus-ring-style: solid;
+
+  /* Elevation */
+  --elevation-control: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+  --elevation-raised:  var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
+  --elevation-overlay: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+
+  /* Weight */
+  --label-weight: 500;
+  --value-weight: 700;
+}
+
+/* ----- Engine-internal defaults that differ by color scheme -----
+ *
+ * NOT public API. Set the public token instead (--control-fill,
+ * --select-chevron-image); these only supply the value it falls back to.
+ *
+ * They live on an inherited scope rather than on the control, and that is the
+ * whole point. An element's own custom property beats an inherited one, so a
+ * dark-mode value declared on `[data-component="select"]` would sit *above* a
+ * consumer's `:root` override and quietly win — the public token would work in
+ * light mode and be ignored in dark. Declaring the default here instead keeps
+ * the public token first in every var() chain, in both schemes.
+ *
+ * `.dark` follows `:root` on purpose: both are (0,1,0) on the same element, so
+ * source order decides, and both are ours.
+ *
+ * A component stylesheet should never reference `.dark` — if a component needs
+ * a different value in dark mode, that is a missing token, not a missing
+ * selector. test/stylesheets/css_conventions_test.rb enforces it.
+ */
+:root {
+  /* Tells the browser which scheme the page is in, so OS-drawn chrome follows:
+     the native <select> option list, scrollbars, spinners, the caret. It is the
+     only lever a page has over those — they are drawn outside the document and
+     ignore its CSS. Without it a dark page pops a light option menu. */
+  color-scheme: light;
+
+  --maquina-control-fill-default: transparent;
+  --maquina-select-fill-default: var(--background);
+  --maquina-select-chevron-default: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+.dark {
+  color-scheme: dark;
+
+  --maquina-control-fill-default: color-mix(in oklch, var(--input) 30%, transparent);
+  --maquina-select-fill-default: color-mix(in oklch, var(--input) 30%, transparent);
+  /* gray-500 alone is low-contrast on a dark field */
+  --maquina-select-chevron-default: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}

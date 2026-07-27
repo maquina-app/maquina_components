@@ -1,0 +1,28 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/table", variant: :bordered do %>
+    <%= render "components/table/header" do %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/head", text: "Invoice" %>
+        <%= render "components/table/head", text: "Status" %>
+        <%= render "components/table/head", text: "Amount", css_classes: "text-right" %>
+      <% end %>
+    <% end %>
+    <%= render "components/table/body" do %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", text: "INV001", css_classes: "font-medium" %>
+        <%= render "components/table/cell", text: "Paid" %>
+        <%= render "components/table/cell", text: "$250.00", css_classes: "text-right" %>
+      <% end %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", text: "INV002", css_classes: "font-medium" %>
+        <%= render "components/table/cell", text: "Pending" %>
+        <%= render "components/table/cell", text: "$150.00", css_classes: "text-right" %>
+      <% end %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", text: "INV003", css_classes: "font-medium" %>
+        <%= render "components/table/cell", text: "Unpaid" %>
+        <%= render "components/table/cell", text: "$350.00", css_classes: "text-right" %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

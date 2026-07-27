@@ -222,9 +222,16 @@ Add these to your `app/assets/tailwind/application.css`:
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* Global border color */
-* {
-  border-color: var(--color-border);
+/* Global border color.
+ *
+ * Keep this inside @layer base. Unlayered CSS outranks every layer at any
+ * specificity, so an unlayered `*` would override the border-color of every
+ * component in @layer components — the tinted borders on the alert and toast
+ * variants would silently fall back to --border. */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
 }
 ```
 
@@ -293,45 +300,31 @@ eagerLoadControllersFrom("controllers", application)
 
 ## Theme Variables
 
-maquina_components uses CSS variables following the [shadcn/ui theming convention](https://ui.shadcn.com/docs/theming).
+Colors are CSS variables following the [shadcn/ui theming convention](https://ui.shadcn.com/docs/theming).
 
-### Dual-Definition Pattern
-
-Variables must be defined twice for Tailwind CSS v4:
-
-1. **`:root`** — Defines the actual color values
-2. **`@theme`** — Makes them available as Tailwind utilities (`bg-primary`, `text-muted-foreground`)
+Each one is defined twice, which Tailwind CSS v4 requires: in `:root` for the
+value, and in `@theme` so it also becomes a utility (`bg-primary`,
+`text-muted-foreground`).
 
 ```css
 :root {
-  --primary: oklch(0.205 0 0);           /* Actual value */
-}
-
-@theme {
-  --color-primary: var(--primary);        /* Enables: bg-primary, text-primary */
-}
-```
-
-### Customizing Colors
-
-Edit the values in `:root` to match your brand. The generator provides neutral grays by default. Common customizations:
-
-```css
-:root {
-  /* Blue primary */
   --primary: oklch(0.488 0.243 264.376);
   --primary-foreground: oklch(0.985 0 0);
-  
-  /* Green success (add new semantic color) */
-  --success: oklch(0.6 0.2 145);
-  --success-foreground: oklch(0.985 0 0);
 }
 
 @theme {
-  --color-success: var(--success);
-  --color-success-foreground: var(--success-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
 }
 ```
+
+Edit the values in `:root` to match your brand — the generator installs neutral
+grays. Adding a semantic color works the same way: declare it in `:root`, then
+mirror it in `@theme` if you want the utility.
+
+Everything that is not a color — shape, focus rings, elevation, weights, control
+marks — is a token too. See **[theming](theming.md)** for the full table, ready-made
+themes, and how to pin a single component.
 
 ---
 
@@ -525,6 +518,11 @@ If you already have `--color-primary:` in your CSS, the generator skips adding t
 ---
 
 ## Next Steps
+
+### Guides
+
+- [Theming](theming.md) — Shape, focus, elevation and mark tokens
+- [Upgrading](upgrading.md) — Breaking changes per release, and `rake maquina:doctor`
 
 ### Layout
 

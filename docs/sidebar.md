@@ -2,7 +2,7 @@
 
 > A composable sidebar component with collapsible states and mobile responsiveness.
 
-<!-- preview:default height:280 -->
+<!-- preview:default height:420 -->
 
 ## Usage
 
@@ -62,6 +62,53 @@
   title: "ACME Corp",
   subtitle: "Workspace" %>
 ```
+
+### Menu Badge and Menu Action
+
+Both pin to the right edge of the menu item, so they must be rendered **inside**
+`menu_item`, as siblings of the `menu_button` (or `menu_link`). That nesting is
+load-bearing: the item is the positioning context, and a menu item containing an
+action automatically reserves right-hand padding on its button so the icon never
+sits on top of the label.
+
+```erb
+<%%= render "components/sidebar/menu_item" do %>
+  <%%= render "components/sidebar/menu_button",
+    title: "Inbox", icon_name: :inbox, url: inbox_path %>
+  <%%= render "components/sidebar/menu_badge", text: "24" %>
+  <%%= render "components/sidebar/menu_action",
+    label: "Inbox options",
+    icon_name: :ellipsis,
+    show_on_hover: true %>
+<%% end %>
+```
+
+`menu_action` renders a `<button type="button">` by default and an `<a>` when
+you pass `url:`. It is icon-only, so `label:` is required — it becomes both the
+`aria-label` and screen-reader text. `show_on_hover: true` keeps the action
+invisible until the item is hovered or focused.
+
+### Group Action
+
+```erb
+<%%= render "components/sidebar/group", title: "Projects" do %>
+  <%%= render "components/sidebar/group_action",
+    label: "Add project", url: new_project_path %>
+
+  <%%= render "components/sidebar/menu" do %>
+    <%# … %>
+  <%% end %>
+<%% end %>
+```
+
+### Separator
+
+```erb
+<%%= render "components/sidebar/separator" %>
+```
+
+Renders the separator primitive, so it keeps the primitive's 1px track while the
+sidebar part re-spaces it and swaps in the sidebar's own border token.
 
 ## API Reference
 
@@ -132,6 +179,10 @@
 | sidebar/group | Groups menu items with optional title |
 | sidebar/menu | List container for menu items |
 | sidebar/menu_item | Individual menu item wrapper |
+| sidebar/menu_badge | Count or short label pinned inside a menu item. `text:` / `content:` |
+| sidebar/menu_action | Icon control pinned right inside a menu item. `label:` (required), `url:`, `icon_name:`, `show_on_hover:` |
+| sidebar/group_action | Icon control pinned to the right of a group label. `label:` (required), `url:`, `icon_name:` |
+| sidebar/separator | Divider between groups. `orientation:` (default `:horizontal`) |
 | sidebar/trigger | Toggle button for sidebar |
 | sidebar/inset | Main content area wrapper |
 

@@ -67,6 +67,8 @@ The footer cell spans two columns via the colspan passthrough.
 
 Draws a border around the scroll container.
 
+<!-- preview:bordered height:240 -->
+
 ```erb
 <%%= render "components/table", variant: :bordered do %>
   <%# ... %>
@@ -76,6 +78,8 @@ Draws a border around the scroll container.
 ### Striped Variant
 
 Alternates row backgrounds on the table itself.
+
+<!-- preview:striped height:280 -->
 
 ```erb
 <%%= render "components/table", table_variant: :striped do %>

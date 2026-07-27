@@ -24,6 +24,7 @@
 <%%= render "components/badge", variant: :destructive do %>Destructive<%% end %>
 <%%= render "components/badge", variant: :success do %>Success<%% end %>
 <%%= render "components/badge", variant: :warning do %>Warning<%% end %>
+<%%= render "components/badge", variant: :info do %>Info<%% end %>
 <%%= render "components/badge", variant: :outline do %>Outline<%% end %>
 ```
 
@@ -59,7 +60,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| variant | Symbol | :default | :default, :primary, :secondary, :destructive, :success, :warning, :outline; :error is accepted as an alias of :destructive |
+| variant | Symbol | :default | :default, :primary, :secondary, :destructive, :success, :warning, :info, :outline; :error is accepted as an alias of :destructive |
 | size | Symbol | :md | :sm, :md, :lg; :default is accepted as an alias of :md |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |

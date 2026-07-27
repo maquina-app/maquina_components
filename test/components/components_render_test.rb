@@ -237,6 +237,163 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     assert_includes dd_shortcut, "⌘K"
   end
 
+  test "table variant lands on the container as a real data attribute" do
+    html = view.render("components/table", variant: :bordered, table_variant: :striped) { "rows" }
+
+    assert_includes html, %(data-table-part="container")
+    assert_includes html, %(data-variant="bordered")
+    assert_includes html, %(data-variant="striped")
+    # regression: the attribute string used to be HTML-escaped into the markup
+    refute_includes html, "&quot;"
+    refute_includes html, %(data-variant=\\")
+  end
+
+  test "table without a container renders the bare table" do
+    html = view.render("components/table", container: false) { "rows" }
+
+    assert_includes html, %(data-component="table")
+    refute_includes html, %(data-table-part="container")
+  end
+
+  test "calendar week emits real state, aria-selected and aria-current attributes" do
+    selected = Date.new(2026, 7, 15)
+    html = view.render("components/calendar/week",
+      days: [selected, Date.current, Date.new(2026, 6, 30)],
+      display_month: 7, selected_date: selected)
+
+    assert_includes html, %(data-state="selected")
+    assert_includes html, %(aria-selected="true")
+    assert_includes html, %(aria-current="date")
+    assert_includes html, %(data-today="true")
+    assert_includes html, %(data-outside="true")
+    refute_includes html, "&quot;" # regression: escaped attribute strings
+  end
+
+  test "calendar week marks a range start, middle and end" do
+    html = view.render("components/calendar/week",
+      days: [Date.new(2026, 7, 6), Date.new(2026, 7, 7), Date.new(2026, 7, 8)],
+      display_month: 7, mode: :range,
+      selected_date: Date.new(2026, 7, 6), selected_end_date: Date.new(2026, 7, 8))
+
+    assert_includes html, %(data-state="range-start")
+    assert_includes html, %(data-state="range-middle")
+    assert_includes html, %(data-state="range-end")
+  end
+
+  test "calendar week disables days outside the allowed range" do
+    html = view.render("components/calendar/week", days: [Date.new(2026, 7, 1)],
+      display_month: 7, min_date: Date.new(2026, 7, 5))
+
+    assert_includes html, %(disabled="disabled")
+  end
+
+  test "sidebar items expose their active state to assistive tech" do
+    active_button = view.render("components/sidebar/menu_button", title: "Home", url: "/", active: true)
+    idle_button = view.render("components/sidebar/menu_button", title: "Home", url: "/")
+    active_link = view.render("components/sidebar/menu_link", title: "Team", url: "/team", active: true)
+    idle_link = view.render("components/sidebar/menu_link", title: "Team", url: "/team")
+
+    assert_includes active_button, %(data-active="true")
+    assert_includes active_button, %(aria-current="page")
+    assert_includes active_link, %(data-active="true")
+    assert_includes active_link, %(aria-current="page")
+
+    # regression: data-active="false" used to be emitted on every inactive row
+    refute_includes idle_button, %(data-active="false")
+    refute_includes idle_button, "aria-current"
+    refute_includes idle_link, %(data-active="false")
+    refute_includes idle_link, "aria-current"
+  end
+
+  test "drawer trigger targets one drawer with for_id and the whole page without" do
+    scoped = view.render("components/drawer/trigger", for_id: "drawer-provider-filters") { "Filters" }
+    with_for = view.render("components/drawer/trigger", for: "drawer-provider-filters") { "Filters" }
+    selector = view.render("components/drawer/trigger", for_id: "[data-outlet='drawer'][data-drawer-name='cart']") { "Cart" }
+    default = view.render("components/drawer/trigger") { "Menu" }
+
+    assert_includes scoped, %(data-drawer-trigger-drawer-outlet="#drawer-provider-filters")
+    assert_includes with_for, %(data-drawer-trigger-drawer-outlet="#drawer-provider-filters")
+    refute_includes with_for, %( for=) # for: must not leak onto the button
+    assert_includes selector, "data-drawer-name="
+    assert_includes default, "data-drawer-trigger-drawer-outlet="
+    assert_includes default, "data-outlet="
+  end
+
+  test "drawer provider derives a deterministic id from name" do
+    first = view.render("components/drawer/provider", name: "Filters") { "" }
+    second = view.render("components/drawer/provider", name: "Filters") { "" }
+    other = view.render("components/drawer/provider", name: "Cart") { "" }
+
+    assert_includes first, %(id="drawer-provider-filters")
+    assert_equal first, second
+    assert_includes other, %(id="drawer-provider-cart")
+    assert_includes view.render("components/drawer/provider") { "" }, %(id="drawer-provider")
+  end
+
+  # drawer.css styled these two parts from the start, but no partial emitted
+  # them, so the documented usage was a hand-rolled <h2 class="text-lg
+  # font-semibold"> duplicating a rule it could not reach.
+  test "drawer title and description emit their styling hooks" do
+    title = view.render("components/drawer/title", text: "Filters")
+    description = view.render("components/drawer/description", text: "Narrow the results")
+
+    assert_includes title, %(data-drawer-part="title")
+    assert_includes title, "Filters"
+    assert_includes title, "<h2"
+    assert_includes description, %(data-drawer-part="description")
+    assert_includes description, "Narrow the results"
+    assert_includes description, "<p"
+  end
+
+  test "drawer title accepts a different heading level and extra data" do
+    rendered = view.render("components/drawer/title",
+      text: "Filters", tag: :h3, css_classes: "truncate", data: {testid: "drawer-title"})
+
+    assert_includes rendered, "<h3"
+    assert_includes rendered, %(class="truncate")
+    assert_includes rendered, %(data-testid="drawer-title")
+    assert_includes rendered, %(data-drawer-part="title")
+  end
+
+  test "label renders required indicator hook and for attribute" do
+    required = view.render("components/label", text: "Email", for_id: "user_email", required: true)
+    plain = view.render("components/label", text: "Name")
+    block = view.render("components/label") { "Blocky" }
+
+    assert_includes required, %(data-component="label")
+    assert_includes required, %(data-required="true")
+    assert_includes required, %(for="user_email")
+    assert_includes required, "Email"
+
+    refute_includes plain, "data-required"
+    assert_includes block, "Blocky"
+  end
+
+  test "callers can override non-identity data attributes" do
+    trigger = view.render("components/drawer/trigger",
+      data: {drawer_trigger_drawer_outlet: "#my-drawer", testid: "t"}) { "" }
+
+    assert_includes trigger, %(data-drawer-trigger-drawer-outlet="#my-drawer")
+    assert_includes trigger, %(data-testid="t")
+
+    # identity keys are still the component's
+    badge = view.render("components/badge", variant: :success,
+      data: {component: "hijack", variant: "hijack"}) { "B" }
+    assert_includes badge, %(data-component="badge")
+    assert_includes badge, %(data-variant="success")
+
+    part = view.render("components/sidebar/menu_link", url: "/",
+      data: {sidebar_part: "hijack"})
+    assert_includes part, %(data-sidebar-part="menu-link")
+  end
+
+  test "merge_component_data drops nils and keeps string keys working" do
+    merged = view.merge_component_data({data: {"testid" => "x", :extra => nil}},
+      component: :thing, gone: nil)
+
+    assert_equal({component: :thing, testid: "x"}, merged)
+  end
+
   test "empty title and description accept text, content, and block" do
     text = view.render("components/empty/title", text: "Nothing here")
     content = view.render("components/empty/description", content: "<em>Try again</em>".html_safe)
@@ -245,5 +402,78 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     assert_includes text, "Nothing here"
     assert_includes content, "<em>Try again</em>"
     assert_includes block, "Block title"
+  end
+
+  # These six parts were styled by the engine with no partial emitting the
+  # hook, so the rules read as API that nothing could reach. See
+  # test/stylesheets/css_hooks_test.rb.
+  test "drawer section and separator emit their styling hooks" do
+    section = view.render("components/drawer/section") { "Body" }
+    separator = view.render("components/drawer/separator")
+
+    assert_includes section, %(data-drawer-part="section")
+    assert_includes section, "Body"
+    assert_includes separator, %(data-drawer-part="separator")
+    # the divider is the separator primitive, so it keeps its 1px track
+    assert_includes separator, %(data-component="separator")
+    assert_includes separator, %(data-orientation="horizontal")
+  end
+
+  test "sidebar separator renders the separator primitive with the sidebar part" do
+    separator = view.render("components/sidebar/separator",
+      css_classes: "my-1", data: {testid: "sep"})
+
+    assert_includes separator, %(data-sidebar-part="separator")
+    assert_includes separator, %(data-component="separator")
+    assert_includes separator, %(data-testid="sep")
+    assert_includes separator, "my-1"
+    refute_includes separator, "{" # regression: options hash rendered as content
+  end
+
+  test "sidebar menu_badge renders its text and hook" do
+    text = view.render("components/sidebar/menu_badge", text: "24")
+    block = view.render("components/sidebar/menu_badge") { "9+" }
+
+    assert_includes text, %(data-sidebar-part="menu-badge")
+    assert_includes text, "24"
+    assert_includes block, "9+"
+  end
+
+  test "sidebar menu_action renders a button by default and a link with url" do
+    button = view.render("components/sidebar/menu_action", label: "More options")
+    link = view.render("components/sidebar/menu_action", label: "More options", url: "/settings")
+
+    assert_includes button, %(data-sidebar-part="menu-action")
+    assert_includes button, %(<button)
+    assert_includes button, %(type="button")
+    assert_includes button, %(aria-label="More options")
+    assert_includes button, "More options</span>"
+    refute_includes button, "<a "
+
+    assert_includes link, %(<a )
+    assert_includes link, %(href="/settings")
+    assert_includes link, %(data-sidebar-part="menu-action")
+  end
+
+  test "sidebar menu_action opts into hover-only visibility" do
+    hover = view.render("components/sidebar/menu_action", label: "More", show_on_hover: true)
+    always = view.render("components/sidebar/menu_action", label: "More")
+
+    assert_includes hover, %(data-show-on-hover="true")
+    refute_includes always, "data-show-on-hover"
+  end
+
+  test "sidebar group_action renders a button by default and a link with url" do
+    button = view.render("components/sidebar/group_action", label: "Add project")
+    link = view.render("components/sidebar/group_action", label: "Add project", url: "/projects/new")
+
+    assert_includes button, %(data-sidebar-part="group-action")
+    assert_includes button, %(<button)
+    assert_includes button, %(aria-label="Add project")
+    refute_includes button, "<a "
+
+    assert_includes link, %(<a )
+    assert_includes link, %(href="/projects/new")
+    assert_includes link, %(data-sidebar-part="group-action")
   end
 end

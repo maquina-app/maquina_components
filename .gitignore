@@ -22,3 +22,8 @@ CLAUDE.md
 AGENTS.md
 .claude/
 /references/
+.playwright-mcp/
+
+# Local gem builds, and the lock for Gemfile.branch
+/maquina-components-*.gem
+/Gemfile.branch.lock

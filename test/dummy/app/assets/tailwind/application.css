@@ -263,6 +263,64 @@
   --sidebar-ring: oklch(0.424 0.199 265);
 }
 
+/* ==========================================================================
+   SHAPE THEMES  (?shape_theme=brutal|soft on any preview URL)
+   ==========================================================================
+
+   These blocks exist to prove one claim: a theme changes token VALUES, not
+   selectors. Nothing below targets a component. If a shape theme ever needs
+   `[data-component="…"]`, the engine's token layer is missing a token.
+
+   They are unlayered, so they beat the engine's `@theme static` defaults
+   (which land in `@layer theme`) regardless of import order.
+   ========================================================================== */
+
+/* ===== Shape Theme: Brutal — square, hard, loud ===== */
+:root[data-shape-theme="brutal"] {
+  --control-radius: 0;
+  --surface-radius: 0;
+  --mark-radius: 0;
+  --pill-radius: 0;
+
+  --focus-ring-width: 4px;
+  --focus-ring-offset: 3px;
+  --focus-ring-style: solid;
+
+  --elevation-control: none;
+  --elevation-raised: none;
+  --elevation-overlay: none;
+
+  --label-weight: 700;
+  --value-weight: 900;
+
+  /* No mark inks here on purpose. A shape theme changes radius, elevation,
+     focus geometry and weight; ink is a color concern and belongs to the color
+     theme. This block used to force the five mark images to black, which reads
+     as a solid black square the moment --primary is dark — measured 2.63:1
+     against the default palette's oklch(0.21) primary, where the stock white
+     ink measures 17.75:1. Re-inking marks is per-palette work: set the
+     --*-image properties in a color theme, or use data-mark="dark" on the
+     control. See previews/specimen/marks. */
+}
+
+/* ===== Shape Theme: Soft — round, floating ===== */
+:root[data-shape-theme="soft"] {
+  --control-radius: 0.75rem;
+  --surface-radius: 1.5rem;
+  --mark-radius: 8px;
+  --pill-radius: calc(infinity * 1px);
+
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+
+  --elevation-control: 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --elevation-raised: 0 8px 24px -8px rgb(0 0 0 / 0.18);
+  --elevation-overlay: 0 24px 48px -12px rgb(0 0 0 / 0.3);
+
+  --label-weight: 500;
+  --value-weight: 600;
+}
+
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -296,8 +354,12 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-* {
-  border-color: var(--color-border);
+/* Must stay in @layer base — unlayered, this `*` outranks every engine
+ * component rule and flattens the alert/toast variants' tinted borders. */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
 }
 
 /* ===== Custom Sidebar Buttons - Collapsed State ===== */

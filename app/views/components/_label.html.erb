@@ -1,0 +1,14 @@
+<%# locals: (text: nil, content: nil, for_id: nil, required: false, css_classes: "", **html_options) %>
+<%
+  # `for` is a Ruby keyword and cannot be a strict-local name, so the local is
+  # for_id: — a caller-supplied for: is honored as well.
+  label_for = for_id.presence || html_options.delete(:for).presence
+
+  merged_data = merge_component_data(html_options,
+    component: :label,
+    required: (required ? true : nil)
+  )
+%>
+<%= content_tag :label, for: label_for, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= text.presence || content || yield %>
+<% end %>

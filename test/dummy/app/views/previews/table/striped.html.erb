@@ -1,0 +1,33 @@
+<%= preview_container width: :lg do %>
+  <%= render "components/table", table_variant: :striped do %>
+    <%= render "components/table/header" do %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/head", text: "Invoice" %>
+        <%= render "components/table/head", text: "Method" %>
+        <%= render "components/table/head", text: "Amount", css_classes: "text-right" %>
+      <% end %>
+    <% end %>
+    <%= render "components/table/body" do %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", text: "INV001", css_classes: "font-medium" %>
+        <%= render "components/table/cell", text: "Credit Card" %>
+        <%= render "components/table/cell", text: "$250.00", css_classes: "text-right" %>
+      <% end %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", text: "INV002", css_classes: "font-medium" %>
+        <%= render "components/table/cell", text: "PayPal" %>
+        <%= render "components/table/cell", text: "$150.00", css_classes: "text-right" %>
+      <% end %>
+      <%= render "components/table/row" do %>
+        <%= render "components/table/cell", text: "INV003", css_classes: "font-medium" %>
+        <%= render "components/table/cell", text: "Bank Transfer" %>
+        <%= render "components/table/cell", text: "$350.00", css_classes: "text-right" %>
+      <% end %>
+      <%= render "components/table/row", selected: true do %>
+        <%= render "components/table/cell", text: "INV004", css_classes: "font-medium" %>
+        <%= render "components/table/cell", text: "Credit Card" %>
+        <%= render "components/table/cell", text: "$50.00", css_classes: "text-right" %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>

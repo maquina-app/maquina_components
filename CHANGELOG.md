@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-27
+
+A theming release. Shape, focus rings, elevation and weight become design tokens, every engine rule moves into `@layer components` at specificity 0,1,0, and a set of long-standing CSS and rendering defects are fixed. Read [docs/upgrading.md](docs/upgrading.md) before upgrading, then run `bin/rails maquina:doctor` — it prints file:line for every pattern this release changes and never edits anything.
+
+### Breaking changes
+
+See [docs/upgrading.md](docs/upgrading.md) for the full migration, including an appendix that reverts every visual change with one token block.
+
+1. **The `* { border-color }` shim in your installed `theme.css` must be wrapped in `@layer base`.** This affects every existing app and fails silently. Engine rules now live in `@layer components`, and unlayered CSS outranks every layer at any specificity, so that one universal rule wins over the tinted borders of all alert and toast variants: a destructive alert's border measures plain `--border` where 0.5.1 painted the destructive tint. The generator template is fixed, but the rule lives in your file. `maquina:doctor` reports it as `breaking` / `unlayered-universal-rule`.
+2. **Utilities passed through `css_classes:` now win.** Flattening every rule to 0,1,0 inside a layer means a Tailwind utility finally applies where it used to be swallowed. Measured on the specimen pages: an input with a width utility goes `448px → 137px`, form actions with a hidden utility go `display: flex → none`, and a form with a flex utility goes `display: grid → flex`. Search your views for `css_classes:` and delete what you passed as decoration and never saw.
+3. **Radius and elevation defaults normalize.** Card, the inset sidebar panel and the inset header's top corners go 12px → 8px; the combobox and dropdown popovers 6px → 8px; the combobox option, dropdown item and toast close 4px → 6px. Four elevation sites collapse `shadow-lg` → `--elevation-overlay` (= `shadow-md`): the toast, the toast on hover, the drawer panel and the date-picker popover. Every site keeps a component-level escape hatch, so any one can be pinned without redefining a role.
+4. **Focus rings are outlines, and six button variants gain a ring they never had.** Form fields no longer ring on a mouse click — the bare `:focus` half of each `:focus, :focus-visible` pair is gone. Rings are `outline` + `outline-offset`, uniformly 3px at offset 0, read from `--focus-ring-*`; the sites that faked a backdrop band with `0 0 0 2px var(--background)` lose the band. If your app restated a ring on buttons to work around the old bug, delete it.
+5. **Components that sit above the page stop painting the page color.** An alert, a calendar and the date-picker popover painted `--background`; they now paint `--card` / `--popover`. In a theme where those are the same value nothing moves, which is why this was invisible in the default light theme — but in the default dark theme the alert and calendar backgrounds go `oklch(0.13 0.028 261)` → `oklch(0.178 0.032 260)`. This was measured as ΔL 0.00 against the page before, i.e. an invisible surface. Relatedly, the `outline` and `ghost` buttons and the active pagination link now paint `transparent` rather than `--background`, so they finally work inside a card. Use ΔL on the L\* axis, not a WCAG contrast ratio, if you are checking surface-against-surface: WCAG is a text metric and reads a misleading ~1.1 on two adjacent large surfaces.
+6. **Tinted badges lose a stray hairline.** Badge's `success` / `warning` / `destructive` variants set `border-color: transparent`, which the unlayered `*` shim had been overriding with `--border`. With the shim layered (break 1) the intended transparent border shows through, so those badges no longer carry a grey 1px outline they were never meant to have.
+7. **`merge_component_data` precedence narrows to identity keys.** The component now wins only `:component`, `:variant`, `:size` and any `*_part` key; `:controller` and `:action` still concatenate (component tokens first, then yours); the caller wins everything else. The merged hash is compacted, so a `nil` value emits no attribute where it used to emit an empty one — `false` still renders `"false"`. Related: a sidebar item omits `data-active` entirely when inactive instead of writing `data-active="false"`, so `[data-active]` presence selectors must become `[data-active="true"]`.
+
+### Added
+
+- Design tokens for everything that is not a color — shape (`--control-radius`, `--surface-radius`, `--mark-radius`, `--pill-radius`), focus ring (`--focus-ring-width` / `-offset` / `-style` / `-color`), elevation (`--elevation-control` / `-raised` / `-overlay`) and weight (`--label-weight`, `--value-weight`) — plus a component-level escape hatch at every radius and elevation site. All 63 `rounded-*` sites, every focus ring and the five control marks now read from them. Documented in [docs/theming.md](docs/theming.md)
+- `rake maquina:doctor`: scans an app's CSS, views and JavaScript and prints file:line for every pattern this release changes, grouped `BREAKING` / `REVIEW` / `CLEANUP`. Advisory only — it never edits anything and always exits 0
+- A `components/label` partial, so `[data-required]` finally has something that emits it
+- `icon_for` name aliases and a `strict_icons` configuration option that raises on an unknown icon instead of rendering nothing
+- Drawer triggers accept `for_id:`, so a page can drive more than one drawer
+- Specimen previews for shape, elevation, marks and states, plus `?shape_theme=brutal|soft` on the preview pages — both themes are token declarations only, which is the claim the previews exist to prove
+- Stylesheet guard tests (`test/stylesheets/`): token fallbacks, no hardcoded radii, outline-only focus rings, state-after-variant source order, `@layer components` completeness, no `prefers-color-scheme` or `.dark` property overrides, plus compiled-output checks for token survival, layer order and cross-file rule order
+- A docs/previews contract test: every `<!-- preview:NAME -->` tag in `docs/*.md` must resolve to a preview template, so a rename cannot silently 404 a live documentation page
+
+### Fixed
+
+- The button focus ring: `:focus-visible` sat before the variant rules at equal specificity, so each variant's own `box-shadow` overwrote it. 2 of 16 buttons on the specimen page actually ringed; now all 14 focusable ones do
+- The badge and card focus bands used `--border`, which measures 1.11:1 against the page — they now use `--ring`
+- Removed the lone `@media (prefers-color-scheme: dark)` block, which flipped one component against the host's explicit `.dark` choice
+- Added `align-content: start` to the form grids, which stretched rows to fill the container
+- Every stylesheet moved into `@layer components` and flattened to specificity 0,1,0 with `:where()`, base selectors un-grouped from variants, and imports reordered primitives-before-composites — alphabetical order had put the composites' button-carrying triggers ahead of `form.css`, so the button base silently won over each of them
+- `dropdown_menu_simple` raised `NoMethodError` and `combobox_simple` rendered an empty popover; both had zero call sites in the repo, which is why they shipped
+- `_table` and `calendar/_week` built a correct data hash and then threw it away, leaving `[data-variant="bordered"]` unreachable
+- Sidebar items expose `aria-current="page"` when active
+- The installed theme's `* { border-color }` preflight shim is generated inside `@layer base`
+- The five control-mark defaults moved from element-level declarations into use-site fallbacks, so a `:root` override can reach them
+
+### Docs
+
+- [docs/theming.md](docs/theming.md): role tokens, flat and brutalist themes in a dozen lines each, recoloring control marks, dark mode, pinning one component
+- [docs/upgrading.md](docs/upgrading.md): the five breaking changes with measurements, and an appendix that restores the 0.5.1 look
+
 ## [0.5.1] - 2026-07-20
 
 A bugfix release that polishes the component contract, tightens rendering edge cases, and aligns docs and tests with the actual library. No new public API and no breaking changes.
@@ -267,7 +312,9 @@ Thanks to the contributors who made this release possible:
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/maquina-app/maquina_components/compare/v0.5.1...v0.6.0
+[0.5.1]: https://github.com/maquina-app/maquina_components/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/maquina-app/maquina_components/compare/v0.4.4...v0.5.0
 [0.4.4]: https://github.com/maquina-app/maquina_components/compare/v0.4.3...v0.4.4
 [0.4.3]: https://github.com/maquina-app/maquina_components/compare/v0.4.2...v0.4.3

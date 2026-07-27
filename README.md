@@ -43,6 +43,7 @@ If you're open to trying maquina_components and providing feedback, you're welco
 - **Stimulus controllers** only used where interactivity is needed
 - **Dark mode** support via CSS variables
 - **shadcn/ui theming** convention (works with their color system)
+- **Design tokens** for shape, focus rings, elevation and weight — [theming guide](docs/theming.md)
 - **Composable** — small partials you can combine freely
 
 ![Test dummy app with light mode](/imgs/light.png)
@@ -133,6 +134,21 @@ This installs `index`, `show`, `new`, `edit`, `_form`, and partial templates to
 generates views built with maquina_components. Customize the templates as needed.
 
 **Prerequisite:** [tailwindcss-rails](https://github.com/rails/tailwindcss-rails) must be installed first.
+
+### Upgrading
+
+Re-running the install generator is safe — it is idempotent and never rewrites
+your palette. After upgrading, run the doctor:
+
+```bash
+bin/rails maquina:doctor
+```
+
+It scans your CSS, views and JavaScript and prints file:line for every pattern
+the new release changes, grouped `BREAKING` / `REVIEW` / `CLEANUP`. It is
+advisory: it never edits anything and never fails a build. See
+[docs/upgrading.md](docs/upgrading.md) for what changed and how to keep the
+previous look.
 
 ---
 
@@ -381,6 +397,22 @@ flash[:success] = "Changes saved successfully!"
 
 Components use CSS variables following the [shadcn/ui theming convention](https://ui.shadcn.com/docs/theming).
 
+Colors are not the only variables: shape, focus rings, elevation and weight are
+design tokens too, so reshaping the whole library is a short list of
+declarations rather than override CSS fighting the cascade.
+
+```css
+:root {
+  --control-radius: 0;   /* buttons, inputs, badges, menu items */
+  --surface-radius: 0;   /* cards, popovers, toasts, alerts */
+  --elevation-raised: none;
+}
+```
+
+**[Theming guide](docs/theming.md)** — the full token list, flat and brutalist
+themes in a dozen lines each, recoloring the control marks, dark mode, and how
+to pin a single component without redefining a role.
+
 The install generator adds default theme variables. Customize them in `app/assets/tailwind/application.css`:
 
 ```css
@@ -469,11 +501,53 @@ cd test/dummy
 bin/rails server
 ```
 
-Run tests:
+Run tests (build the dummy app's CSS first — the stylesheet guards assert on the
+compiled output):
 
 ```bash
-bin/rails test
+cd test/dummy && bin/rails tailwindcss:build && cd -
+bin/test
 ```
+
+### Running against the published branch
+
+Both commands above run against the source tree. To exercise the gem the way a
+consuming app resolves it — from GitHub rather than from `lib/` and `app/` —
+use `Gemfile.branch`:
+
+```bash
+BUNDLE_GEMFILE=Gemfile.branch bundle install
+BUNDLE_GEMFILE=Gemfile.branch bin/test
+
+# or drive the app by hand
+cd test/dummy
+BUNDLE_GEMFILE=../../Gemfile.branch bin/rails tailwindcss:build
+BUNDLE_GEMFILE=../../Gemfile.branch bin/rails server
+```
+
+It defaults to the current release branch; override with `MAQUINA_BRANCH`.
+
+`test/dummy/config/boot.rb` skips its `$LOAD_PATH` unshift under
+`Gemfile.branch`, so the source tree cannot shadow the resolved gem — without
+that the check would pass no matter what was on the branch. `Gemfile.common`
+holds the app gems both Gemfiles share, so the two cannot drift.
+
+Two limits worth knowing. It resolves the **pushed** commit, so local work you
+have not pushed is not what you are testing — `bundle list | grep maquina`
+prints the SHA. And Bundler resolves a git source from a checkout, so every
+file is present whether or not `spec.files` lists it: this catches a bad
+dependency or a broken require path, but a file missing from the packaged gem
+stays invisible. For that, build the gem and install what comes out:
+
+```bash
+gem build maquina-components.gemspec
+gem contents --show-install-dir maquina-components   # after installing it
+```
+
+Worth confirming either way: `bin/rails -T | grep maquina` (the rake task
+ships), `bin/rails generate --help` (the generators are found), and that the
+previews render — those exercise `lib/tasks`, `lib/generators/**/templates` and
+`app/**`, which are the parts a packaging mistake tends to drop.
 
 ---
 

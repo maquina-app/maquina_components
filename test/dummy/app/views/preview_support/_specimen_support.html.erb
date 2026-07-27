@@ -1,0 +1,36 @@
+<%#
+  Shared scaffolding for the specimen pages. It lives outside app/views/previews
+  because everything under previews/<component>/ is a page: PreviewRegistry
+  scans those directories and previews_smoke_test GETs every file it finds there.
+
+  [data-specimen-ring] paints the focus ring exactly as the focus tokens define
+  it. Focus is the one state markup cannot force, and a specimen that only shows
+  the ring while a keyboard is in it cannot be screenshotted or measured. Every
+  focusable specimen is still really focusable — tab into it to see the
+  component's own :focus-visible rule.
+
+  [data-specimen-indeterminate] sets the IDL-only indeterminate flag, which has
+  no HTML attribute.
+%>
+<style>
+  [data-specimen-ring] {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--ring));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  [data-specimen-swatch] {
+    width: 4.5rem;
+    height: 3rem;
+    border: 1px solid var(--border);
+    background-color: var(--card);
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-specimen-indeterminate]").forEach((el) => {
+      el.indeterminate = true
+    })
+  })
+</script>

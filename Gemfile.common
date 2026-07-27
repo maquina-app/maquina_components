@@ -1,0 +1,23 @@
+# Gems the dummy app needs to boot, shared by Gemfile (source tree) and
+# Gemfile.vendored (packaged gem) so the two cannot drift apart. The engine's
+# own runtime dependencies come from the gemspec, not from here.
+
+gem "puma"
+gem "thruster", ">= 0.1.1"
+
+# Reduces boot times through caching; required in config/boot.rb
+gem "bootsnap", require: false
+
+gem "sqlite3"
+
+# Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
+gem "standard", require: false
+
+gem "propshaft", "~> 1.1"
+gem "tailwindcss-rails", "~> 4.4"
+
+# Hotwire (importmap-rails and stimulus-rails come from the gemspec)
+gem "turbo-rails"
+
+# CORS for preview embeds
+gem "rack-cors"

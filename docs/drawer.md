@@ -10,7 +10,7 @@
 <%%= render "components/drawer/provider", default_open: drawer_open? do %>
   <%%= render "components/drawer", state: drawer_state do %>
     <%%= render "components/drawer/header" do %>
-      <h2 class="text-lg font-semibold">Drawer Title</h2>
+      <%%= render "components/drawer/title", text: "Drawer Title" %>
       <%%= render "components/drawer/close" %>
     <%% end %>
 
@@ -38,6 +38,27 @@
   <%% end %>
 <%% end %>
 ```
+
+### Sections and Separators
+
+Group the drawer body into stacked sections, divided by a separator.
+
+```erb
+<%%= render "components/drawer/content" do %>
+  <%%= render "components/drawer/section" do %>
+    <%%= render "components/drawer/title", text: "Filters", tag: :h3 %>
+  <%% end %>
+
+  <%%= render "components/drawer/separator" %>
+
+  <%%= render "components/drawer/section" do %>
+    <%# More rows %>
+  <%% end %>
+<%% end %>
+```
+
+`drawer/separator` renders the separator primitive, so it keeps the primitive's
+1px track while the drawer part re-spaces it for the panel.
 
 ### Left Side Drawer
 
@@ -84,8 +105,12 @@
 | Partial | Description |
 |---------|-------------|
 | drawer/header | Top section with title and close button |
+| drawer/title | Heading inside the header. `text:` / `content:`, `tag:` (default `:h2`) |
+| drawer/description | Supporting line under the title. `text:` / `content:`, `tag:` (default `:p`) |
 | drawer/content | Scrollable middle section |
 | drawer/footer | Bottom section for actions |
+| drawer/section | Groups related rows inside the content area. Container — pass a block |
+| drawer/separator | Divider between sections. `orientation:` (default `:horizontal`) |
 | drawer/trigger | Toggle button for drawer |
 | drawer/close | Close button (X icon) |
 

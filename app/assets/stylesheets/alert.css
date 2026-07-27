@@ -3,141 +3,175 @@
  * Alert component for displaying callouts, messages, and notifications.
  * Uses data attributes for styling to maintain consistency with other components.
  * Fully compatible with dark mode via CSS variables.
+ *
+ * Cascade order in this file (full contract documented in form.css):
+ *   1. base      [data-component="alert"], [data-alert-part="…"]
+ *   2. sizes     — none
+ *   3. variants  [data-component="alert"]:where([data-variant="…"], [data-has-icon])
+ *   4. states    — none
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ * Every rule is flattened to 0,1,0 with :where() and lives in
+ * @layer components, so a caller's utility class wins and source order is
+ * the only tie-breaker. (Rules whose target is a bare element read 0,1,1 — an
+ * element selector cannot be zeroed away.)
  */
 
-/* ===== Base Alert Styles ===== */
-[data-component="alert"] {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr;
-  @apply w-full rounded-lg border p-4 text-sm;
-  
-  /* Default colors */
-  background-color: var(--background);
-  color: var(--foreground);
-  border-color: var(--border);
-}
+@layer components {
+  /* ===== Base Alert Styles ===== */
+  [data-component="alert"] {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    @apply w-full border p-4 text-sm;
+    border-radius: var(--alert-radius, var(--surface-radius, 0.5rem));
 
-/* Alert with icon - add left padding for icon space */
-[data-component="alert"][data-has-icon="true"] {
-  grid-template-columns: auto 1fr;
-  @apply gap-3;
-}
+    /* Default colors — an alert sits *on* a surface, so it paints --card, not
+       the page background (painting --background measures ΔL 0.00 inside a card) */
+    background-color: var(--card, var(--background));
+    color: var(--foreground);
+    border-color: var(--border);
+  }
 
-/* ===== Icon Support ===== */
-[data-component="alert"] > svg:first-child,
-[data-component="alert"] [data-alert-part="icon"] {
-  @apply size-4 shrink-0;
-  color: var(--foreground);
-  /* Align with first line of text */
-  margin-top: 0.125rem;
-}
+  /* Alert with icon - add left padding for icon space */
+  [data-component="alert"]:where([data-has-icon="true"]) {
+    grid-template-columns: auto 1fr;
+    @apply gap-3;
+  }
 
-/* ===== Alert Title ===== */
-[data-component="alert"] [data-alert-part="title"] {
-  @apply font-medium leading-none tracking-tight;
-  color: var(--foreground);
-}
+  /* ===== Icon Support ===== */
+  [data-component="alert"] > svg:where(:first-child),
+  :where([data-component="alert"]) [data-alert-part="icon"] {
+    @apply size-4 shrink-0;
+    color: var(--foreground);
+    /* Align with first line of text */
+    margin-top: 0.125rem;
+  }
 
-/* Title followed by description needs margin */
-[data-component="alert"] [data-alert-part="title"]:has(+ [data-alert-part="description"]) {
-  @apply mb-1;
-}
+  /* ===== Alert Title ===== */
+  :where([data-component="alert"]) [data-alert-part="title"] {
+    @apply leading-none tracking-tight;
+    font-weight: var(--label-weight, 500);
+    color: var(--foreground);
+  }
 
-/* ===== Alert Description ===== */
-[data-component="alert"] [data-alert-part="description"] {
-  @apply text-sm;
-  color: var(--muted-foreground);
-}
+  /* Title followed by description needs margin */
+  :where([data-component="alert"]) [data-alert-part="title"]:where(:has(+ [data-alert-part="description"])) {
+    @apply mb-1;
+  }
 
-/* Nested paragraphs */
-[data-component="alert"] [data-alert-part="description"] p {
-  @apply leading-relaxed;
-}
+  /* ===== Alert Description ===== */
+  :where([data-component="alert"]) [data-alert-part="description"] {
+    @apply text-sm;
+    color: var(--muted-foreground);
+  }
 
-/* Lists inside description */
-[data-component="alert"] [data-alert-part="description"] ul {
-  @apply mt-2 list-inside list-disc;
-}
+  /* Nested paragraphs */
+  :where([data-component="alert"]) [data-alert-part="description"] p {
+    @apply leading-relaxed;
+  }
 
-/* ===== Variant: Default ===== */
-[data-component="alert"][data-variant="default"] {
-  background-color: var(--background);
-  color: var(--foreground);
-  border-color: var(--border);
-}
+  /* Lists inside description */
+  :where([data-component="alert"]) [data-alert-part="description"] ul {
+    @apply mt-2 list-inside list-disc;
+  }
 
-[data-component="alert"][data-variant="default"] > svg:first-child,
-[data-component="alert"][data-variant="default"] [data-alert-part="icon"] {
-  color: var(--foreground);
-}
+  /* ===== Variant: Default ===== */
+  [data-component="alert"]:where([data-variant="default"]) {
+    background-color: var(--card, var(--background));
+    color: var(--foreground);
+    border-color: var(--border);
+  }
 
-/* ===== Variant: Destructive ===== */
-[data-component="alert"][data-variant="destructive"] {
-  background-color: var(--destructive);
-  color: var(--destructive-foreground);
-  border-color: var(--destructive);
-}
+  [data-component="alert"]:where([data-variant="default"]) > svg:where(:first-child),
+  :where([data-component="alert"][data-variant="default"]) [data-alert-part="icon"] {
+    color: var(--foreground);
+  }
 
-[data-component="alert"][data-variant="destructive"] [data-alert-part="title"] {
-  color: var(--destructive-foreground);
-}
+  /* ===== Variant: Destructive ===== */
+  [data-component="alert"]:where([data-variant="destructive"]) {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+    border-color: var(--destructive);
+  }
 
-[data-component="alert"][data-variant="destructive"] [data-alert-part="description"] {
-  color: var(--destructive-foreground);
-  opacity: 0.9;
-}
+  :where([data-component="alert"][data-variant="destructive"]) [data-alert-part="title"] {
+    color: var(--destructive-foreground);
+  }
 
-[data-component="alert"][data-variant="destructive"] > svg:first-child,
-[data-component="alert"][data-variant="destructive"] [data-alert-part="icon"] {
-  color: var(--destructive-foreground);
-}
+  :where([data-component="alert"][data-variant="destructive"]) [data-alert-part="description"] {
+    color: var(--destructive-foreground);
+    opacity: 0.9;
+  }
 
-/* ===== Variant: Success ===== */
-[data-component="alert"][data-variant="success"] {
-  background-color: var(--success);
-  color: var(--success-foreground);
-  border-color: var(--success);
-}
+  [data-component="alert"]:where([data-variant="destructive"]) > svg:where(:first-child),
+  :where([data-component="alert"][data-variant="destructive"]) [data-alert-part="icon"] {
+    color: var(--destructive-foreground);
+  }
 
-[data-component="alert"][data-variant="success"] [data-alert-part="title"] {
-  color: var(--success-foreground);
-}
+  /* ===== Variant: Success ===== */
+  [data-component="alert"]:where([data-variant="success"]) {
+    background-color: var(--success, oklch(0.627 0.194 149.214));
+    color: var(--success-foreground, oklch(0.985 0 0));
+    border-color: var(--success, oklch(0.627 0.194 149.214));
+  }
 
-[data-component="alert"][data-variant="success"] [data-alert-part="description"] {
-  color: var(--success-foreground);
-  opacity: 0.9;
-}
+  :where([data-component="alert"][data-variant="success"]) [data-alert-part="title"] {
+    color: var(--success-foreground, oklch(0.985 0 0));
+  }
 
-[data-component="alert"][data-variant="success"] > svg:first-child,
-[data-component="alert"][data-variant="success"] [data-alert-part="icon"] {
-  color: var(--success-foreground);
-}
+  :where([data-component="alert"][data-variant="success"]) [data-alert-part="description"] {
+    color: var(--success-foreground, oklch(0.985 0 0));
+    opacity: 0.9;
+  }
 
-/* ===== Variant: Warning ===== */
-[data-component="alert"][data-variant="warning"] {
-  background-color: var(--warning);
-  color: var(--warning-foreground);
-  border-color: var(--warning);
-}
+  [data-component="alert"]:where([data-variant="success"]) > svg:where(:first-child),
+  :where([data-component="alert"][data-variant="success"]) [data-alert-part="icon"] {
+    color: var(--success-foreground, oklch(0.985 0 0));
+  }
 
-[data-component="alert"][data-variant="warning"] [data-alert-part="title"] {
-  color: var(--warning-foreground);
-}
+  /* ===== Variant: Warning ===== */
+  [data-component="alert"]:where([data-variant="warning"]) {
+    background-color: var(--warning, oklch(0.769 0.188 70.08));
+    color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+    border-color: var(--warning, oklch(0.769 0.188 70.08));
+  }
 
-[data-component="alert"][data-variant="warning"] [data-alert-part="description"] {
-  color: var(--warning-foreground);
-  opacity: 0.9;
-}
+  :where([data-component="alert"][data-variant="warning"]) [data-alert-part="title"] {
+    color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+  }
 
-[data-component="alert"][data-variant="warning"] > svg:first-child,
-[data-component="alert"][data-variant="warning"] [data-alert-part="icon"] {
-  color: var(--warning-foreground);
-}
+  :where([data-component="alert"][data-variant="warning"]) [data-alert-part="description"] {
+    color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+    opacity: 0.9;
+  }
 
-/* ===== Dark Mode ===== */
-/*
- * Dark mode is handled automatically through CSS variables.
- * The theme variables change based on the .dark class on html/body.
- * No additional dark mode styles needed here.
- */
+  [data-component="alert"]:where([data-variant="warning"]) > svg:where(:first-child),
+  :where([data-component="alert"][data-variant="warning"]) [data-alert-part="icon"] {
+    color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+  }
+
+  /* ===== Variant: Info ===== */
+  /*
+   * --info has no engine default on purpose: an undefined --info must fall back
+   * to the neutral default treatment, never to --primary (that renders an
+   * informational alert in the brand accent, so it reads as a call to action).
+   */
+  [data-component="alert"]:where([data-variant="info"]) {
+    background-color: var(--info, var(--card, var(--background)));
+    color: var(--info-foreground, var(--foreground));
+    border-color: var(--info, var(--border));
+  }
+
+  :where([data-component="alert"][data-variant="info"]) [data-alert-part="title"] {
+    color: var(--info-foreground, var(--foreground));
+  }
+
+  :where([data-component="alert"][data-variant="info"]) [data-alert-part="description"] {
+    color: var(--info-foreground, var(--muted-foreground));
+  }
+
+  [data-component="alert"]:where([data-variant="info"]) > svg:where(:first-child),
+  :where([data-component="alert"][data-variant="info"]) [data-alert-part="icon"] {
+    color: var(--info-foreground, var(--foreground));
+  }
+}

@@ -2,10 +2,11 @@
 <% merged_data = merge_component_data(html_options,
     sidebar_part: "menu-button",
     size: size,
-    active: active
+    active: (active ? true : nil)
   ) %>
 
-<%= link_to url, class: css_classes, data: merged_data, **html_options do %>
+<%= link_to url, class: css_classes, data: merged_data,
+      "aria-current": (active ? "page" : nil), **html_options do %>
   <% if icon_name.present? %>
     <%= icon_for(icon_name) %>
   <% end %>

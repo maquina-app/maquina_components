@@ -42,4 +42,31 @@ module PreviewsHelper
   def preview_container(width: :md, &block)
     content_tag(:div, class: MAX_WIDTHS[width.to_sym] || "max-w-md", &block)
   end
+
+  # ===== Specimen helpers =====
+  # Specimen pages are dense grids of one component in many states or one token
+  # role across many components. They read better with captions than with prose.
+
+  def specimen_section(title, note: nil, &block)
+    content_tag(:section, class: "space-y-3") do
+      safe_join([
+        content_tag(:h3, title, class: "text-sm font-semibold tracking-tight"),
+        (content_tag(:p, note, class: "text-xs text-muted-foreground") if note),
+        capture(&block)
+      ].compact)
+    end
+  end
+
+  def specimen_grid(&block)
+    content_tag(:div, class: "flex flex-wrap items-end gap-x-6 gap-y-4", &block)
+  end
+
+  def specimen_cell(label, &block)
+    content_tag(:div, class: "flex flex-col items-start gap-1.5") do
+      safe_join([
+        capture(&block),
+        content_tag(:span, label, class: "text-[11px] leading-none text-muted-foreground")
+      ])
+    end
+  end
 end

@@ -1,14 +1,23 @@
-<%# locals: (id: nil, default_open: false, css_classes: "", cookie_name: "drawer_state", keyboard_shortcut: "d", **html_options) %>
-<% merged_data = merge_component_data(html_options,
+<%# locals: (id: nil, name: nil, default_open: false, css_classes: "", cookie_name: "drawer_state", keyboard_shortcut: "d", **html_options) %>
+<%
+  # Deterministic ids only — random ids break idiomorph matching across morphs.
+  # Pass name: (or id:) when a page has more than one drawer, and point each
+  # trigger at it with for_id:.
+  provider_id = id.presence ||
+    ["drawer-provider", name.presence && name.to_s.parameterize.presence].compact.join("-")
+
+  merged_data = merge_component_data(html_options,
     component: :drawer,
     controller: "drawer",
     outlet: "drawer",
+    drawer_name: name.presence,
     drawer_default_open_value: default_open,
     drawer_open_value: default_open,
     drawer_cookie_name_value: cookie_name,
     drawer_keyboard_shortcut_value: keyboard_shortcut,
     action: "keydown.meta+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard keydown.ctrl+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard keydown.esc@window->drawer#closeOnEscape"
-  ) %>
-<%= content_tag :div, id: id || "drawer-provider", class: css_classes, data: merged_data, **html_options do %>
+  )
+%>
+<%= content_tag :div, id: provider_id, class: css_classes, data: merged_data, **html_options do %>
   <%= yield %>
 <% end %>

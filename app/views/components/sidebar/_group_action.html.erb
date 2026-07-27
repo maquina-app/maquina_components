@@ -1,0 +1,26 @@
+<%# locals: (label:, url: nil, icon_name: :ellipsis, css_classes: "", **html_options) %>
+<%#
+  Render this inside a sidebar/group, alongside the group label — `ml-auto`
+  pushes it to the right edge of the group and the group is the positioning
+  context its expanded touch target resolves against.
+
+  label: is required: the control is icon-only, so without it there is
+  nothing for a screen reader to announce.
+%>
+<% merged_data = merge_component_data(html_options,
+    sidebar_part: "group-action"
+  ) %>
+<% action_content = capture do %>
+  <%= icon_for(icon_name) if icon_name.present? %>
+  <span class="sr-only"><%= label %></span>
+<% end %>
+<% if url.present? %>
+  <%= link_to url, class: css_classes.presence, data: merged_data,
+        "aria-label": label, **html_options do %>
+    <%= action_content %>
+  <% end %>
+<% else %>
+  <%= content_tag :button, action_content, type: :button,
+        class: css_classes.presence, data: merged_data,
+        "aria-label": label, **html_options %>
+<% end %>
