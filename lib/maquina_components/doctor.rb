@@ -115,7 +115,7 @@ module MaquinaComponents
     def each_file(globs)
       globs.flat_map { |glob| Dir.glob(File.join(root, glob)) }
         .uniq
-        .reject { |path| path =~ EXCLUDED }
+        .reject { |path| "/#{relative(path)}" =~ EXCLUDED }
         .select { |path| File.file?(path) }
         .sort
         .each do |path|

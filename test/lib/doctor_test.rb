@@ -140,6 +140,23 @@ class DoctorTest < ActiveSupport::TestCase
     assert_empty doctor.findings
   end
 
+  # The exclusions name directories inside the app, so they have to be matched
+  # against the path relative to the root. Matched against the absolute path,
+  # an app that merely lives under one of those names — /tmp on CI, or any
+  # checkout under a vendor/ directory — scans zero files and reports a clean
+  # bill of health.
+  test "scans an app whose root sits under an excluded directory name" do
+    nested = File.join(@root, "tmp", "checkout")
+    FileUtils.mkdir_p(File.join(nested, "app/assets/tailwind"))
+    File.write(File.join(nested, "app/assets/tailwind/application.css"),
+      "[data-sidebar-part=\"menu-link\"][data-active] { color: red; }")
+
+    result = MaquinaComponents::Doctor.new(nested).run
+
+    assert_equal 1, result.scanned_files
+    assert_equal ["data-active-presence"], rules(result.findings_for(:breaking))
+  end
+
   # The shim every 0.5.x install shipped with. Unlayered, it outranks the
   # engine's @layer components rules and flattens the alert/toast variant
   # borders back to --border.
