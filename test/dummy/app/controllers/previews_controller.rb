@@ -3,13 +3,19 @@
 class PreviewsController < ApplicationController
   layout "preview"
 
+  # maquina_site embeds these previews as iframes. Its Bridgetown dev server
+  # (port 4001) has to be here too, or previews render as empty boxes while
+  # writing docs locally and a genuinely broken preview is indistinguishable
+  # from the CSP refusing the frame.
   ALLOWED_FRAME_ANCESTORS = [
     "'self'",
     "https://maquina.app",
     "https://www.maquina.app",
     "http://localhost:3803",
     "http://localhost:3804",
-    "http://127.0.0.1:3803"
+    "http://localhost:4001",
+    "http://127.0.0.1:3803",
+    "http://127.0.0.1:4001"
   ].freeze
 
   before_action :set_theme

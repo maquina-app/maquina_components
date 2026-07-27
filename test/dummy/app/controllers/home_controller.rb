@@ -13,9 +13,13 @@ class HomeController < ApplicationController
 
   private
 
+  # nil when docs/ is unavailable — it is excluded from the deployed image by
+  # .dockerignore. That is "cannot tell", not "nothing is referenced": an empty
+  # Set here would report every preview as an orphan, which is the confidently
+  # wrong answer.
   def documented_previews
     docs = Rails.root.join("../../docs")
-    return Set.new unless docs.directory?
+    return nil unless docs.directory?
 
     Dir.glob(docs.join("*.md")).flat_map { |path|
       component = File.basename(path, ".md")

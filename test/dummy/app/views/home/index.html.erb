@@ -7,9 +7,19 @@
   preview_count = @manifest.values.sum(&:size)
   specimens = @manifest["specimen"] || []
   components = @manifest.except("specimen")
-  orphans = @manifest.flat_map { |component, examples|
+  # nil whenever @documented is — see HomeController#documented_previews.
+  orphans = @documented && @manifest.flat_map { |component, examples|
     examples.map { |example| "#{component}/#{example}" }
   }.reject { |path| @documented.include?(path) }
+
+  cards = [
+    { title: "Components", value: @manifest.size, icon: :grid },
+    { title: "Previews", value: preview_count, icon: :list }
+  ]
+  if @documented
+    cards << { title: "Embedded in docs", value: @documented.size, icon: :circle_check }
+    cards << { title: "Not referenced", value: orphans.size, icon: :circle_alert }
+  end
 %>
 
 <div class="mx-auto max-w-6xl space-y-8 pb-12">
@@ -22,12 +32,7 @@
     </p>
   </header>
 
-  <%= render "components/stats/stats_grid", columns: 4, cards: [
-    { title: "Components", value: @manifest.size, icon: :grid },
-    { title: "Previews", value: preview_count, icon: :list },
-    { title: "Embedded in docs", value: @documented.size, icon: :circle_check },
-    { title: "Not referenced", value: orphans.size, icon: :circle_alert }
-  ] %>
+  <%= render "components/stats/stats_grid", columns: cards.size, cards: cards %>
 
   <%= render "components/alert", variant: :info, icon: :info do %>
     <%= render "components/alert/title", text: "Preview URLs take query parameters" %>
@@ -92,11 +97,11 @@
           <%= render "components/card/content" do %>
             <div class="flex flex-wrap gap-2">
               <% examples.each do |example| %>
-                <% embedded = @documented.include?("#{component}/#{example}") %>
+                <% embedded = @documented&.include?("#{component}/#{example}") %>
                 <%= link_to example.titleize,
                       preview_path(component, example),
                       data: { component: "button", variant: embedded ? "secondary" : "outline", size: "sm" },
-                      title: embedded ? "Embedded in docs/#{component}.md" : "Not referenced by any doc",
+                      title: (embedded ? "Embedded in docs/#{component}.md" : "Not referenced by any doc" if @documented),
                       target: "_blank" %>
               <% end %>
             </div>
@@ -106,6 +111,8 @@
     </div>
   </section>
 
+  <%# Only meaningful when docs/ is readable — in the deployed image it is not. %>
+  <% if @documented %>
   <section class="space-y-3">
     <h3 class="text-lg font-semibold tracking-tight">Not referenced by any doc</h3>
     <p class="max-w-prose text-sm text-muted-foreground">
@@ -126,4 +133,5 @@
       <p class="text-sm text-muted-foreground">None — every preview is embedded somewhere.</p>
     <% end %>
   </section>
+  <% end %>
 </div>
