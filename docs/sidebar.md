@@ -2,7 +2,7 @@
 
 > A composable sidebar component with collapsible states and mobile responsiveness.
 
-<!-- preview:default height:280 -->
+<!-- preview:default height:420 -->
 
 ## Usage
 

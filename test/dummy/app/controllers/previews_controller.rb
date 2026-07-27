@@ -28,8 +28,11 @@ class PreviewsController < ApplicationController
   private
 
   def set_theme
+    # params[:theme] is the documentation site's light/dark toggle. Do not add
+    # values to it; shape themes ride on their own param.
     @theme = params[:theme].presence_in(%w[light dark]) || "light"
     @color_theme = params[:color_theme].presence_in(%w[neutral green rose blue])
+    @shape_theme = params[:shape_theme].presence_in(%w[brutal soft])
   end
 
   def set_preview

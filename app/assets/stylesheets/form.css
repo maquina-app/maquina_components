@@ -246,8 +246,8 @@
        document, so currentColor never resolves inside it — the whole image is
        exposed as an overridable property instead, with ready-made second and
        third inks below. */
-    --select-chevron-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-image: var(--select-chevron-image);
+    background-image: var(--select-chevron-image,
+      url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"));
     background-position: right 0.5rem center;
     background-repeat: no-repeat;
     background-size: 1.25rem 1.25rem;
@@ -311,14 +311,6 @@
     border-color: var(--input);
     background-color: var(--control-fill, transparent);
     box-shadow: var(--elevation-control, var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)));
-
-    /* Marks are exposed as overridable images, not masks: mask-image would mask
-       the whole element (box, border and shadow included), appearance:none inputs
-       cannot carry ::before/::after reliably, and neither currentColor nor var()
-       resolves inside a data URI. A light --primary makes the white ink measure
-       1.23:1, so ship a second ink rather than baking one in. */
-    --checkbox-mark-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23ffffff' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-    --checkbox-indeterminate-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23ffffff' xmlns='http://www.w3.org/2000/svg'%3e%3crect x='3' y='7' width='10' height='2' rx='1'/%3e%3c/svg%3e");
   }
 
   /* Dark ink — one attribute fixes a light --primary */
@@ -337,8 +329,20 @@
     background-color: var(--primary);
     border-color: var(--primary);
 
-    /* Checkmark icon */
-    background-image: var(--checkbox-mark-image);
+    /* Checkmark icon.
+       Marks are overridable images, not masks: mask-image would mask the whole
+       element (box, border and shadow included), appearance:none inputs cannot
+       carry ::before/::after reliably, and neither currentColor nor var()
+       resolves inside a data URI. A light --primary makes the white ink measure
+       1.15:1, so ship a second ink rather than baking one in.
+
+       The default is the fallback rather than a declaration on the control,
+       because an element's own custom property beats an inherited one — so
+       declaring it here would put it out of reach of :root. Setting it at :root
+       retints every control; the data-mark attributes below still win, since an
+       explicit opt-in should beat a global default. */
+    background-image: var(--checkbox-mark-image,
+      url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23ffffff' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e"));
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100% 100%;
@@ -347,7 +351,8 @@
   [data-component="checkbox"]:where(:indeterminate) {
     background-color: var(--primary);
     border-color: var(--primary);
-    background-image: var(--checkbox-indeterminate-image);
+    background-image: var(--checkbox-indeterminate-image,
+      url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23ffffff' xmlns='http://www.w3.org/2000/svg'%3e%3crect x='3' y='7' width='10' height='2' rx='1'/%3e%3c/svg%3e"));
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100% 100%;
@@ -388,7 +393,6 @@
     box-shadow: var(--elevation-control, var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05)));
 
     /* Inner dot — overridable image, see the checkbox note above */
-    --radio-mark-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23ffffff' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
   }
 
   [data-component="radio"]:where([data-mark="dark"]) {
@@ -406,7 +410,8 @@
     background-color: var(--primary);
 
     /* Inner dot */
-    background-image: var(--radio-mark-image);
+    background-image: var(--radio-mark-image,
+      url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23ffffff' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e"));
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100% 100%;
@@ -439,8 +444,8 @@
     /* Thumb — overridable image, see the checkbox note above.
        The thumb slides via background-position, so these must stay longhands:
        the background shorthand would reset the position on every state change. */
-    --switch-thumb-image: url("data:image/svg+xml,%3csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='10' cy='10' r='8' fill='%23ffffff'/%3e%3c/svg%3e");
-    background-image: var(--switch-thumb-image);
+    background-image: var(--switch-thumb-image,
+      url("data:image/svg+xml,%3csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='10' cy='10' r='8' fill='%23ffffff'/%3e%3c/svg%3e"));
     background-position: left 2px center;
     background-repeat: no-repeat;
     background-size: 16px 16px;

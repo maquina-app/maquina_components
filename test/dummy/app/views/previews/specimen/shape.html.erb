@@ -1,0 +1,156 @@
+<%= render "preview_support/specimen_support" %>
+
+<div class="space-y-8">
+  <p class="text-xs text-muted-foreground max-w-prose">
+    One row per shape role. Everything in a row reads the same token, so a single
+    declaration reshapes all of it. Append
+    <code class="rounded bg-muted px-1">?shape_theme=brutal</code> or
+    <code class="rounded bg-muted px-1">?shape_theme=soft</code> to this URL to
+    see the whole page change without a single component selector.
+  </p>
+
+  <%= specimen_section "--control-radius", note: "Buttons, fields, badges, menu items, pagination links — anything you click or type into." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "button" do %>
+        <button data-component="button" data-variant="primary">Button</button>
+      <% end %>
+      <%= specimen_cell "input" do %>
+        <input data-component="input" type="text" value="Input" class="w-32">
+      <% end %>
+      <%= specimen_cell "select" do %>
+        <select data-component="select" class="w-32"><option>Select</option></select>
+      <% end %>
+      <%= specimen_cell "textarea" do %>
+        <textarea data-component="textarea" rows="2" class="w-32">Textarea</textarea>
+      <% end %>
+      <%= specimen_cell "badge" do %>
+        <%= render "components/badge" do %>Badge<% end %>
+      <% end %>
+      <%= specimen_cell "toggle group" do %>
+        <%= render "components/toggle_group", type: :single, size: :sm, value: "a" do %>
+          <%= render "components/toggle_group/item", value: "a", pressed: true, aria_label: "A" do %>A<% end %>
+          <%= render "components/toggle_group/item", value: "b", aria_label: "B" do %>B<% end %>
+        <% end %>
+      <% end %>
+      <%= specimen_cell "pagination link" do %>
+        <%= render "components/pagination" do %>
+          <%= render "components/pagination/content" do %>
+            <%= render "components/pagination/item" do %>
+              <%= render "components/pagination/link", href: "#", active: true do %>1<% end %>
+            <% end %>
+            <%= render "components/pagination/item" do %>
+              <%= render "components/pagination/link", href: "#" do %>2<% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% end %>
+      <%= specimen_cell "menu item" do %>
+        <div class="w-40 border p-1">
+          <%= render "components/dropdown_menu/item", href: "#" do %>Menu item<% end %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "--surface-radius", note: "Cards, alerts, popovers, toasts, tables — anything that holds other things. 0.5rem in 0.6.0; card and the sidebar inset were 12px before." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "card" do %>
+        <div class="w-48">
+          <%= render "components/card" do %>
+            <%= render "components/card/header" do %>
+              <%= render "components/card/title", text: "Card" %>
+            <% end %>
+            <%= render "components/card/content" do %>
+              <p class="text-sm text-muted-foreground">Surface</p>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "alert" do %>
+        <div class="w-64">
+          <%= render "components/alert", icon: :info do %>
+            <%= render "components/alert/title", text: "Alert" %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "table container" do %>
+        <div class="w-48">
+          <%= render "components/table", variant: :bordered do %>
+            <%= render "components/table/body" do %>
+              <%= render "components/table/row" do %>
+                <%= render "components/table/cell", text: "Table" %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "stats card" do %>
+        <div class="w-48">
+          <%= render "components/stats/stats_card", title: "Revenue", value: "$12,400", subtitle: "+4.2%" %>
+        </div>
+      <% end %>
+      <%= specimen_cell "empty" do %>
+        <div class="w-48">
+          <%= render "components/empty", variant: :outline, size: :sm do %>
+            <%= render "components/empty/header" do %>
+              <%= render "components/empty/title", text: "Empty" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "popover surface" do %>
+        <div class="w-48 border bg-popover p-2 text-sm" style="border-radius: var(--surface-radius, 0.5rem)">
+          Dropdown and combobox popovers
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "--mark-radius", note: "The checkbox box. 4px by default, which is neither a control nor a surface." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "unchecked" do %>
+        <input data-component="checkbox" type="checkbox">
+      <% end %>
+      <%= specimen_cell "checked" do %>
+        <input data-component="checkbox" type="checkbox" checked>
+      <% end %>
+      <%= specimen_cell "indeterminate" do %>
+        <input data-component="checkbox" type="checkbox" data-specimen-indeterminate>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "--pill-radius", note: "Fully round by default: the radio and the switch track." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "radio" do %>
+        <input data-component="radio" type="radio" name="specimen-shape-radio" checked>
+      <% end %>
+      <%= specimen_cell "switch off" do %>
+        <input data-component="switch" type="checkbox">
+      <% end %>
+      <%= specimen_cell "switch on" do %>
+        <input data-component="switch" type="checkbox" checked>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Focus ring", note: "--focus-ring-width / --focus-ring-offset / --focus-ring-style. An outline, so it never disturbs layout and never gets clipped." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "button" do %>
+        <button data-component="button" data-variant="primary" data-specimen-ring>Button</button>
+      <% end %>
+      <%= specimen_cell "input" do %>
+        <input data-component="input" type="text" value="Input" data-specimen-ring class="w-32">
+      <% end %>
+      <%= specimen_cell "checkbox" do %>
+        <input data-component="checkbox" type="checkbox" checked data-specimen-ring>
+      <% end %>
+      <%= specimen_cell "switch" do %>
+        <input data-component="switch" type="checkbox" checked data-specimen-ring>
+      <% end %>
+      <%= specimen_cell "badge" do %>
+        <%= render "components/badge", "data-specimen-ring": true do %>Badge<% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

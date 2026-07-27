@@ -263,6 +263,67 @@
   --sidebar-ring: oklch(0.424 0.199 265);
 }
 
+/* ==========================================================================
+   SHAPE THEMES  (?shape_theme=brutal|soft on any preview URL)
+   ==========================================================================
+
+   These blocks exist to prove one claim: a theme changes token VALUES, not
+   selectors. Nothing below targets a component. If a shape theme ever needs
+   `[data-component="…"]`, the engine's token layer is missing a token.
+
+   They are unlayered, so they beat the engine's `@theme static` defaults
+   (which land in `@layer theme`) regardless of import order.
+   ========================================================================== */
+
+/* ===== Shape Theme: Brutal — square, hard, loud ===== */
+:root[data-shape-theme="brutal"] {
+  --control-radius: 0;
+  --surface-radius: 0;
+  --mark-radius: 0;
+  --pill-radius: 0;
+
+  --focus-ring-width: 4px;
+  --focus-ring-offset: 3px;
+  --focus-ring-style: solid;
+
+  --elevation-control: none;
+  --elevation-raised: none;
+  --elevation-overlay: none;
+
+  --label-weight: 700;
+  --value-weight: 900;
+
+  /* Dark control marks. These are whole SVG images rather than a color token
+     because var() cannot be interpolated into url(); they still theme from
+     :root like everything else, because the engine keeps its own artwork in the
+     use-site fallback instead of declaring it on the control.
+     One scoped exception, by design: under .dark the engine re-inks the select
+     chevron on the control, so this line applies in light mode only. */
+  --checkbox-mark-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  --checkbox-indeterminate-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'%3e%3crect x='3' y='7' width='10' height='2' rx='1'/%3e%3c/svg%3e");
+  --radio-mark-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+  --switch-thumb-image: url("data:image/svg+xml,%3csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='10' cy='10' r='8' fill='%23000000'/%3e%3c/svg%3e");
+  --select-chevron-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+/* ===== Shape Theme: Soft — round, floating ===== */
+:root[data-shape-theme="soft"] {
+  --control-radius: 0.75rem;
+  --surface-radius: 1.5rem;
+  --mark-radius: 8px;
+  --pill-radius: calc(infinity * 1px);
+
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+
+  --elevation-control: 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --elevation-raised: 0 8px 24px -8px rgb(0 0 0 / 0.18);
+  --elevation-overlay: 0 24px 48px -12px rgb(0 0 0 / 0.3);
+
+  --label-weight: 500;
+  --value-weight: 600;
+}
+
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

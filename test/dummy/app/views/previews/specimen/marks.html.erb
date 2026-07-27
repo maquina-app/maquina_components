@@ -1,0 +1,88 @@
+<%= render "preview_support/specimen_support" %>
+
+<div class="space-y-8">
+  <p class="text-xs text-muted-foreground max-w-prose">
+    Five control marks — the checkbox tick, the checkbox dash, the radio dot, the
+    switch thumb and the select chevron. None of them is a glyph or a border
+    trick: each is an SVG data URI held in its own custom property, because
+    <code class="rounded bg-muted px-1">currentColor</code> and
+    <code class="rounded bg-muted px-1">var()</code> do not resolve inside a data
+    URI. That is why re-inking a mark is a property swap, and why
+    <code class="rounded bg-muted px-1">data-mark="dark"</code> exists as a
+    ready-made second ink.
+  </p>
+
+  <%= specimen_section "Default ink vs data-mark=\"dark\"" do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "checkbox" do %>
+        <input data-component="checkbox" type="checkbox" checked>
+      <% end %>
+      <%= specimen_cell "checkbox, dark" do %>
+        <input data-component="checkbox" type="checkbox" checked data-mark="dark">
+      <% end %>
+      <%= specimen_cell "indeterminate" do %>
+        <input data-component="checkbox" type="checkbox" data-specimen-indeterminate>
+      <% end %>
+      <%= specimen_cell "indeterminate, dark" do %>
+        <input data-component="checkbox" type="checkbox" data-specimen-indeterminate data-mark="dark">
+      <% end %>
+      <%= specimen_cell "radio" do %>
+        <input data-component="radio" type="radio" name="specimen-marks-a" checked>
+      <% end %>
+      <%= specimen_cell "radio, dark" do %>
+        <input data-component="radio" type="radio" name="specimen-marks-b" checked data-mark="dark">
+      <% end %>
+      <%= specimen_cell "switch" do %>
+        <input data-component="switch" type="checkbox" checked>
+      <% end %>
+      <%= specimen_cell "switch, dark" do %>
+        <input data-component="switch" type="checkbox" checked data-mark="dark">
+      <% end %>
+      <%= specimen_cell "select" do %>
+        <select data-component="select" class="w-36"><option>Chevron</option></select>
+      <% end %>
+      <%= specimen_cell "select, dark" do %>
+        <select data-component="select" data-mark="dark" class="w-36"><option>Chevron</option></select>
+      <% end %>
+      <%= specimen_cell "select, light" do %>
+        <select data-component="select" data-mark="light" class="w-36"><option>Chevron</option></select>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "Why the second ink ships",
+        note: "Both rows below force --primary to a pale mint. The default white ink measures about 1.15:1 against it — invisible. data-mark=\"dark\" is the whole fix." do %>
+    <div class="space-y-4" style="--primary: oklch(0.92 0.05 155); --primary-foreground: oklch(0.35 0.1 155)">
+      <%= specimen_grid do %>
+        <%= specimen_cell "white ink on a light --primary" do %>
+          <div class="flex items-center gap-3">
+            <input data-component="checkbox" type="checkbox" checked>
+            <input data-component="radio" type="radio" name="specimen-marks-light-a" checked>
+            <input data-component="switch" type="checkbox" checked>
+          </div>
+        <% end %>
+        <%= specimen_cell "the same, data-mark=\"dark\"" do %>
+          <div class="flex items-center gap-3">
+            <input data-component="checkbox" type="checkbox" checked data-mark="dark">
+            <input data-component="radio" type="radio" name="specimen-marks-light-b" checked data-mark="dark">
+            <input data-component="switch" type="checkbox" checked data-mark="dark">
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= specimen_section "Theming a mark",
+        note: "The engine keeps its own artwork in the use-site fallback rather than declaring it on the control, so setting one of the five properties anywhere above the control — :root, a theme block, or a single element as below — retints it. data-mark still wins over a global default, because an explicit opt-in should. Try ?shape_theme=brutal: it re-inks all five from tokens alone." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "custom checkbox mark" do %>
+        <input data-component="checkbox" type="checkbox" checked
+               style="--checkbox-mark-image: url(&quot;data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23ffffff' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M8 2l1.8 4.2L14 8l-4.2 1.8L8 14l-1.8-4.2L2 8l4.2-1.8z'/%3e%3c/svg%3e&quot;)">
+      <% end %>
+      <%= specimen_cell "custom switch thumb" do %>
+        <input data-component="switch" type="checkbox" checked
+               style="--switch-thumb-image: url(&quot;data:image/svg+xml,%3csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3crect x='3' y='3' width='14' height='14' fill='%23ffffff'/%3e%3c/svg%3e&quot;)">
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

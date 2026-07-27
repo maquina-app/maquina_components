@@ -1,0 +1,108 @@
+<%= render "preview_support/specimen_support" %>
+
+<div class="space-y-8">
+  <p class="text-xs text-muted-foreground max-w-prose">
+    Three elevation roles and the flat case. Every shadow in the engine reads one
+    of these four, so depth is a four-line decision, not a per-component one.
+    In 0.6.0 the toast, the drawer panel and the date-picker popover moved from
+    <code class="rounded bg-muted px-1">shadow-lg</code> to
+    <code class="rounded bg-muted px-1">--elevation-overlay</code>, which is
+    <code class="rounded bg-muted px-1">shadow-md</code>. Compare with
+    <code class="rounded bg-muted px-1">?shape_theme=soft</code>.
+  </p>
+
+  <%= specimen_grid do %>
+    <%= specimen_cell "--elevation-control" do %>
+      <div data-specimen-swatch style="box-shadow: var(--elevation-control, none)"></div>
+    <% end %>
+    <%= specimen_cell "--elevation-raised" do %>
+      <div data-specimen-swatch style="box-shadow: var(--elevation-raised, none)"></div>
+    <% end %>
+    <%= specimen_cell "--elevation-overlay" do %>
+      <div data-specimen-swatch style="box-shadow: var(--elevation-overlay, none)"></div>
+    <% end %>
+    <%= specimen_cell "--elevation-none" do %>
+      <div data-specimen-swatch style="box-shadow: var(--elevation-none, none)"></div>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "--elevation-control", note: "Form controls: enough to lift an editable surface off the page, no more." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "input" do %>
+        <input data-component="input" type="text" value="Input" class="w-36">
+      <% end %>
+      <%= specimen_cell "textarea" do %>
+        <textarea data-component="textarea" rows="2" class="w-36">Textarea</textarea>
+      <% end %>
+      <%= specimen_cell "select" do %>
+        <select data-component="select" class="w-36"><option>Select</option></select>
+      <% end %>
+      <%= specimen_cell "checkbox" do %>
+        <input data-component="checkbox" type="checkbox">
+      <% end %>
+      <%= specimen_cell "radio" do %>
+        <input data-component="radio" type="radio" name="specimen-elevation-radio">
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "--elevation-raised", note: "Surfaces that sit in the flow, and the buttons with a box: cards, stats cards, the floating sidebar, every filled button." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "button primary" do %>
+        <button data-component="button" data-variant="primary">Primary</button>
+      <% end %>
+      <%= specimen_cell "button outline" do %>
+        <button data-component="button" data-variant="outline">Outline</button>
+      <% end %>
+      <%= specimen_cell "card" do %>
+        <div class="w-48">
+          <%= render "components/card" do %>
+            <%= render "components/card/header" do %>
+              <%= render "components/card/title", text: "Card" %>
+            <% end %>
+            <%= render "components/card/content" do %>
+              <p class="text-sm text-muted-foreground">Raised</p>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "stats card" do %>
+        <div class="w-48">
+          <%= render "components/stats/stats_card", title: "Customers", value: "1,204", subtitle: "+12 this week" %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "--elevation-overlay", note: "Things that float above the page: dropdown and combobox popovers, the date-picker popover, toasts, the drawer panel." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "toast" do %>
+        <div class="w-72">
+<%# duration: 0 turns the auto-dismiss timer off — a specimen has to stay on screen. %>
+          <%= render "components/toast",
+                title: "Scheduled",
+                description: "Friday at 5:57 PM",
+                duration: 0,
+                dismissible: false %>
+        </div>
+      <% end %>
+      <%= specimen_cell "popover surface" do %>
+        <div class="w-48 border bg-popover p-2 text-sm"
+             style="border-radius: var(--surface-radius, 0.5rem); box-shadow: var(--elevation-overlay, none)">
+          Popover
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%= specimen_section "--elevation-none", note: "Not the absence of a token: the ghost and link buttons, and the inset sidebar, declare it, so a theme can give even the flat case a shadow." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "button ghost" do %>
+        <button data-component="button" data-variant="ghost">Ghost</button>
+      <% end %>
+      <%= specimen_cell "button link" do %>
+        <button data-component="button" data-variant="link">Link</button>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

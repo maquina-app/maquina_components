@@ -37,6 +37,17 @@
 <%% end %>
 ```
 
+### Info
+
+<!-- preview:info height:100 -->
+
+```erb
+<%%= render "components/alert", variant: :info, icon: :info do %>
+  <%%= render "components/alert/title", text: "Heads up" %>
+  <%%= render "components/alert/description", text: "This release normalizes the default radius." %>
+<%% end %>
+```
+
 ### Warning
 
 <!-- preview:warning height:100 -->
@@ -54,7 +65,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| variant | Symbol | :default | :default, :destructive, :success, :warning; :error is accepted as an alias of :destructive |
+| variant | Symbol | :default | :default, :destructive, :success, :warning, :info; :error is accepted as an alias of :destructive |
 | icon | Symbol | nil | Icon name to display |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
