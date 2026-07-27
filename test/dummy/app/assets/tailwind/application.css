@@ -296,8 +296,12 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-* {
-  border-color: var(--color-border);
+/* Must stay in @layer base — unlayered, this `*` outranks every engine
+ * component rule and flattens the alert/toast variants' tinted borders. */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
 }
 
 /* ===== Custom Sidebar Buttons - Collapsed State ===== */

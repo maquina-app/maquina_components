@@ -1,569 +1,589 @@
 /* ===== Sidebar Component Styles ===== */
 /* Comprehensive CSS using data-attribute selectors */
 /* Uses @apply for theme-customizable properties */
+/*
+ * Cascade order in this file (full contract documented in form.css):
+ *   1. base      [data-component="sidebar"], [data-sidebar-part="…"]
+ *   2. sizes     [data-sidebar-part="menu-button"]:where([data-size="…"])
+ *   3. variants  :where([data-variant="…"], [data-collapsible="…"], [data-side="…"])
+ *   4. states    […]:where(:hover, :active, :focus-visible, [data-state="…"])
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ * Every rule is flattened to 0,1,0 with :where() and lives in
+ * @layer components, so a caller's utility class wins and source order is
+ * the only tie-breaker. (Rules whose target is a bare element read 0,1,1 — an
+ * element selector cannot be zeroed away.)
+ *
+ * The sidebar's per-part rules are grouped by part rather than globally by
+ * kind: each part reads base → sizes → variants → states before the next part
+ * starts, which is the same contract applied at part granularity.
+ */
 
-/* ===== Provider (Wrapper) ===== */
-[data-component="sidebar"] {
-  @apply flex min-h-svh w-full;
-}
+@layer components {
+  /* ===== Provider (Wrapper) ===== */
+  [data-component="sidebar"] {
+    @apply flex min-h-svh w-full;
+  }
 
-[data-component="sidebar"][data-variant="inset"] {
-  @apply h-svh;
-  background-color: var(--sidebar);
-}
+  [data-component="sidebar"]:where([data-variant="inset"]) {
+    @apply h-svh;
+    background-color: var(--sidebar);
+  }
 
-/* ===== Sidebar Root ===== */
-[data-sidebar-part="root"] {
-  @apply block text-sidebar-foreground;
-}
+  /* ===== Sidebar Root ===== */
+  [data-sidebar-part="root"] {
+    @apply block text-sidebar-foreground;
+  }
 
-/* Prevent transitions on initial load */
-[data-sidebar-part="root"].sidebar-loading,
-[data-sidebar-part="root"].sidebar-loading * {
-  transition: none !important;
-}
+  /* Prevent transitions on initial load */
+  [data-sidebar-part="root"]:where(.sidebar-loading),
+  :where([data-sidebar-part="root"].sidebar-loading) * {
+    transition: none !important;
+  }
 
-/* Prevent layout shift before Stimulus initializes.
-   The server renders collapsible="offcanvas" (gap=0) but JS immediately
-   sets collapsible="none" (gap=sidebar-width) for expanded desktop sidebars.
-   This rule keeps the gap at the correct width during loading so the main
-   content doesn't jump from left to right. Desktop-only — on mobile JS
-   forces the sidebar closed and the gap should stay at 0. */
-@media (min-width: 768px) {
-  [data-sidebar-part="root"].sidebar-loading[data-state="expanded"] [data-sidebar-part="gap"] {
+  /* Prevent layout shift before Stimulus initializes.
+     The server renders collapsible="offcanvas" (gap=0) but JS immediately
+     sets collapsible="none" (gap=sidebar-width) for expanded desktop sidebars.
+     This rule keeps the gap at the correct width during loading so the main
+     content doesn't jump from left to right. Desktop-only — on mobile JS
+     forces the sidebar closed and the gap should stay at 0. */
+  @media (min-width: 768px) {
+    :where([data-sidebar-part="root"].sidebar-loading[data-state="expanded"]) [data-sidebar-part="gap"] {
+      width: var(--sidebar-width);
+    }
+  }
+
+  /* ===== Sidebar Gap (creates space on desktop) ===== */
+  [data-sidebar-part="gap"] {
+    @apply relative bg-transparent;
     width: var(--sidebar-width);
+    transition: width 200ms linear;
   }
-}
 
-/* ===== Sidebar Gap (creates space on desktop) ===== */
-[data-sidebar-part="gap"] {
-  @apply relative bg-transparent;
-  width: var(--sidebar-width);
-  transition: width 200ms linear;
-}
+  :where([data-sidebar-part="root"][data-collapsible="offcanvas"]) [data-sidebar-part="gap"] {
+    width: 0;
+  }
 
-[data-sidebar-part="root"][data-collapsible="offcanvas"] [data-sidebar-part="gap"] {
-  width: 0;
-}
+  :where([data-sidebar-part="root"][data-side="right"]) [data-sidebar-part="gap"] {
+    @apply rotate-180;
+  }
 
-[data-sidebar-part="root"][data-side="right"] [data-sidebar-part="gap"] {
-  @apply rotate-180;
-}
+  :where([data-sidebar-part="root"][data-state="collapsed"][data-collapsible="icon"]) [data-sidebar-part="gap"] {
+    width: calc(var(--sidebar-width-icon) + 1rem);
+  }
 
-[data-sidebar-part="root"][data-state="collapsed"][data-collapsible="icon"] [data-sidebar-part="gap"] {
-  width: calc(var(--sidebar-width-icon) + 1rem);
-}
+  /* ===== Sidebar Backdrop (mobile overlay) ===== */
+  [data-sidebar-part="backdrop"] {
+    @apply fixed inset-0 z-40 hidden bg-black opacity-0;
+    transition: opacity 300ms;
+  }
 
-/* ===== Sidebar Backdrop (mobile overlay) ===== */
-[data-sidebar-part="backdrop"] {
-  @apply fixed inset-0 z-40 hidden bg-black opacity-0;
-  transition: opacity 300ms;
-}
+  [data-sidebar-part="backdrop"]:where([data-state="visible"]) {
+    @apply block opacity-60;
+  }
 
-[data-sidebar-part="backdrop"][data-state="visible"] {
-  @apply block opacity-60;
-}
-
-/* ===== Sidebar Container (fixed positioned) ===== */
-[data-sidebar-part="container"] {
-  @apply fixed inset-y-0 z-50 flex h-svh;
-  width: var(--sidebar-width);
-  transition: left 200ms linear, right 200ms linear, width 200ms linear;
-}
-
-@media (min-width: 768px) {
+  /* ===== Sidebar Container (fixed positioned) ===== */
   [data-sidebar-part="container"] {
-    @apply p-2;
-  }
-}
-
-[data-sidebar-part="root"][data-side="left"] [data-sidebar-part="container"] {
-  @apply left-0;
-}
-
-[data-sidebar-part="root"][data-side="right"] [data-sidebar-part="container"] {
-  @apply right-0;
-}
-
-/* Collapsed offcanvas - slide out */
-[data-sidebar-part="root"][data-state="collapsed"][data-collapsible="offcanvas"][data-side="left"] [data-sidebar-part="container"] {
-  left: calc(var(--sidebar-width) * -1);
-}
-
-[data-sidebar-part="root"][data-state="collapsed"][data-collapsible="offcanvas"][data-side="right"] [data-sidebar-part="container"] {
-  right: calc(var(--sidebar-width) * -1);
-}
-
-/* Collapsed icon mode - narrow width */
-[data-sidebar-part="root"][data-state="collapsed"][data-collapsible="icon"] [data-sidebar-part="container"] {
-  width: calc(var(--sidebar-width-icon) + 1rem + 2px);
-}
-
-/* ===== Sidebar Inner Content Wrapper ===== */
-[data-sidebar-part="inner"] {
-  @apply flex h-full w-full flex-col;
-  background-color: var(--sidebar);
-}
-
-[data-sidebar-part="root"][data-variant="floating"] [data-sidebar-part="inner"] {
-  @apply border;
-  border-radius: var(--sidebar-radius, var(--surface-radius, 0.5rem));
-  box-shadow: var(--elevation-raised, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)));
-  border-color: var(--sidebar-border);
-}
-
-[data-sidebar-part="root"][data-variant="inset"] [data-sidebar-part="inner"] {
-  @apply border-0;
-  /* Structural: the inset variant sits flush inside the provider, so it
-     resets the floating variant's radius rather than theming one */
-  border-radius: 0;
-  box-shadow: var(--elevation-none, none);
-}
-
-/* ===== Sidebar Header ===== */
-[data-sidebar-part="header"] {
-  @apply flex flex-col gap-2 p-2;
-}
-
-/* ===== Sidebar Footer ===== */
-[data-sidebar-part="footer"] {
-  @apply flex flex-col gap-2 p-2;
-}
-
-/* ===== Sidebar Content (scrollable area) ===== */
-[data-sidebar-part="content"] {
-  @apply flex min-h-0 flex-1 flex-col gap-2 overflow-auto;
-}
-
-[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="content"] {
-  @apply overflow-hidden;
-}
-
-/* ===== Sidebar Group ===== */
-[data-sidebar-part="group"] {
-  @apply relative flex w-full min-w-0 flex-col p-2;
-}
-
-/* ===== Sidebar Group Label ===== */
-[data-sidebar-part="group-label"] {
-  @apply flex h-8 shrink-0 items-center px-2 text-xs uppercase tracking-wide;
-  @apply transition-[margin,opacity] duration-200 ease-linear;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  font-weight: var(--label-weight, 500);
-  color: var(--sidebar-foreground);
-  opacity: 0.6;
-}
-
-[data-sidebar-part="group-label"]:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-[data-sidebar-part="group-label"] svg {
-  @apply size-4 shrink-0;
-}
-
-[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="group-label"] {
-  @apply -mt-8 opacity-0;
-}
-
-/* ===== Sidebar Group Action ===== */
-[data-sidebar-part="group-action"] {
-  @apply ml-auto flex aspect-square w-5 items-center justify-center p-0;
-  @apply transition-transform;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  color: var(--sidebar-foreground);
-}
-
-[data-sidebar-part="group-action"]:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-[data-sidebar-part="group-action"]:hover {
-  background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
-  color: var(--sidebar-accent-foreground);
-}
-
-[data-sidebar-part="group-action"] svg {
-  @apply size-4 shrink-0;
-}
-
-[data-sidebar-part="group-action"]::after {
-  @apply absolute -inset-2 md:hidden;
-  content: "";
-}
-
-/* ===== Sidebar Menu ===== */
-[data-sidebar-part="menu"] {
-  @apply flex w-full min-w-0 flex-col gap-1;
-}
-
-/* ===== Sidebar Menu Item ===== */
-[data-sidebar-part="menu-item"] {
-  @apply relative; /* group/menu-item  */
-}
-
-/* ===== Sidebar Menu Button (base styles) ===== */
-[data-sidebar-part="menu-button"] {
-  @apply flex w-full items-center gap-2 overflow-hidden p-2 text-left text-sm;
-  @apply transition-[width,height,padding];
-  @apply disabled:pointer-events-none disabled:opacity-50;
-  @apply aria-disabled:pointer-events-none aria-disabled:opacity-50;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  font-weight: var(--label-weight, 500);
-  color: var(--sidebar-foreground);
-}
-
-/* outline, not a ring: the sidebar container clips box-shadow rings */
-[data-sidebar-part="menu-button"]:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-[data-sidebar-part="menu-button"]:hover {
-  background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
-  color: var(--sidebar-accent-foreground);
-}
-
-[data-sidebar-part="menu-button"]:active {
-  background-color: var(--sidebar-accent);
-  color: var(--sidebar-accent-foreground);
-}
-
-[data-sidebar-part="menu-button"][data-active="true"] {
-  @apply font-semibold;
-  background-color: var(--sidebar-accent);
-  color: var(--sidebar-accent-foreground);
-}
-
-[data-sidebar-part="menu-button"][data-state="open"]:hover {
-  background-color: var(--sidebar-accent);
-  color: var(--sidebar-accent-foreground);
-}
-
-[data-sidebar-part="menu-button"] svg {
-  @apply size-4 shrink-0;
-}
-
-[data-sidebar-part="menu-button"] span:last-child {
-  @apply truncate;
-}
-
-/* Menu Button Sizes */
-[data-sidebar-part="menu-button"][data-size="default"],
-[data-sidebar-part="menu-button"]:not([data-size]) {
-  @apply h-8;
-}
-
-[data-sidebar-part="menu-button"][data-size="sm"] {
-  @apply h-7 text-xs;
-}
-
-[data-sidebar-part="menu-button"][data-size="lg"] {
-  @apply h-12;
-}
-
-/* Has menu action - add padding */
-.group-has-data-\[sidebar-part\=menu-action\]\/menu-item [data-sidebar-part="menu-button"],
-[data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"]) [data-sidebar-part="menu-button"] {
-  @apply pr-8;
-}
-
-/* Icon collapsed mode */
-[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-button"] {
-  @apply size-8 p-2;
-}
-
-[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-button"][data-size="lg"] {
-  @apply size-8 p-0;
-}
-
-/* ===== Sidebar Menu Link (avatar style variant) ===== */
-[data-sidebar-part="menu-link"] {
-  @apply flex w-full items-center gap-2 overflow-hidden p-2 text-left text-sm;
-  @apply transition-[width,height,padding];
-  @apply disabled:pointer-events-none disabled:opacity-50;
-  @apply aria-disabled:pointer-events-none aria-disabled:opacity-50;
-  @apply h-12;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  font-weight: var(--label-weight, 500);
-  color: var(--sidebar-foreground);
-}
-
-[data-sidebar-part="menu-link"]:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-[data-sidebar-part="menu-link"]:hover {
-  background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
-  color: var(--sidebar-accent-foreground);
-}
-
-[data-sidebar-part="menu-link"]:active {
-  background-color: var(--sidebar-accent);
-  color: var(--sidebar-accent-foreground);
-}
-
-[data-sidebar-part="menu-link"][data-active="true"] {
-  @apply font-semibold;
-  background-color: var(--sidebar-accent);
-  color: var(--sidebar-accent-foreground);
-}
-
-[data-sidebar-part="menu-link"] svg {
-  @apply size-4 shrink-0;
-}
-
-[data-sidebar-part="menu-link"] span:last-child {
-  @apply truncate;
-}
-
-[data-sidebar-part="menu-link-text"] {
-  @apply flex flex-col gap-0.5 leading-none;
-}
-
-[data-sidebar-part="menu-link-title"] {
-  font-weight: var(--label-weight, 500);
-}
-
-[data-sidebar-part="menu-link-subtitle"] {
-  @apply text-xs text-sidebar-foreground/70;
-}
-
-/* Has menu action - add padding */
-.group-has-data-\[sidebar-part\=menu-action\]\/menu-item [data-sidebar-part="menu-link"],
-[data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"]) [data-sidebar-part="menu-link"] {
-  @apply pr-8;
-}
-
-/* Icon collapsed mode */
-[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-link"] {
-  @apply size-8 p-0;
-}
-
-/* ===== Sidebar Menu Avatar ===== */
-[data-sidebar-part="menu-avatar"] {
-  @apply flex aspect-square size-8 items-center justify-center;
-  border-radius: var(--avatar-radius, var(--surface-radius, 0.5rem));
-  background-color: var(--sidebar-primary);
-  color: var(--sidebar-primary-foreground);
-}
-
-/* ===== Sidebar Menu Action ===== */
-[data-sidebar-part="menu-action"] {
-  @apply absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center p-0;
-  @apply transition-transform;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  color: var(--sidebar-foreground);
-}
-
-[data-sidebar-part="menu-action"]:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-[data-sidebar-part="menu-action"]:hover {
-  background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
-  color: var(--sidebar-accent-foreground);
-}
-
-[data-sidebar-part="menu-action"] svg {
-  @apply size-4 shrink-0;
-}
-
-[data-sidebar-part="menu-action"]::after {
-  @apply absolute -inset-2 md:hidden;
-  content: "";
-}
-
-/* Show on hover only (desktop) */
-[data-sidebar-part="menu-action"][data-show-on-hover="true"] {
-  @apply opacity-0 group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100;
-  @apply group-data-[collapsible=icon]:hidden;
-}
-
-/* ===== Sidebar Trigger ===== */
-[data-sidebar-part="trigger"] {
-  @apply inline-flex items-center justify-center gap-2 whitespace-nowrap;
-  @apply text-sm;
-  @apply disabled:pointer-events-none disabled:opacity-50;
-  @apply transition-all;
-  @apply size-7 shrink-0 -ml-1;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  font-weight: var(--label-weight, 500);
-  color: var(--foreground);
-}
-
-[data-sidebar-part="trigger"]:focus-visible {
-  border-color: var(--ring);
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, color-mix(in oklch, var(--ring) 50%, transparent));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-[data-sidebar-part="trigger"]:hover {
-  background-color: var(--accent-hover, var(--accent));
-  color: var(--accent-foreground);
-}
-
-[data-sidebar-part="trigger"] svg {
-  @apply pointer-events-none size-4 shrink-0;
-}
-
-/* ===== Sidebar Inset (main content area) ===== */
-[data-sidebar-part="inset"] {
-  @apply relative flex w-full flex-1 flex-col;
-  background-color: var(--background);
-}
-
-@media (min-width: 768px) {
-  [data-sidebar-part="inset"] {
-    /* Peer selector for when sidebar is peer */
-    @apply peer-data-[variant=inset]:m-2 peer-data-[variant=inset]:ml-0;
+    @apply fixed inset-y-0 z-50 flex h-svh;
+    width: var(--sidebar-width);
+    transition: left 200ms linear, right 200ms linear, width 200ms linear;
   }
 
-  /* Radius and elevation spelled out so they can read the tokens; the header
-     component matches --inset-radius for its top corners. */
-  .peer[data-variant="inset"] ~ [data-sidebar-part="inset"],
-  [data-sidebar-part="root"][data-variant="inset"] ~ [data-sidebar-part="inset"] {
-    border-radius: var(--inset-radius, var(--surface-radius, 0.5rem));
+  @media (min-width: 768px) {
+    [data-sidebar-part="container"] {
+      @apply p-2;
+    }
+  }
+
+  :where([data-sidebar-part="root"][data-side="left"]) [data-sidebar-part="container"] {
+    @apply left-0;
+  }
+
+  :where([data-sidebar-part="root"][data-side="right"]) [data-sidebar-part="container"] {
+    @apply right-0;
+  }
+
+  /* Collapsed offcanvas - slide out */
+  :where([data-sidebar-part="root"][data-state="collapsed"][data-collapsible="offcanvas"][data-side="left"]) [data-sidebar-part="container"] {
+    left: calc(var(--sidebar-width) * -1);
+  }
+
+  :where([data-sidebar-part="root"][data-state="collapsed"][data-collapsible="offcanvas"][data-side="right"]) [data-sidebar-part="container"] {
+    right: calc(var(--sidebar-width) * -1);
+  }
+
+  /* Collapsed icon mode - narrow width */
+  :where([data-sidebar-part="root"][data-state="collapsed"][data-collapsible="icon"]) [data-sidebar-part="container"] {
+    width: calc(var(--sidebar-width-icon) + 1rem + 2px);
+  }
+
+  /* ===== Sidebar Inner Content Wrapper ===== */
+  [data-sidebar-part="inner"] {
+    @apply flex h-full w-full flex-col;
+    background-color: var(--sidebar);
+  }
+
+  :where([data-sidebar-part="root"][data-variant="floating"]) [data-sidebar-part="inner"] {
+    @apply border;
+    border-radius: var(--sidebar-radius, var(--surface-radius, 0.5rem));
     box-shadow: var(--elevation-raised, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)));
+    border-color: var(--sidebar-border);
   }
 
-  /* When sidebar is collapsed, add left margin */
-  .peer[data-state="collapsed"] ~ [data-sidebar-part="inset"],
-  [data-sidebar-part="root"][data-state="collapsed"] ~ [data-sidebar-part="inset"] {
-    @apply ml-2;
+  :where([data-sidebar-part="root"][data-variant="inset"]) [data-sidebar-part="inner"] {
+    @apply border-0;
+    /* Structural: the inset variant sits flush inside the provider, so it
+       resets the floating variant's radius rather than theming one */
+    border-radius: 0;
+    box-shadow: var(--elevation-none, none);
   }
-}
 
-/* ===== Sidebar Rail (hover to expand) ===== */
-[data-sidebar-part="rail"] {
-  @apply absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear;
-  @apply after:absolute after:inset-y-0 after:left-1/2 after:w-[2px];
-  @apply hover:after:bg-sidebar-border;
-  @apply group-data-[side=left]:-right-4 group-data-[side=right]:left-0;
-}
+  /* ===== Sidebar Header ===== */
+  [data-sidebar-part="header"] {
+    @apply flex flex-col gap-2 p-2;
+  }
 
-@media (min-width: 768px) {
+  /* ===== Sidebar Footer ===== */
+  [data-sidebar-part="footer"] {
+    @apply flex flex-col gap-2 p-2;
+  }
+
+  /* ===== Sidebar Content (scrollable area) ===== */
+  [data-sidebar-part="content"] {
+    @apply flex min-h-0 flex-1 flex-col gap-2 overflow-auto;
+  }
+
+  :where([data-sidebar-part="root"][data-collapsible="icon"]) [data-sidebar-part="content"] {
+    @apply overflow-hidden;
+  }
+
+  /* ===== Sidebar Group ===== */
+  [data-sidebar-part="group"] {
+    @apply relative flex w-full min-w-0 flex-col p-2;
+  }
+
+  /* ===== Sidebar Group Label ===== */
+  [data-sidebar-part="group-label"] {
+    @apply flex h-8 shrink-0 items-center px-2 text-xs uppercase tracking-wide;
+    @apply transition-[margin,opacity] duration-200 ease-linear;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    font-weight: var(--label-weight, 500);
+    color: var(--sidebar-foreground);
+    opacity: 0.6;
+  }
+
+  [data-sidebar-part="group-label"] svg {
+    @apply size-4 shrink-0;
+  }
+
+  :where([data-sidebar-part="root"][data-collapsible="icon"]) [data-sidebar-part="group-label"] {
+    @apply -mt-8 opacity-0;
+  }
+
+  [data-sidebar-part="group-label"]:where(:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  /* ===== Sidebar Group Action ===== */
+  [data-sidebar-part="group-action"] {
+    @apply ml-auto flex aspect-square w-5 items-center justify-center p-0;
+    @apply transition-transform;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    color: var(--sidebar-foreground);
+  }
+
+  [data-sidebar-part="group-action"] svg {
+    @apply size-4 shrink-0;
+  }
+
+  [data-sidebar-part="group-action"]::after {
+    @apply absolute -inset-2 md:hidden;
+    content: "";
+  }
+
+  [data-sidebar-part="group-action"]:where(:hover) {
+    background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
+    color: var(--sidebar-accent-foreground);
+  }
+
+  [data-sidebar-part="group-action"]:where(:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  /* ===== Sidebar Menu ===== */
+  [data-sidebar-part="menu"] {
+    @apply flex w-full min-w-0 flex-col gap-1;
+  }
+
+  /* ===== Sidebar Menu Item ===== */
+  [data-sidebar-part="menu-item"] {
+    @apply relative; /* group/menu-item  */
+  }
+
+  /* ===== Sidebar Menu Button (base styles) ===== */
+  [data-sidebar-part="menu-button"] {
+    @apply flex w-full items-center gap-2 overflow-hidden p-2 text-left text-sm;
+    @apply transition-[width,height,padding];
+    @apply disabled:pointer-events-none disabled:opacity-50;
+    @apply aria-disabled:pointer-events-none aria-disabled:opacity-50;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    font-weight: var(--label-weight, 500);
+    color: var(--sidebar-foreground);
+  }
+
+  [data-sidebar-part="menu-button"] svg {
+    @apply size-4 shrink-0;
+  }
+
+  [data-sidebar-part="menu-button"] span:where(:last-child) {
+    @apply truncate;
+  }
+
+  /* Menu Button Sizes — :not([data-size]) picks up the un-sized case that used
+     to lean on the base selector sitting in this group */
+  [data-sidebar-part="menu-button"]:where([data-size="default"], :not([data-size])) {
+    @apply h-8;
+  }
+
+  [data-sidebar-part="menu-button"]:where([data-size="sm"]) {
+    @apply h-7 text-xs;
+  }
+
+  [data-sidebar-part="menu-button"]:where([data-size="lg"]) {
+    @apply h-12;
+  }
+
+  /* Has menu action - add padding */
+  :where(.group-has-data-\[sidebar-part\=menu-action\]\/menu-item) [data-sidebar-part="menu-button"],
+  :where([data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"])) [data-sidebar-part="menu-button"] {
+    @apply pr-8;
+  }
+
+  /* Icon collapsed mode */
+  :where([data-sidebar-part="root"][data-collapsible="icon"]) [data-sidebar-part="menu-button"] {
+    @apply size-8 p-2;
+  }
+
+  :where([data-sidebar-part="root"][data-collapsible="icon"]) [data-sidebar-part="menu-button"]:where([data-size="lg"]) {
+    @apply size-8 p-0;
+  }
+
+  /* Menu Button States */
+  /* outline, not a ring: the sidebar container clips box-shadow rings */
+  [data-sidebar-part="menu-button"]:where(:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  [data-sidebar-part="menu-button"]:where(:hover) {
+    background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
+    color: var(--sidebar-accent-foreground);
+  }
+
+  [data-sidebar-part="menu-button"]:where(:active) {
+    background-color: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+  }
+
+  [data-sidebar-part="menu-button"]:where([data-active="true"]) {
+    @apply font-semibold;
+    background-color: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+  }
+
+  [data-sidebar-part="menu-button"]:where([data-state="open"]:hover) {
+    background-color: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+  }
+
+  /* ===== Sidebar Menu Link (avatar style variant) ===== */
+  [data-sidebar-part="menu-link"] {
+    @apply flex w-full items-center gap-2 overflow-hidden p-2 text-left text-sm;
+    @apply transition-[width,height,padding];
+    @apply disabled:pointer-events-none disabled:opacity-50;
+    @apply aria-disabled:pointer-events-none aria-disabled:opacity-50;
+    @apply h-12;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    font-weight: var(--label-weight, 500);
+    color: var(--sidebar-foreground);
+  }
+
+  [data-sidebar-part="menu-link"] svg {
+    @apply size-4 shrink-0;
+  }
+
+  [data-sidebar-part="menu-link"] span:where(:last-child) {
+    @apply truncate;
+  }
+
+  /* Has menu action - add padding */
+  :where(.group-has-data-\[sidebar-part\=menu-action\]\/menu-item) [data-sidebar-part="menu-link"],
+  :where([data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"])) [data-sidebar-part="menu-link"] {
+    @apply pr-8;
+  }
+
+  /* Icon collapsed mode */
+  :where([data-sidebar-part="root"][data-collapsible="icon"]) [data-sidebar-part="menu-link"] {
+    @apply size-8 p-0;
+  }
+
+  /* Menu Link States */
+  [data-sidebar-part="menu-link"]:where(:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  [data-sidebar-part="menu-link"]:where(:hover) {
+    background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
+    color: var(--sidebar-accent-foreground);
+  }
+
+  [data-sidebar-part="menu-link"]:where(:active) {
+    background-color: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+  }
+
+  [data-sidebar-part="menu-link"]:where([data-active="true"]) {
+    @apply font-semibold;
+    background-color: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+  }
+
+  [data-sidebar-part="menu-link-text"] {
+    @apply flex flex-col gap-0.5 leading-none;
+  }
+
+  [data-sidebar-part="menu-link-title"] {
+    font-weight: var(--label-weight, 500);
+  }
+
+  [data-sidebar-part="menu-link-subtitle"] {
+    @apply text-xs text-sidebar-foreground/70;
+  }
+
+  /* ===== Sidebar Menu Avatar ===== */
+  [data-sidebar-part="menu-avatar"] {
+    @apply flex aspect-square size-8 items-center justify-center;
+    border-radius: var(--avatar-radius, var(--surface-radius, 0.5rem));
+    background-color: var(--sidebar-primary);
+    color: var(--sidebar-primary-foreground);
+  }
+
+  /* ===== Sidebar Menu Action ===== */
+  [data-sidebar-part="menu-action"] {
+    @apply absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center p-0;
+    @apply transition-transform;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    color: var(--sidebar-foreground);
+  }
+
+  [data-sidebar-part="menu-action"] svg {
+    @apply size-4 shrink-0;
+  }
+
+  [data-sidebar-part="menu-action"]::after {
+    @apply absolute -inset-2 md:hidden;
+    content: "";
+  }
+
+  /* Show on hover only (desktop) */
+  [data-sidebar-part="menu-action"]:where([data-show-on-hover="true"]) {
+    @apply opacity-0 group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100;
+    @apply group-data-[collapsible=icon]:hidden;
+  }
+
+  [data-sidebar-part="menu-action"]:where(:hover) {
+    background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
+    color: var(--sidebar-accent-foreground);
+  }
+
+  [data-sidebar-part="menu-action"]:where(:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  /* ===== Sidebar Trigger ===== */
+  [data-sidebar-part="trigger"] {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap;
+    @apply text-sm;
+    @apply disabled:pointer-events-none disabled:opacity-50;
+    @apply transition-all;
+    @apply size-7 shrink-0 -ml-1;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    font-weight: var(--label-weight, 500);
+    color: var(--foreground);
+  }
+
+  [data-sidebar-part="trigger"] svg {
+    @apply pointer-events-none size-4 shrink-0;
+  }
+
+  [data-sidebar-part="trigger"]:where(:hover) {
+    background-color: var(--accent-hover, var(--accent));
+    color: var(--accent-foreground);
+  }
+
+  [data-sidebar-part="trigger"]:where(:focus-visible) {
+    border-color: var(--ring);
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, color-mix(in oklch, var(--ring) 50%, transparent));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  /* ===== Sidebar Inset (main content area) ===== */
+  [data-sidebar-part="inset"] {
+    @apply relative flex w-full flex-1 flex-col;
+    background-color: var(--background);
+  }
+
+  @media (min-width: 768px) {
+    [data-sidebar-part="inset"] {
+      /* Peer selector for when sidebar is peer */
+      @apply peer-data-[variant=inset]:m-2 peer-data-[variant=inset]:ml-0;
+    }
+
+    /* Radius and elevation spelled out so they can read the tokens; the header
+       component matches --inset-radius for its top corners. */
+    :where(.peer[data-variant="inset"]) ~ [data-sidebar-part="inset"],
+    :where([data-sidebar-part="root"][data-variant="inset"]) ~ [data-sidebar-part="inset"] {
+      border-radius: var(--inset-radius, var(--surface-radius, 0.5rem));
+      box-shadow: var(--elevation-raised, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)));
+    }
+
+    /* When sidebar is collapsed, add left margin */
+    :where(.peer[data-state="collapsed"]) ~ [data-sidebar-part="inset"],
+    :where([data-sidebar-part="root"][data-state="collapsed"]) ~ [data-sidebar-part="inset"] {
+      @apply ml-2;
+    }
+  }
+
+  /* ===== Sidebar Rail (hover to expand) ===== */
   [data-sidebar-part="rail"] {
-    @apply flex;
+    @apply absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear;
+    @apply after:absolute after:inset-y-0 after:left-1/2 after:w-[2px];
+    @apply hover:after:bg-sidebar-border;
+    @apply group-data-[side=left]:-right-4 group-data-[side=right]:left-0;
   }
-}
 
-[data-sidebar-part="root"][data-collapsible="offcanvas"] [data-sidebar-part="rail"] {
-  @apply translate-x-0 after:left-full;
-  @apply group-data-[side=left]:right-2;
-  @apply group-data-[side=right]:left-0 group-data-[side=right]:-translate-x-full;
-}
+  @media (min-width: 768px) {
+    [data-sidebar-part="rail"] {
+      @apply flex;
+    }
+  }
 
-/* ===== Sidebar Separator ===== */
-[data-sidebar-part="separator"] {
-  @apply mx-2 w-auto;
-  background-color: var(--sidebar-border);
-}
+  :where([data-sidebar-part="root"][data-collapsible="offcanvas"]) [data-sidebar-part="rail"] {
+    @apply translate-x-0 after:left-full;
+    @apply group-data-[side=left]:right-2;
+    @apply group-data-[side=right]:left-0 group-data-[side=right]:-translate-x-full;
+  }
 
-/* ===== Sidebar Menu Badge ===== */
-[data-sidebar-part="menu-badge"] {
-  @apply pointer-events-none absolute right-1 flex h-5 min-w-5 select-none items-center justify-center;
-  @apply px-1 text-xs tabular-nums;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  font-weight: var(--label-weight, 500);
-  color: var(--sidebar-foreground);
-}
+  /* ===== Sidebar Separator ===== */
+  [data-sidebar-part="separator"] {
+    @apply mx-2 w-auto;
+    background-color: var(--sidebar-border);
+  }
 
-[data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"]) [data-sidebar-part="menu-badge"] {
-  /* Shift badge when action button present */
-  @apply right-7;
-}
+  /* ===== Sidebar Menu Badge ===== */
+  [data-sidebar-part="menu-badge"] {
+    @apply pointer-events-none absolute right-1 flex h-5 min-w-5 select-none items-center justify-center;
+    @apply px-1 text-xs tabular-nums;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    font-weight: var(--label-weight, 500);
+    color: var(--sidebar-foreground);
+  }
 
-[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-badge"] {
-  @apply hidden;
-}
+  :where([data-sidebar-part="menu-item"]:has([data-sidebar-part="menu-action"])) [data-sidebar-part="menu-badge"] {
+    /* Shift badge when action button present */
+    @apply right-7;
+  }
 
-/* ===== Sidebar Menu Skeleton (loading state) ===== */
-[data-sidebar-part="menu-skeleton"] {
-  @apply flex h-8 items-center gap-2 px-2;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-}
+  :where([data-sidebar-part="root"][data-collapsible="icon"]) [data-sidebar-part="menu-badge"] {
+    @apply hidden;
+  }
 
-[data-sidebar-part="menu-skeleton"] [data-skeleton="icon"] {
-  @apply size-4;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  background-color: var(--sidebar-accent);
-}
+  /* ===== Sidebar Menu Skeleton (loading state) ===== */
+  [data-sidebar-part="menu-skeleton"] {
+    @apply flex h-8 items-center gap-2 px-2;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+  }
 
-[data-sidebar-part="menu-skeleton"] [data-skeleton="text"] {
-  @apply h-4 max-w-[calc(var(--skeleton-width,100%)-1rem)] flex-1;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  background-color: var(--sidebar-accent);
-}
+  :where([data-sidebar-part="menu-skeleton"]) [data-skeleton="icon"] {
+    @apply size-4;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    background-color: var(--sidebar-accent);
+  }
 
-[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-skeleton"] {
-  @apply size-8;
-}
+  :where([data-sidebar-part="menu-skeleton"]) [data-skeleton="text"] {
+    @apply h-4 max-w-[calc(var(--skeleton-width,100%)-1rem)] flex-1;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    background-color: var(--sidebar-accent);
+  }
 
-[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-skeleton"] [data-skeleton="text"] {
-  @apply hidden;
-}
+  :where([data-sidebar-part="root"][data-collapsible="icon"]) [data-sidebar-part="menu-skeleton"] {
+    @apply size-8;
+  }
 
-/* ===== Utility: Sidebar hidden text in icon mode ===== */
-[data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-hide-on-collapse] {
-  @apply hidden;
-}
+  :where([data-sidebar-part="root"][data-collapsible="icon"] [data-sidebar-part="menu-skeleton"]) [data-skeleton="text"] {
+    @apply hidden;
+  }
 
-/* ===== Sidebar Primary Button (Quick Create style) ===== */
-.sidebar-primary-button {
-  @apply flex flex-1 items-center gap-2 overflow-hidden p-2 text-left text-sm;
-  @apply transition-colors;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  font-weight: var(--label-weight, 500);
-  background-color: var(--sidebar-primary);
-  color: var(--sidebar-primary-foreground);
-}
+  /* ===== Utility: Sidebar hidden text in icon mode ===== */
+  :where([data-sidebar-part="root"][data-collapsible="icon"]) [data-sidebar-hide-on-collapse] {
+    @apply hidden;
+  }
 
-.sidebar-primary-button:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
+  /* ===== Sidebar Primary Button (Quick Create style) ===== */
+  .sidebar-primary-button {
+    @apply flex flex-1 items-center gap-2 overflow-hidden p-2 text-left text-sm;
+    @apply transition-colors;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    font-weight: var(--label-weight, 500);
+    background-color: var(--sidebar-primary);
+    color: var(--sidebar-primary-foreground);
+  }
 
-.sidebar-primary-button:hover {
-  opacity: 0.9;
-}
+  .sidebar-primary-button svg {
+    @apply size-4 shrink-0;
+  }
 
-.sidebar-primary-button svg {
-  @apply size-4 shrink-0;
-}
+  .sidebar-primary-button:where(:hover) {
+    opacity: 0.9;
+  }
 
-/* ===== Sidebar Outline Button ===== */
-.sidebar-outline-button {
-  @apply flex items-center justify-center p-2;
-  @apply transition-colors;
-  @apply border;
-  border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
-  border-color: var(--sidebar-border);
-  color: var(--sidebar-foreground);
-}
+  .sidebar-primary-button:where(:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
 
-.sidebar-outline-button:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
+  /* ===== Sidebar Outline Button ===== */
+  .sidebar-outline-button {
+    @apply flex items-center justify-center p-2;
+    @apply transition-colors;
+    @apply border;
+    border-radius: var(--sidebar-item-radius, var(--control-radius, 0.375rem));
+    border-color: var(--sidebar-border);
+    color: var(--sidebar-foreground);
+  }
 
-.sidebar-outline-button:hover {
-  background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
-  color: var(--sidebar-accent-foreground);
-}
+  .sidebar-outline-button svg {
+    @apply size-4 shrink-0;
+  }
 
-.sidebar-outline-button svg {
-  @apply size-4 shrink-0;
+  .sidebar-outline-button:where(:hover) {
+    background-color: var(--sidebar-accent-hover, var(--sidebar-accent));
+    color: var(--sidebar-accent-foreground);
+  }
+
+  .sidebar-outline-button:where(:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--sidebar-ring, var(--ring)));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
 }

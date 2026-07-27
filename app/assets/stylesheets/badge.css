@@ -1,160 +1,150 @@
 /* ===== Badge Component Styles ===== */
-/* 
+/*
  * Badge component for status indicators, tags, counts, and labels.
  * Uses data attributes for styling to avoid inline utility classes.
  * Fully compatible with dark mode and supports icons.
+ *
+ * Cascade order in this file (full contract documented in form.css):
+ *   1. base      [data-component="badge"]
+ *   2. sizes     [data-component="badge"]:where([data-size="…"])
+ *   3. variants  [data-component="badge"]:where([data-variant="…"])
+ *   4. states    :where(:hover, :focus-visible, :active, :disabled)
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ * Every rule is flattened to 0,1,0 with :where() and lives in
+ * @layer components, so a caller's utility class wins and source order is
+ * the only tie-breaker. (Rules whose target is a bare element or a
+ * pseudo-element read 0,1,1 — an element selector cannot be zeroed away.)
  */
 
-/* ===== Base Badge Styles ===== */
-[data-component="badge"] {
-  /* Layout */
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-  @apply gap-1 border border-transparent leading-none;
-  border-radius: var(--badge-radius, var(--control-radius, 0.375rem));
-  font-weight: var(--label-weight, 500);
-  
-  /* Transitions */
-  @apply transition-[background-color,border-color,color,opacity] duration-150;
+@layer components {
+  /* ===== Base Badge Styles ===== */
+  [data-component="badge"] {
+    /* Layout */
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    @apply gap-1 border border-transparent leading-none;
+    border-radius: var(--badge-radius, var(--control-radius, 0.375rem));
+    font-weight: var(--label-weight, 500);
+
+    /* Transitions */
+    @apply transition-[background-color,border-color,color,opacity] duration-150;
+  }
+
+  /* ===== Icon Support ===== */
+  [data-component="badge"] svg {
+    /* Scales with font size using em */
+    width: 0.875em;
+    height: 0.875em;
+    @apply shrink-0 pointer-events-none;
+  }
+
+  /* ===== Size Variants ===== */
+
+  /* Small size - compact badges for inline use */
+  [data-component="badge"]:where([data-size="sm"]) {
+    @apply text-xs px-2 py-0.5 h-5;
+  }
+
+  /* Medium size - default, balanced size */
+  [data-component="badge"]:where([data-size="md"]) {
+    @apply text-sm px-2.5 py-1 h-6;
+  }
+
+  /* Large size - prominent badges */
+  [data-component="badge"]:where([data-size="lg"]) {
+    @apply text-sm px-3 py-1.5 h-7;
+  }
+
+  /* ===== Visual Variants ===== */
+
+  /* Default variant - muted appearance */
+  [data-component="badge"]:where([data-variant="default"]) {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+
+  /* Primary variant - brand color */
+  [data-component="badge"]:where([data-variant="primary"]) {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  /* Secondary variant - subtle appearance */
+  [data-component="badge"]:where([data-variant="secondary"]) {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+  }
+
+  /* Destructive variant - errors, deletions */
+  [data-component="badge"]:where([data-variant="destructive"]) {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+
+  /* Success variant - positive status */
+  [data-component="badge"]:where([data-variant="success"]) {
+    background-color: var(--success, oklch(0.627 0.194 149.214));
+    color: var(--success-foreground, oklch(0.985 0 0));
+  }
+
+  /* Warning variant - caution status */
+  [data-component="badge"]:where([data-variant="warning"]) {
+    background-color: var(--warning, oklch(0.769 0.188 70.08));
+    color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+  }
+
+  /* Info variant - informational status.
+     --info has no engine default on purpose: undefined falls back to the neutral
+     default treatment, never to --primary (which would make an informational
+     badge read as a brand call to action). */
+  [data-component="badge"]:where([data-variant="info"]) {
+    background-color: var(--info, var(--muted));
+    color: var(--info-foreground, var(--muted-foreground));
+  }
+
+  /* Outline variant - transparent with border */
+  [data-component="badge"]:where([data-variant="outline"]) {
+    @apply bg-transparent;
+    color: var(--foreground);
+    border-color: var(--border);
+  }
+
+  /* ===== Interactive States (when used as link/button) ===== */
+
+  /* Hover - solid variants just soften */
+  [data-component="badge"]:where(
+      [data-variant="default"]:hover,
+      [data-variant="primary"]:hover,
+      [data-variant="secondary"]:hover,
+      [data-variant="destructive"]:hover,
+      [data-variant="success"]:hover,
+      [data-variant="warning"]:hover,
+      [data-variant="info"]:hover
+    ) {
+    @apply opacity-90;
+  }
+
+  /* Hover - the outline variant fills instead */
+  [data-component="badge"]:where([data-variant="outline"]:hover) {
+    background-color: var(--accent-hover, var(--accent));
+    color: var(--accent-foreground);
+  }
+
+  /* Focus state for keyboard navigation */
+  [data-component="badge"]:where(a:focus-visible, button:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--ring));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  /* Active/pressed state */
+  [data-component="badge"]:where(a:active, button:active) {
+    @apply scale-[0.98];
+  }
+
+  /* Disabled state (if used as button) */
+  [data-component="badge"]:where(button:disabled) {
+    @apply opacity-50 cursor-not-allowed pointer-events-none;
+  }
 }
-
-/* ===== Icon Support ===== */
-[data-component="badge"] svg {
-  /* Scales with font size using em */
-  width: 0.875em;
-  height: 0.875em;
-  @apply shrink-0 pointer-events-none;
-}
-
-/* ===== Size Variants ===== */
-
-/* Small size - compact badges for inline use */
-[data-component="badge"][data-size="sm"] {
-  @apply text-xs px-2 py-0.5 h-5;
-}
-
-/* Medium size - default, balanced size */
-[data-component="badge"][data-size="md"] {
-  @apply text-sm px-2.5 py-1 h-6;
-}
-
-/* Large size - prominent badges */
-[data-component="badge"][data-size="lg"] {
-  @apply text-sm px-3 py-1.5 h-7;
-}
-
-/* ===== Visual Variants ===== */
-
-/* Default variant - muted appearance */
-[data-component="badge"][data-variant="default"] {
-  background-color: var(--muted);
-  color: var(--muted-foreground);
-}
-
-[data-component="badge"][data-variant="default"]:hover {
-  @apply opacity-90;
-}
-
-/* Primary variant - brand color */
-[data-component="badge"][data-variant="primary"] {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
-
-[data-component="badge"][data-variant="primary"]:hover {
-  @apply opacity-90;
-}
-
-/* Secondary variant - subtle appearance */
-[data-component="badge"][data-variant="secondary"] {
-  background-color: var(--secondary);
-  color: var(--secondary-foreground);
-}
-
-[data-component="badge"][data-variant="secondary"]:hover {
-  @apply opacity-90;
-}
-
-/* Destructive variant - errors, deletions */
-[data-component="badge"][data-variant="destructive"] {
-  background-color: var(--destructive);
-  color: var(--destructive-foreground);
-}
-
-[data-component="badge"][data-variant="destructive"]:hover {
-  @apply opacity-90;
-}
-
-/* Success variant - positive status */
-[data-component="badge"][data-variant="success"] {
-  background-color: var(--success, oklch(0.627 0.194 149.214));
-  color: var(--success-foreground, oklch(0.985 0 0));
-}
-
-[data-component="badge"][data-variant="success"]:hover {
-  @apply opacity-90;
-}
-
-/* Warning variant - caution status */
-[data-component="badge"][data-variant="warning"] {
-  background-color: var(--warning, oklch(0.769 0.188 70.08));
-  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
-}
-
-[data-component="badge"][data-variant="warning"]:hover {
-  @apply opacity-90;
-}
-
-/* Info variant - informational status.
-   --info has no engine default on purpose: undefined falls back to the neutral
-   default treatment, never to --primary (which would make an informational
-   badge read as a brand call to action). */
-[data-component="badge"][data-variant="info"] {
-  background-color: var(--info, var(--muted));
-  color: var(--info-foreground, var(--muted-foreground));
-}
-
-[data-component="badge"][data-variant="info"]:hover {
-  @apply opacity-90;
-}
-
-/* Outline variant - transparent with border */
-[data-component="badge"][data-variant="outline"] {
-  @apply bg-transparent;
-  color: var(--foreground);
-  border-color: var(--border);
-}
-
-[data-component="badge"][data-variant="outline"]:hover {
-  background-color: var(--accent-hover, var(--accent));
-  color: var(--accent-foreground);
-}
-
-/* ===== Interactive States (when used as link/button) ===== */
-
-/* Focus state for keyboard navigation */
-a[data-component="badge"]:focus-visible,
-button[data-component="badge"]:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--ring));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-/* Active/pressed state */
-a[data-component="badge"]:active,
-button[data-component="badge"]:active {
-  @apply scale-[0.98];
-}
-
-/* Disabled state (if used as button) */
-button[data-component="badge"]:disabled {
-  @apply opacity-50 cursor-not-allowed pointer-events-none;
-}
-
-/* ===== Dark Mode ===== */
-/*
- * Dark mode is handled automatically through CSS variables.
- * The theme variables change based on the .dark class on html/body.
- * No additional dark mode styles needed here.
- */

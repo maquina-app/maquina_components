@@ -11,125 +11,131 @@
  *     - title (heading)
  *     - description (explanatory text)
  *   - content (action buttons/links)
+ *
+ * Cascade order in this file (full contract documented in form.css):
+ *   1. base      [data-component="empty"], [data-empty-part="…"]
+ *   2. sizes     […]:where([data-size="compact"])
+ *   3. variants  […]:where([data-variant="…"])
+ *   4. states    […]:where(:hover)
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ * Every rule is flattened to 0,1,0 with :where() and lives in
+ * @layer components, so a caller's utility class wins and source order is
+ * the only tie-breaker. (Rules whose target is a bare element read 0,1,1 — an
+ * element selector cannot be zeroed away.)
  */
 
-/* ===== Root Container ===== */
-[data-component="empty"] {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  @apply px-6 py-12;
-}
+@layer components {
+  /* ===== Root Container ===== */
+  [data-component="empty"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    @apply px-6 py-12;
+  }
 
-/* ===== Size Variants ===== */
-[data-component="empty"][data-size="compact"] {
-  @apply px-6 py-8;
-}
+  /* ===== Size Variants ===== */
+  [data-component="empty"]:where([data-size="compact"]) {
+    @apply px-6 py-8;
+  }
 
-/* ===== Visual Variants ===== */
-[data-component="empty"][data-variant="default"] {
-  /* No additional styles for default */
-}
+  /* ===== Visual Variants ===== */
+  [data-component="empty"]:where([data-variant="default"]) {
+    /* No additional styles for default */
+  }
 
-[data-component="empty"][data-variant="outline"] {
-  border-radius: var(--empty-radius, var(--surface-radius, 0.5rem));
-  border: 1px dashed var(--border);
-}
+  [data-component="empty"]:where([data-variant="outline"]) {
+    border-radius: var(--empty-radius, var(--surface-radius, 0.5rem));
+    border: 1px dashed var(--border);
+  }
 
-/* ===== Header ===== */
-[data-empty-part="header"] {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  @apply gap-2;
-}
+  /* ===== Header ===== */
+  [data-empty-part="header"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    @apply gap-2;
+  }
 
-/* ===== Media (Icon/Avatar Container) ===== */
-[data-empty-part="media"] {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted-foreground);
-  @apply mb-2;
-}
+  /* ===== Media (Icon/Avatar Container) ===== */
+  [data-empty-part="media"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted-foreground);
+    @apply mb-2;
+  }
 
-/* Icon variant */
-[data-empty-part="media"][data-variant="icon"] {
-  @apply opacity-60;
-}
+  /* Icon variant */
+  [data-empty-part="media"]:where([data-variant="icon"]) {
+    @apply opacity-60;
+  }
 
-[data-empty-part="media"][data-variant="icon"] svg {
-  @apply size-12;
-}
+  [data-empty-part="media"]:where([data-variant="icon"]) svg {
+    @apply size-12;
+  }
 
-/* Compact size adjustments */
-[data-component="empty"][data-size="compact"] [data-empty-part="media"][data-variant="icon"] svg {
-  @apply size-8;
-}
+  /* Compact size adjustments */
+  :where([data-component="empty"][data-size="compact"]) [data-empty-part="media"]:where([data-variant="icon"]) svg {
+    @apply size-8;
+  }
 
-/* Avatar variant */
-[data-empty-part="media"][data-variant="avatar"] {
-  @apply size-16 overflow-hidden;
-  border-radius: var(--pill-radius, calc(infinity * 1px));
-  background-color: var(--muted);
-}
+  /* Avatar variant */
+  [data-empty-part="media"]:where([data-variant="avatar"]) {
+    @apply size-16 overflow-hidden;
+    border-radius: var(--pill-radius, calc(infinity * 1px));
+    background-color: var(--muted);
+  }
 
-[data-empty-part="media"][data-variant="avatar"] img {
-  @apply size-full object-cover;
-}
+  [data-empty-part="media"]:where([data-variant="avatar"]) img {
+    @apply size-full object-cover;
+  }
 
-/* ===== Title ===== */
-[data-empty-part="title"] {
-  color: var(--foreground);
-  @apply text-base;
-  font-weight: var(--label-weight, 500);
-}
+  /* ===== Title ===== */
+  [data-empty-part="title"] {
+    color: var(--foreground);
+    @apply text-base;
+    font-weight: var(--label-weight, 500);
+  }
 
-/* Compact size */
-[data-component="empty"][data-size="compact"] [data-empty-part="title"] {
-  @apply text-sm;
-}
+  /* Compact size */
+  :where([data-component="empty"][data-size="compact"]) [data-empty-part="title"] {
+    @apply text-sm;
+  }
 
-/* ===== Description ===== */
-[data-empty-part="description"] {
-  color: var(--muted-foreground);
-  @apply text-sm mt-1 max-w-md;
-}
+  /* ===== Description ===== */
+  [data-empty-part="description"] {
+    color: var(--muted-foreground);
+    @apply text-sm mt-1 max-w-md;
+  }
 
-/* Links in description */
-[data-empty-part="description"] a {
-  color: var(--primary);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
+  /* Links in description */
+  [data-empty-part="description"] a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
 
-[data-empty-part="description"] a:hover {
-  @apply opacity-80;
-}
+  [data-empty-part="description"] a:where(:hover) {
+    @apply opacity-80;
+  }
 
-/* ===== Content (Actions) ===== */
-[data-empty-part="content"] {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  @apply mt-6 gap-3;
-}
+  /* ===== Content (Actions) ===== */
+  [data-empty-part="content"] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    @apply mt-6 gap-3;
+  }
 
-/* Compact size */
-[data-component="empty"][data-size="compact"] [data-empty-part="content"] {
-  @apply mt-4;
-}
+  /* Compact size */
+  :where([data-component="empty"][data-size="compact"]) [data-empty-part="content"] {
+    @apply mt-4;
+  }
 
-/* Flex container for multiple buttons */
-[data-empty-part="content"] > .flex {
-  @apply gap-2;
+  /* Flex container for multiple buttons */
+  :where([data-empty-part="content"]) > .flex {
+    @apply gap-2;
+  }
 }
-
-/* ===== Dark Mode ===== */
-/*
- * Dark mode is handled automatically through CSS variables.
- * The theme variables change based on the .dark class on html/body.
- * No additional dark mode styles needed here.
- */

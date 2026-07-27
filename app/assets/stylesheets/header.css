@@ -2,62 +2,76 @@
 /*
  * Page header component for use with sidebar layouts.
  * Provides a consistent header with proper height and alignment.
+ *
+ * Cascade order in this file (full contract documented in form.css):
+ *   1. base      [data-component="header"], [data-header-part="…"]
+ *   2. sizes     — none (height comes from --header-height)
+ *   3. variants  :where([data-sidebar-part="inset"]) [data-component="header"]
+ *   4. states    — none
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ * Every rule is flattened to 0,1,0 with :where() and lives in
+ * @layer components, so a caller's utility class wins and source order is
+ * the only tie-breaker.
+ *
+ * This file must be imported after sidebar.css and separator.css: it reaches
+ * into both (the inset corner radius, the vertical separator's height) and at a
+ * flat 0,1,0 only source order decides that. See engine.css.
  */
 
-/* ===== Base Styles ===== */
-[data-component="header"] {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  height: var(--header-height, 3.5rem);
-  border-bottom: 1px solid var(--border);
-  background-color: var(--background);
-}
+@layer components {
+  /* ===== Base Styles ===== */
+  [data-component="header"] {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: var(--header-height, 3.5rem);
+    border-bottom: 1px solid var(--border);
+    background-color: var(--background);
+  }
 
-/* Inner container */
-[data-component="header"] [data-header-part="inner"] {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  @apply gap-1 px-4 lg:gap-2 lg:px-6;
-}
+  /* Inner container */
+  :where([data-component="header"]) [data-header-part="inner"] {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    @apply gap-1 px-4 lg:gap-2 lg:px-6;
+  }
 
-/* ===== Inset Variant (rounded top corners) ===== */
-/*
- * When header is inside sidebar/inset, add rounded top corners
- * to match the inset content area styling.
- */
-[data-sidebar-part="inset"] [data-component="header"] {
-  border-start-start-radius: var(--inset-radius, var(--surface-radius, 0.5rem));
-  border-start-end-radius: var(--inset-radius, var(--surface-radius, 0.5rem));
-}
+  /* Title text */
+  :where([data-component="header"]) [data-header-part="title"] {
+    @apply text-sm;
+    font-weight: var(--label-weight, 500);
+    color: var(--foreground);
+  }
 
-/* ===== Header Elements ===== */
+  /* Actions container (right side) */
+  :where([data-component="header"]) [data-header-part="actions"] {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    @apply gap-2;
+  }
 
-/* Separator between trigger and content */
-[data-component="header"] [data-component="separator"][data-orientation="vertical"] {
-  height: 1rem;
-  @apply mx-2;
-}
+  /* Separator between trigger and content */
+  :where([data-component="header"]) [data-component="separator"]:where([data-orientation="vertical"]) {
+    height: 1rem;
+    @apply mx-2;
+  }
 
-/* Title text */
-[data-component="header"] [data-header-part="title"] {
-  @apply text-sm;
-  font-weight: var(--label-weight, 500);
-  color: var(--foreground);
-}
+  /* ===== Inset Variant (rounded top corners) ===== */
+  /*
+   * When header is inside sidebar/inset, add rounded top corners
+   * to match the inset content area styling.
+   */
+  :where([data-sidebar-part="inset"]) [data-component="header"] {
+    border-start-start-radius: var(--inset-radius, var(--surface-radius, 0.5rem));
+    border-start-end-radius: var(--inset-radius, var(--surface-radius, 0.5rem));
+  }
 
-/* Actions container (right side) */
-[data-component="header"] [data-header-part="actions"] {
-  display: flex;
-  align-items: center;
-  margin-left: auto;
-  @apply gap-2;
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 1024px) {
-  [data-component="header"] [data-header-part="inner"] {
-    @apply gap-1 px-4;
+  /* ===== Responsive ===== */
+  @media (max-width: 1024px) {
+    :where([data-component="header"]) [data-header-part="inner"] {
+      @apply gap-1 px-4;
+    }
   }
 }

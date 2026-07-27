@@ -42,6 +42,9 @@ module MaquinaComponents
 
     # A component-owned selector: data-component or any data-*-part hook.
     COMPONENT_SELECTOR = /\[data-(?:component|[a-z]+(?:-[a-z]+)*-part)\s*[~|^$*]?=/
+    # A rule whose every selector is the universal one, e.g. `*` or
+    # `*, ::before, ::after` — the shape of a Tailwind-v3-style preflight shim.
+    UNIVERSAL_SELECTOR = /\A\*(\s*,\s*(\*|::?[a-z-]+))*\z/
     PRESENCE_ACTIVE = /\[data-active\](?!\s*[~|^$*]?=)/
     TAILWIND_ACTIVE_VARIANT = /data-\[active\]/
     SVG_DATA_URI = /data:image\/svg\+xml/
@@ -196,6 +199,16 @@ module MaquinaComponents
 
     def check_selector(path, index, selector, in_layer)
       return if selector.empty?
+
+      if UNIVERSAL_SELECTOR.match?(selector) && !in_layer
+        add(path, index, selector, :breaking, "unlayered-universal-rule",
+          "An unlayered `*` rule outranks every layer at any specificity, and the engine's\n" \
+          "own rules move into @layer components in 0.6.0. The shadcn/Tailwind-v3 preflight\n" \
+          "shim `* { border-color: var(--color-border) }` therefore flattens the tinted\n" \
+          "borders on every alert and toast variant back to --border.\n" \
+          "Wrap it so the engine can still paint its own borders:\n" \
+          "  @layer base { #{squash(selector)} { ... } }")
+      end
 
       if COMPONENT_SELECTOR.match?(selector)
         if /(^|[\s>+~(])\.dark\b/.match?(selector)

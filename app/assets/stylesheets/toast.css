@@ -11,337 +11,348 @@
  *     - content (title + description)
  *     - action (optional button)
  *     - close (dismiss button)
+ *
+ * Cascade order in this file (full contract documented in form.css) — applied
+ * per selector root, so each part reads base → states before the next part:
+ *   1. base      [data-component="toast"|"toaster"], [data-toast-part="…"]
+ *   2. sizes     — none
+ *   3. variants  [data-component="toast"]:where([data-variant="…"]) …
+ *   4. states    […]:where(:hover, :focus-visible, [data-state="…"])
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ * Every rule is flattened to 0,1,0 with :where() and lives in
+ * @layer components, so a caller's utility class wins and source order is
+ * the only tie-breaker. (Rules whose target is a bare element read 0,1,1 — an
+ * element selector cannot be zeroed away.) @keyframes sit outside the layer:
+ * they take no part in the cascade.
  */
 
-/* ===== Toaster Container ===== */
-[data-component="toaster"] {
-  position: fixed;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  pointer-events: none;
-  @apply gap-3 p-4;
-  max-height: 100vh;
-  overflow: hidden;
+@layer components {
+  /* ===== Toaster Container ===== */
+  [data-component="toaster"] {
+    position: fixed;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    @apply gap-3 p-4;
+    max-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Position variants */
+  [data-component="toaster"]:where([data-position="top-left"]) {
+    top: 0;
+    left: 0;
+    align-items: flex-start;
+  }
+
+  [data-component="toaster"]:where([data-position="top-center"]) {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+  }
+
+  [data-component="toaster"]:where([data-position="top-right"]) {
+    top: 0;
+    right: 0;
+    align-items: flex-end;
+  }
+
+  [data-component="toaster"]:where([data-position="bottom-left"]) {
+    bottom: 0;
+    left: 0;
+    align-items: flex-start;
+    flex-direction: column-reverse;
+  }
+
+  [data-component="toaster"]:where([data-position="bottom-center"]) {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+    flex-direction: column-reverse;
+  }
+
+  [data-component="toaster"]:where([data-position="bottom-right"]) {
+    bottom: 0;
+    right: 0;
+    align-items: flex-end;
+    flex-direction: column-reverse;
+  }
+
+  /* ===== Toast Base Styles ===== */
+  [data-component="toast"] {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    pointer-events: auto;
+    background-color: var(--popover, var(--background));
+    color: var(--popover-foreground, var(--foreground));
+    border-color: var(--border);
+    @apply w-full max-w-sm gap-3 border p-4 pr-10;
+    border-radius: var(--toast-radius, var(--surface-radius, 0.5rem));
+    box-shadow: var(--toast-shadow, var(--elevation-overlay, var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1))));
+  }
+
+  /* ===== Icon ===== */
+  [data-toast-part="icon"] {
+    @apply shrink-0;
+    color: var(--foreground);
+  }
+
+  [data-toast-part="icon"] svg {
+    @apply size-5;
+  }
+
+  /* ===== Content ===== */
+  [data-toast-part="content"] {
+    @apply flex-1 min-w-0;
+  }
+
+  /* ===== Title ===== */
+  [data-toast-part="title"] {
+    @apply text-sm font-semibold;
+    color: var(--foreground);
+  }
+
+  /* Title followed by description */
+  [data-toast-part="title"]:where(:has(+ [data-toast-part="description"])) {
+    @apply mb-1;
+  }
+
+  /* ===== Description ===== */
+  [data-toast-part="description"] {
+    @apply text-sm;
+    color: var(--muted-foreground);
+  }
+
+  /* ===== Close Button ===== */
+  [data-toast-part="close"] {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.5;
+    color: var(--foreground);
+    @apply size-6 transition-opacity;
+    border-radius: var(--toast-close-radius, var(--control-radius, 0.375rem));
+  }
+
+  [data-toast-part="close"] svg {
+    @apply size-4;
+  }
+
+  [data-toast-part="close"]:where(:hover) {
+    opacity: 1;
+  }
+
+  [data-toast-part="close"]:where(:focus-visible) {
+    opacity: 1;
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--ring));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  /* ===== Action Button ===== */
+  [data-toast-part="action"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    background-color: transparent;
+    color: var(--foreground);
+    cursor: pointer;
+    text-decoration: none;
+    @apply mt-2 h-8 px-3 text-xs transition-colors;
+    border-radius: var(--toast-action-radius, var(--control-radius, 0.375rem));
+    font-weight: var(--label-weight, 500);
+  }
+
+  [data-toast-part="action"]:where(:hover) {
+    background-color: var(--accent-hover, var(--accent));
+    color: var(--accent-foreground);
+  }
+
+  [data-toast-part="action"]:where(:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--ring));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  /* ===== Variant: Default ===== */
+  [data-component="toast"]:where([data-variant="default"]) {
+    background-color: var(--popover, var(--background));
+    color: var(--popover-foreground, var(--foreground));
+    border-color: var(--border);
+  }
+
+  /* ===== Variant: Success ===== */
+  [data-component="toast"]:where([data-variant="success"]) {
+    background-color: var(--success, oklch(0.627 0.194 149.214));
+    color: var(--success-foreground, oklch(0.985 0 0));
+    border-color: var(--success, oklch(0.627 0.194 149.214));
+  }
+
+  :where([data-component="toast"][data-variant="success"]) :is([data-toast-part="icon"], [data-toast-part="title"], [data-toast-part="close"]) {
+    color: var(--success-foreground, oklch(0.985 0 0));
+  }
+
+  :where([data-component="toast"][data-variant="success"]) [data-toast-part="description"] {
+    color: var(--success-foreground, oklch(0.985 0 0));
+    opacity: 0.9;
+  }
+
+  :where([data-component="toast"][data-variant="success"]) [data-toast-part="action"] {
+    border-color: var(--success-foreground, oklch(0.985 0 0));
+    color: var(--success-foreground, oklch(0.985 0 0));
+  }
+
+  :where([data-component="toast"][data-variant="success"]) [data-toast-part="action"]:where(:hover) {
+    background-color: var(--success-foreground, oklch(0.985 0 0));
+    color: var(--success, oklch(0.627 0.194 149.214));
+  }
+
+  /* ===== Variant: Info ===== */
+  /*
+   * --info deliberately falls back to the neutral default treatment, not to
+   * --primary: an undefined --info used to render informational toasts in the
+   * brand accent, which reads as a call to action.
+   */
+  [data-component="toast"]:where([data-variant="info"]) {
+    background-color: var(--info, var(--popover, var(--background)));
+    color: var(--info-foreground, var(--foreground));
+    border-color: var(--info, var(--border));
+  }
+
+  :where([data-component="toast"][data-variant="info"]) :is([data-toast-part="icon"], [data-toast-part="title"], [data-toast-part="close"]) {
+    color: var(--info-foreground, var(--foreground));
+  }
+
+  :where([data-component="toast"][data-variant="info"]) [data-toast-part="description"] {
+    color: var(--info-foreground, var(--muted-foreground));
+  }
+
+  :where([data-component="toast"][data-variant="info"]) [data-toast-part="action"] {
+    border-color: var(--info-foreground, var(--border));
+    color: var(--info-foreground, var(--foreground));
+  }
+
+  :where([data-component="toast"][data-variant="info"]) [data-toast-part="action"]:where(:hover) {
+    background-color: var(--info-foreground, var(--accent-hover, var(--accent)));
+    color: var(--info, var(--accent-foreground));
+  }
+
+  /* ===== Variant: Warning ===== */
+  [data-component="toast"]:where([data-variant="warning"]) {
+    background-color: var(--warning, oklch(0.769 0.188 70.08));
+    color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+    border-color: var(--warning, oklch(0.769 0.188 70.08));
+  }
+
+  :where([data-component="toast"][data-variant="warning"]) :is([data-toast-part="icon"], [data-toast-part="title"], [data-toast-part="close"]) {
+    color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+  }
+
+  :where([data-component="toast"][data-variant="warning"]) [data-toast-part="description"] {
+    color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+    opacity: 0.9;
+  }
+
+  :where([data-component="toast"][data-variant="warning"]) [data-toast-part="action"] {
+    border-color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+    color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+  }
+
+  :where([data-component="toast"][data-variant="warning"]) [data-toast-part="action"]:where(:hover) {
+    background-color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+    color: var(--warning, oklch(0.769 0.188 70.08));
+  }
+
+  /* ===== Variant: Error ===== */
+  [data-component="toast"]:where([data-variant="error"]) {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+    border-color: var(--destructive);
+  }
+
+  :where([data-component="toast"][data-variant="error"]) :is([data-toast-part="icon"], [data-toast-part="title"], [data-toast-part="close"]) {
+    color: var(--destructive-foreground);
+  }
+
+  :where([data-component="toast"][data-variant="error"]) [data-toast-part="description"] {
+    color: var(--destructive-foreground);
+    opacity: 0.9;
+  }
+
+  :where([data-component="toast"][data-variant="error"]) [data-toast-part="action"] {
+    border-color: var(--destructive-foreground);
+    color: var(--destructive-foreground);
+  }
+
+  :where([data-component="toast"][data-variant="error"]) [data-toast-part="action"]:where(:hover) {
+    background-color: var(--destructive-foreground);
+    color: var(--destructive);
+  }
+
+  /* ===== States: animation ===== */
+
+  /* Enter from right (for right-aligned positions) */
+  [data-component="toast"]:where([data-state="entering"]) {
+    animation: toast-enter-right 200ms ease-out;
+  }
+
+  /* Enter from left (for left-aligned positions) */
+  :where([data-component="toaster"][data-position="top-left"], [data-component="toaster"][data-position="bottom-left"]) [data-component="toast"]:where([data-state="entering"]) {
+    animation: toast-enter-left 200ms ease-out;
+  }
+
+  /* Enter from top (for center-aligned positions) */
+  :where([data-component="toaster"][data-position="top-center"]) [data-component="toast"]:where([data-state="entering"]) {
+    animation: toast-enter-top 200ms ease-out;
+  }
+
+  /* Enter from bottom (for bottom-center) */
+  :where([data-component="toaster"][data-position="bottom-center"]) [data-component="toast"]:where([data-state="entering"]) {
+    animation: toast-enter-bottom 200ms ease-out;
+  }
+
+  /* Visible state */
+  [data-component="toast"]:where([data-state="visible"]) {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+
+  /* Exit animations */
+  [data-component="toast"]:where([data-state="exiting"]) {
+    animation: toast-exit-right 150ms ease-in forwards;
+  }
+
+  :where([data-component="toaster"][data-position="top-left"], [data-component="toaster"][data-position="bottom-left"]) [data-component="toast"]:where([data-state="exiting"]) {
+    animation: toast-exit-left 150ms ease-in forwards;
+  }
+
+  :where([data-component="toaster"][data-position="top-center"]) [data-component="toast"]:where([data-state="exiting"]) {
+    animation: toast-exit-top 150ms ease-in forwards;
+  }
+
+  :where([data-component="toaster"][data-position="bottom-center"]) [data-component="toast"]:where([data-state="exiting"]) {
+    animation: toast-exit-bottom 150ms ease-in forwards;
+  }
+
+  /* ===== Hover Pause Indicator ===== */
+  [data-component="toast"]:where(:hover) {
+    box-shadow: var(--toast-hover-shadow, var(--elevation-overlay, var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1))));
+  }
 }
 
-/* Position variants */
-[data-component="toaster"][data-position="top-left"] {
-  top: 0;
-  left: 0;
-  align-items: flex-start;
-}
-
-[data-component="toaster"][data-position="top-center"] {
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  align-items: center;
-}
-
-[data-component="toaster"][data-position="top-right"] {
-  top: 0;
-  right: 0;
-  align-items: flex-end;
-}
-
-[data-component="toaster"][data-position="bottom-left"] {
-  bottom: 0;
-  left: 0;
-  align-items: flex-start;
-  flex-direction: column-reverse;
-}
-
-[data-component="toaster"][data-position="bottom-center"] {
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  align-items: center;
-  flex-direction: column-reverse;
-}
-
-[data-component="toaster"][data-position="bottom-right"] {
-  bottom: 0;
-  right: 0;
-  align-items: flex-end;
-  flex-direction: column-reverse;
-}
-
-/* ===== Toast Base Styles ===== */
-[data-component="toast"] {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  pointer-events: auto;
-  background-color: var(--popover, var(--background));
-  color: var(--popover-foreground, var(--foreground));
-  border-color: var(--border);
-  @apply w-full max-w-sm gap-3 border p-4 pr-10;
-  border-radius: var(--toast-radius, var(--surface-radius, 0.5rem));
-  box-shadow: var(--toast-shadow, var(--elevation-overlay, var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1))));
-}
-
-/* ===== Icon ===== */
-[data-toast-part="icon"] {
-  @apply shrink-0;
-  color: var(--foreground);
-}
-
-[data-toast-part="icon"] svg {
-  @apply size-5;
-}
-
-/* ===== Content ===== */
-[data-toast-part="content"] {
-  @apply flex-1 min-w-0;
-}
-
-/* ===== Title ===== */
-[data-toast-part="title"] {
-  @apply text-sm font-semibold;
-  color: var(--foreground);
-}
-
-/* Title followed by description */
-[data-toast-part="title"]:has(+ [data-toast-part="description"]) {
-  @apply mb-1;
-}
-
-/* ===== Description ===== */
-[data-toast-part="description"] {
-  @apply text-sm;
-  color: var(--muted-foreground);
-}
-
-/* ===== Close Button ===== */
-[data-toast-part="close"] {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  opacity: 0.5;
-  color: var(--foreground);
-  @apply size-6 transition-opacity;
-  border-radius: var(--toast-close-radius, var(--control-radius, 0.375rem));
-}
-
-[data-toast-part="close"]:hover {
-  opacity: 1;
-}
-
-[data-toast-part="close"]:focus-visible {
-  opacity: 1;
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--ring));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-[data-toast-part="close"] svg {
-  @apply size-4;
-}
-
-/* ===== Action Button ===== */
-[data-toast-part="action"] {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-  background-color: transparent;
-  color: var(--foreground);
-  cursor: pointer;
-  text-decoration: none;
-  @apply mt-2 h-8 px-3 text-xs transition-colors;
-  border-radius: var(--toast-action-radius, var(--control-radius, 0.375rem));
-  font-weight: var(--label-weight, 500);
-}
-
-[data-toast-part="action"]:hover {
-  background-color: var(--accent-hover, var(--accent));
-  color: var(--accent-foreground);
-}
-
-[data-toast-part="action"]:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--ring));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-/* ===== Variant: Default ===== */
-[data-component="toast"][data-variant="default"] {
-  background-color: var(--popover, var(--background));
-  color: var(--popover-foreground, var(--foreground));
-  border-color: var(--border);
-}
-
-/* ===== Variant: Success ===== */
-[data-component="toast"][data-variant="success"] {
-  background-color: var(--success, oklch(0.627 0.194 149.214));
-  color: var(--success-foreground, oklch(0.985 0 0));
-  border-color: var(--success, oklch(0.627 0.194 149.214));
-}
-
-[data-component="toast"][data-variant="success"] [data-toast-part="icon"],
-[data-component="toast"][data-variant="success"] [data-toast-part="title"],
-[data-component="toast"][data-variant="success"] [data-toast-part="close"] {
-  color: var(--success-foreground, oklch(0.985 0 0));
-}
-
-[data-component="toast"][data-variant="success"] [data-toast-part="description"] {
-  color: var(--success-foreground, oklch(0.985 0 0));
-  opacity: 0.9;
-}
-
-[data-component="toast"][data-variant="success"] [data-toast-part="action"] {
-  border-color: var(--success-foreground, oklch(0.985 0 0));
-  color: var(--success-foreground, oklch(0.985 0 0));
-}
-
-[data-component="toast"][data-variant="success"] [data-toast-part="action"]:hover {
-  background-color: var(--success-foreground, oklch(0.985 0 0));
-  color: var(--success, oklch(0.627 0.194 149.214));
-}
-
-/* ===== Variant: Info ===== */
-/*
- * --info deliberately falls back to the neutral default treatment, not to
- * --primary: an undefined --info used to render informational toasts in the
- * brand accent, which reads as a call to action.
- */
-[data-component="toast"][data-variant="info"] {
-  background-color: var(--info, var(--popover, var(--background)));
-  color: var(--info-foreground, var(--foreground));
-  border-color: var(--info, var(--border));
-}
-
-[data-component="toast"][data-variant="info"] [data-toast-part="icon"],
-[data-component="toast"][data-variant="info"] [data-toast-part="title"],
-[data-component="toast"][data-variant="info"] [data-toast-part="close"] {
-  color: var(--info-foreground, var(--foreground));
-}
-
-[data-component="toast"][data-variant="info"] [data-toast-part="description"] {
-  color: var(--info-foreground, var(--muted-foreground));
-}
-
-[data-component="toast"][data-variant="info"] [data-toast-part="action"] {
-  border-color: var(--info-foreground, var(--border));
-  color: var(--info-foreground, var(--foreground));
-}
-
-[data-component="toast"][data-variant="info"] [data-toast-part="action"]:hover {
-  background-color: var(--info-foreground, var(--accent-hover, var(--accent)));
-  color: var(--info, var(--accent-foreground));
-}
-
-/* ===== Variant: Warning ===== */
-[data-component="toast"][data-variant="warning"] {
-  background-color: var(--warning, oklch(0.769 0.188 70.08));
-  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
-  border-color: var(--warning, oklch(0.769 0.188 70.08));
-}
-
-[data-component="toast"][data-variant="warning"] [data-toast-part="icon"],
-[data-component="toast"][data-variant="warning"] [data-toast-part="title"],
-[data-component="toast"][data-variant="warning"] [data-toast-part="close"] {
-  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
-}
-
-[data-component="toast"][data-variant="warning"] [data-toast-part="description"] {
-  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
-  opacity: 0.9;
-}
-
-[data-component="toast"][data-variant="warning"] [data-toast-part="action"] {
-  border-color: var(--warning-foreground, oklch(0.216 0.006 56.043));
-  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
-}
-
-[data-component="toast"][data-variant="warning"] [data-toast-part="action"]:hover {
-  background-color: var(--warning-foreground, oklch(0.216 0.006 56.043));
-  color: var(--warning, oklch(0.769 0.188 70.08));
-}
-
-/* ===== Variant: Error ===== */
-[data-component="toast"][data-variant="error"] {
-  background-color: var(--destructive);
-  color: var(--destructive-foreground);
-  border-color: var(--destructive);
-}
-
-[data-component="toast"][data-variant="error"] [data-toast-part="icon"],
-[data-component="toast"][data-variant="error"] [data-toast-part="title"],
-[data-component="toast"][data-variant="error"] [data-toast-part="close"] {
-  color: var(--destructive-foreground);
-}
-
-[data-component="toast"][data-variant="error"] [data-toast-part="description"] {
-  color: var(--destructive-foreground);
-  opacity: 0.9;
-}
-
-[data-component="toast"][data-variant="error"] [data-toast-part="action"] {
-  border-color: var(--destructive-foreground);
-  color: var(--destructive-foreground);
-}
-
-[data-component="toast"][data-variant="error"] [data-toast-part="action"]:hover {
-  background-color: var(--destructive-foreground);
-  color: var(--destructive);
-}
-
-/* ===== Animation States ===== */
-
-/* Enter from right (for right-aligned positions) */
-[data-component="toast"][data-state="entering"] {
-  animation: toast-enter-right 200ms ease-out;
-}
-
-/* Enter from left (for left-aligned positions) */
-[data-component="toaster"][data-position="top-left"] [data-component="toast"][data-state="entering"],
-[data-component="toaster"][data-position="bottom-left"] [data-component="toast"][data-state="entering"] {
-  animation: toast-enter-left 200ms ease-out;
-}
-
-/* Enter from top (for center-aligned positions) */
-[data-component="toaster"][data-position="top-center"] [data-component="toast"][data-state="entering"] {
-  animation: toast-enter-top 200ms ease-out;
-}
-
-/* Enter from bottom (for bottom-center) */
-[data-component="toaster"][data-position="bottom-center"] [data-component="toast"][data-state="entering"] {
-  animation: toast-enter-bottom 200ms ease-out;
-}
-
-/* Visible state */
-[data-component="toast"][data-state="visible"] {
-  opacity: 1;
-  transform: translateX(0) translateY(0);
-}
-
-/* Exit animations */
-[data-component="toast"][data-state="exiting"] {
-  animation: toast-exit-right 150ms ease-in forwards;
-}
-
-[data-component="toaster"][data-position="top-left"] [data-component="toast"][data-state="exiting"],
-[data-component="toaster"][data-position="bottom-left"] [data-component="toast"][data-state="exiting"] {
-  animation: toast-exit-left 150ms ease-in forwards;
-}
-
-[data-component="toaster"][data-position="top-center"] [data-component="toast"][data-state="exiting"] {
-  animation: toast-exit-top 150ms ease-in forwards;
-}
-
-[data-component="toaster"][data-position="bottom-center"] [data-component="toast"][data-state="exiting"] {
-  animation: toast-exit-bottom 150ms ease-in forwards;
-}
-
-/* Keyframes */
+/* ===== Keyframes ===== */
+/* Outside the layer: @keyframes are not cascade participants. */
 @keyframes toast-enter-right {
   from {
     opacity: 0;
@@ -429,15 +440,3 @@
     transform: translateY(100%);
   }
 }
-
-/* ===== Hover Pause Indicator ===== */
-[data-component="toast"]:hover {
-  box-shadow: var(--toast-hover-shadow, var(--elevation-overlay, var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1))));
-}
-
-/* ===== Dark Mode ===== */
-/*
- * Dark mode is handled automatically through CSS variables.
- * The theme variables change based on the .dark class on html/body.
- * No additional dark mode styles needed here.
- */

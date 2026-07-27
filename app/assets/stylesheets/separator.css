@@ -2,19 +2,31 @@
 /*
  * Decorative divider, horizontal or vertical.
  * Styled via data attributes; colors come from theme variables.
+ *
+ * Cascade order in this file (full contract documented in form.css):
+ *   1. base      [data-component="separator"]
+ *   2. sizes     — none
+ *   3. variants  [data-component="separator"]:where([data-orientation="…"])
+ *   4. states    — none
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ * Every rule is flattened to 0,1,0 with :where() and lives in
+ * @layer components, so a caller's utility class wins and source order is
+ * the only tie-breaker.
  */
 
-[data-component="separator"] {
-  @apply mx-2 shrink-0;
-  background-color: var(--border);
-}
+@layer components {
+  [data-component="separator"] {
+    @apply mx-2 shrink-0;
+    background-color: var(--border);
+  }
 
-[data-component="separator"][data-orientation="horizontal"] {
-  height: 1px;
-  width: 100%;
-}
+  [data-component="separator"]:where([data-orientation="horizontal"]) {
+    height: 1px;
+    width: 100%;
+  }
 
-[data-component="separator"][data-orientation="vertical"] {
-  width: 1px;
-  height: 1rem;
+  [data-component="separator"]:where([data-orientation="vertical"]) {
+    width: 1px;
+    height: 1rem;
+  }
 }

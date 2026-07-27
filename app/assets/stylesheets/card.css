@@ -3,129 +3,132 @@
  * Card component for grouping related content with header, body, and footer.
  * Uses data attributes for styling to maintain consistency with other components.
  * Fully compatible with dark mode via CSS variables.
+ *
+ * Cascade order in this file (full contract documented in form.css):
+ *   1. base      [data-component="card"], [data-card-part="…"]
+ *   2. sizes     […]:where([data-size="…"])
+ *   3. variants  […]:where([data-layout="…"], [data-spacing="…"], [data-align="…"])
+ *   4. states    […]:where(a:hover, button:focus-visible, …)
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ * Every rule is flattened to 0,1,0 with :where() and lives in
+ * @layer components, so a caller's utility class wins and source order is
+ * the only tie-breaker. (Rules whose target is a bare element read 0,1,1 — an
+ * element selector cannot be zeroed away.)
  */
 
-/* ===== Base Card Styles ===== */
-[data-component="card"] {
-  display: flex;
-  flex-direction: column;
-  
-  /* Border, radius & elevation */
-  @apply border;
-  border-radius: var(--card-radius, var(--surface-radius, 0.5rem));
-  box-shadow: var(--card-shadow, var(--elevation-raised, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1))));
-  border-color: var(--border);
-  
-  /* Colors */
-  background-color: var(--card);
-  color: var(--card-foreground);
-}
+@layer components {
+  /* ===== Base Card Styles ===== */
+  [data-component="card"] {
+    display: flex;
+    flex-direction: column;
 
-/* ===== Card Header ===== */
-[data-component="card"] [data-card-part="header"] {
-  display: flex;
-  flex-direction: column;
-  @apply gap-1.5 p-6;
-}
+    /* Border, radius & elevation */
+    @apply border;
+    border-radius: var(--card-radius, var(--surface-radius, 0.5rem));
+    box-shadow: var(--card-shadow, var(--elevation-raised, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1))));
+    border-color: var(--border);
 
-/* Header with row layout (when using action) */
-[data-component="card"] [data-card-part="header"][data-layout="row"] {
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  @apply gap-4;
-}
+    /* Colors */
+    background-color: var(--card);
+    color: var(--card-foreground);
+  }
 
-/* ===== Card Title ===== */
-[data-component="card"] [data-card-part="title"] {
-  @apply text-lg font-semibold leading-none tracking-tight;
-}
+  /* ===== Card Header ===== */
+  :where([data-component="card"]) [data-card-part="header"] {
+    display: flex;
+    flex-direction: column;
+    @apply gap-1.5 p-6;
+  }
 
-/* Small title variant (for compact headers) */
-[data-component="card"] [data-card-part="title"][data-size="sm"] {
-  @apply text-sm;
-  font-weight: var(--label-weight, 500);
-}
+  /* Header with row layout (when using action) */
+  :where([data-component="card"]) [data-card-part="header"]:where([data-layout="row"]) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    @apply gap-4;
+  }
 
-/* ===== Card Description ===== */
-[data-component="card"] [data-card-part="description"] {
-  @apply text-sm;
-  color: var(--muted-foreground);
-}
+  /* ===== Card Title ===== */
+  :where([data-component="card"]) [data-card-part="title"] {
+    @apply text-lg font-semibold leading-none tracking-tight;
+  }
 
-/* ===== Card Action ===== */
-[data-component="card"] [data-card-part="action"] {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  @apply gap-2;
-}
+  /* Small title variant (for compact headers) */
+  :where([data-component="card"]) [data-card-part="title"]:where([data-size="sm"]) {
+    @apply text-sm;
+    font-weight: var(--label-weight, 500);
+  }
 
-/* ===== Card Content ===== */
-[data-component="card"] [data-card-part="content"] {
-  @apply p-6 pt-0;
-}
+  /* ===== Card Description ===== */
+  :where([data-component="card"]) [data-card-part="description"] {
+    @apply text-sm;
+    color: var(--muted-foreground);
+  }
 
-/* Content with top padding (when no header) */
-[data-component="card"] [data-card-part="content"][data-spacing="full"] {
-  @apply pt-6;
-}
+  /* ===== Card Action ===== */
+  :where([data-component="card"]) [data-card-part="action"] {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    @apply gap-2;
+  }
 
-/* ===== Card Footer ===== */
-[data-component="card"] [data-card-part="footer"] {
-  display: flex;
-  align-items: center;
-  @apply p-6 pt-0;
-}
+  /* ===== Card Content ===== */
+  :where([data-component="card"]) [data-card-part="content"] {
+    @apply p-6 pt-0;
+  }
 
-/* Footer with top padding (when no content) */
-[data-component="card"] [data-card-part="footer"][data-spacing="full"] {
-  @apply pt-6;
-}
+  /* Content with top padding (when no header) */
+  :where([data-component="card"]) [data-card-part="content"]:where([data-spacing="full"]) {
+    @apply pt-6;
+  }
 
-/* Footer alignment variants */
-[data-component="card"] [data-card-part="footer"][data-align="between"] {
-  justify-content: space-between;
-}
+  /* ===== Card Footer ===== */
+  :where([data-component="card"]) [data-card-part="footer"] {
+    display: flex;
+    align-items: center;
+    @apply p-6 pt-0;
+  }
 
-[data-component="card"] [data-card-part="footer"][data-align="end"] {
-  justify-content: flex-end;
-}
+  /* Footer with top padding (when no content) */
+  :where([data-component="card"]) [data-card-part="footer"]:where([data-spacing="full"]) {
+    @apply pt-6;
+  }
 
-[data-component="card"] [data-card-part="footer"][data-align="center"] {
-  justify-content: center;
-}
+  /* Footer alignment variants */
+  :where([data-component="card"]) [data-card-part="footer"]:where([data-align="between"]) {
+    justify-content: space-between;
+  }
 
-/* ===== Icon Support ===== */
-[data-component="card"] [data-card-part="header"] svg,
-[data-component="card"] [data-card-part="action"] svg {
-  @apply size-4 shrink-0;
-  color: var(--muted-foreground);
-}
+  :where([data-component="card"]) [data-card-part="footer"]:where([data-align="end"]) {
+    justify-content: flex-end;
+  }
 
-/* ===== Interactive Card (when used as link/button) ===== */
-a[data-component="card"],
-button[data-component="card"] {
-  text-decoration: none;
-  cursor: pointer;
-  @apply transition-[border-color,box-shadow] duration-150;
-}
+  :where([data-component="card"]) [data-card-part="footer"]:where([data-align="center"]) {
+    justify-content: center;
+  }
 
-a[data-component="card"]:hover,
-button[data-component="card"]:hover {
-  border-color: var(--accent);
-}
+  /* ===== Icon Support ===== */
+  :where([data-component="card"]) [data-card-part="header"] svg,
+  :where([data-component="card"]) [data-card-part="action"] svg {
+    @apply size-4 shrink-0;
+    color: var(--muted-foreground);
+  }
 
-a[data-component="card"]:focus-visible,
-button[data-component="card"]:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--ring));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
+  /* ===== Interactive Card (when used as link/button) ===== */
+  [data-component="card"]:where(a, button) {
+    text-decoration: none;
+    cursor: pointer;
+    @apply transition-[border-color,box-shadow] duration-150;
+  }
 
-/* ===== Dark Mode ===== */
-/*
- * Dark mode is handled automatically through CSS variables.
- * The theme variables change based on the .dark class on html/body.
- * No additional dark mode styles needed here.
- */
+  [data-component="card"]:where(a:hover, button:hover) {
+    border-color: var(--accent);
+  }
+
+  [data-component="card"]:where(a:focus-visible, button:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--ring));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+}

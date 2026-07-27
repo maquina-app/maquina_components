@@ -127,6 +127,30 @@ class DoctorTest < ActiveSupport::TestCase
     assert_empty doctor.findings
   end
 
+  # The shim every 0.5.x install shipped with. Unlayered, it outranks the
+  # engine's @layer components rules and flattens the alert/toast variant
+  # borders back to --border.
+  test "flags an unlayered universal rule but not a layered one" do
+    write "app/assets/tailwind/application.css", <<~CSS
+      * {
+        border-color: var(--color-border);
+      }
+
+      @layer base {
+        *, ::before, ::after {
+          border-color: var(--color-border);
+        }
+      }
+    CSS
+
+    findings = doctor.findings.select { |finding| finding.rule == "unlayered-universal-rule" }
+
+    assert_equal 1, findings.size
+    assert_equal 1, findings.first.line
+    assert_equal :breaking, findings.first.severity
+    assert_match(/@layer base/, findings.first.suggestion)
+  end
+
   test "report is grouped by severity and lists file:line" do
     write "app/assets/tailwind/application.css", <<~CSS
       [data-component="button"][data-active] {

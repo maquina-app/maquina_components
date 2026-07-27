@@ -1,143 +1,168 @@
 /* ===== Drawer Component Styles ===== */
+/*
+ * Cascade order in this file (full contract documented in form.css):
+ *   1. base      [data-component="drawer"], [data-drawer-part="…"]
+ *   2. sizes     — none
+ *   3. variants  :where([data-drawer-part="root"][data-side="…"]) …
+ *   4. states    […]:where(:hover, :focus-visible, [data-state="…"])
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ * Every rule is flattened to 0,1,0 with :where() and lives in
+ * @layer components, so a caller's utility class wins and source order is
+ * the only tie-breaker. (Rules whose target is a bare element read 0,1,1 — an
+ * element selector cannot be zeroed away.)
+ *
+ * The one exception is the body scroll lock at the bottom of this file: see the
+ * comment there. It is intentionally NOT in the layer.
+ */
 
-/* ===== Provider (Wrapper) ===== */
-[data-component="drawer"] {
-  @apply flex w-full;
-}
+@layer components {
+  /* ===== Provider (Wrapper) ===== */
+  [data-component="drawer"] {
+    @apply flex w-full;
+  }
 
-/* ===== Drawer Root ===== */
-[data-drawer-part="root"] {
-  @apply block text-foreground;
-}
+  /* ===== Drawer Root ===== */
+  [data-drawer-part="root"] {
+    @apply block text-foreground;
+  }
 
-/* Prevent transitions on initial load */
-[data-drawer-part="root"].drawer-loading,
-[data-drawer-part="root"].drawer-loading * {
-  transition: none !important;
-}
+  /* Prevent transitions on initial load */
+  [data-drawer-part="root"]:where(.drawer-loading),
+  :where([data-drawer-part="root"].drawer-loading) * {
+    transition: none !important;
+  }
 
-/* ===== Drawer Backdrop (overlay) ===== */
-[data-drawer-part="backdrop"] {
-  @apply fixed inset-0 z-40 hidden bg-black opacity-0;
-  transition: opacity 300ms;
-}
+  /* ===== Drawer Backdrop (overlay) ===== */
+  [data-drawer-part="backdrop"] {
+    @apply fixed inset-0 z-40 hidden bg-black opacity-0;
+    transition: opacity 300ms;
+  }
 
-[data-drawer-part="backdrop"][data-state="visible"] {
-  @apply block opacity-60;
-}
+  [data-drawer-part="backdrop"]:where([data-state="visible"]) {
+    @apply block opacity-60;
+  }
 
-/* ===== Drawer Panel (fixed positioned) ===== */
-[data-drawer-part="panel"] {
-  @apply fixed inset-y-0 z-50 flex h-full w-80 flex-col;
-  @apply bg-background;
-  box-shadow: var(--drawer-shadow, var(--elevation-overlay, var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1))));
-  transition: right 300ms ease-in-out, left 300ms ease-in-out;
-}
+  /* ===== Drawer Panel (fixed positioned) ===== */
+  [data-drawer-part="panel"] {
+    @apply fixed inset-y-0 z-50 flex h-full w-80 flex-col;
+    @apply bg-background;
+    box-shadow: var(--drawer-shadow, var(--elevation-overlay, var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1))));
+    transition: right 300ms ease-in-out, left 300ms ease-in-out;
+  }
 
-[data-drawer-part="root"][data-side="left"] [data-drawer-part="panel"] {
-  @apply left-0;
-  right: auto;
-}
+  :where([data-drawer-part="root"][data-side="left"]) [data-drawer-part="panel"] {
+    @apply left-0;
+    right: auto;
+  }
 
-[data-drawer-part="root"][data-side="right"] [data-drawer-part="panel"] {
-  @apply right-0;
-  left: auto;
-}
+  :where([data-drawer-part="root"][data-side="right"]) [data-drawer-part="panel"] {
+    @apply right-0;
+    left: auto;
+  }
 
-/* Closed state - slide out */
-[data-drawer-part="root"][data-side="left"][data-state="closed"] [data-drawer-part="panel"] {
-  @apply -translate-x-full;
-}
+  /* Closed state - slide out */
+  :where([data-drawer-part="root"][data-side="left"][data-state="closed"]) [data-drawer-part="panel"] {
+    @apply -translate-x-full;
+  }
 
-[data-drawer-part="root"][data-side="right"][data-state="closed"] [data-drawer-part="panel"] {
-  @apply translate-x-full;
-}
+  :where([data-drawer-part="root"][data-side="right"][data-state="closed"]) [data-drawer-part="panel"] {
+    @apply translate-x-full;
+  }
 
-/* ===== Drawer Inner Content Wrapper ===== */
-[data-drawer-part="inner"] {
-  @apply flex h-full w-full flex-col;
+  /* ===== Drawer Inner Content Wrapper ===== */
+  [data-drawer-part="inner"] {
+    @apply flex h-full w-full flex-col;
+  }
+
+  /* ===== Drawer Header ===== */
+  [data-drawer-part="header"] {
+    @apply flex shrink-0 items-center justify-between gap-2 border-b px-4 py-3;
+    border-color: var(--border);
+  }
+
+  [data-drawer-part="header-content"] {
+    @apply flex-1;
+  }
+
+  /* ===== Drawer Content (scrollable area) ===== */
+  [data-drawer-part="content"] {
+    @apply flex min-h-0 flex-1 flex-col gap-2 overflow-auto p-4;
+  }
+
+  /* ===== Drawer Footer ===== */
+  [data-drawer-part="footer"] {
+    @apply flex shrink-0 flex-col gap-2 border-t p-4;
+    border-color: var(--border);
+  }
+
+  /* ===== Drawer Trigger ===== */
+  [data-drawer-part="trigger"]:where(:hover) {
+    background-color: var(--accent-hover, var(--accent));
+    color: var(--accent-foreground);
+  }
+
+  /* ===== Drawer Title ===== */
+  [data-drawer-part="title"] {
+    @apply text-lg font-semibold;
+  }
+
+  /* ===== Drawer Description ===== */
+  [data-drawer-part="description"] {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* ===== Drawer Close Button ===== */
+  [data-drawer-part="close"] {
+    @apply inline-flex items-center justify-center p-1;
+    @apply transition-colors;
+    border-radius: var(--drawer-close-radius, var(--control-radius, 0.375rem));
+    color: var(--foreground);
+  }
+
+  [data-drawer-part="close"] svg {
+    @apply size-4;
+  }
+
+  [data-drawer-part="close"]:where(:hover) {
+    background-color: var(--accent-hover, var(--accent));
+    color: var(--accent-foreground);
+  }
+
+  /* outline, not a ring: the drawer panel clips box-shadow rings */
+  [data-drawer-part="close"]:where(:focus-visible) {
+    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+             var(--focus-ring-color, var(--ring));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
+  /* ===== Drawer Section ===== */
+  [data-drawer-part="section"] {
+    @apply flex flex-col gap-2;
+  }
+
+  /* ===== Drawer Separator ===== */
+  [data-drawer-part="separator"] {
+    @apply mx-4 my-2 w-auto;
+    background-color: var(--border);
+  }
 }
 
 /* ===== Body Scroll Lock ===== */
-/* Shared by drawer_controller and sidebar_controller: the controllers set
-   the data attribute and the --maquina-scroll-lock-top offset on <body>;
-   all styling lives here. */
+/*
+ * Shared by drawer_controller and sidebar_controller: the controllers set
+ * the data attribute and the --maquina-scroll-lock-top offset on <body>;
+ * all styling lives here.
+ *
+ * PUBLIC CONTRACT — this is the only engine rule outside @layer components.
+ * It is not component appearance, it is a functional lock: if a host's own
+ * unlayered `body { position: … }` beat it, the page would scroll behind an
+ * open drawer and the restored scroll position would be wrong. Keeping it
+ * unlayered means it wins the way it did before 0.6.0. Nothing else in the
+ * engine claims that privilege.
+ */
 body[data-maquina-scroll-locked] {
   position: fixed;
   top: var(--maquina-scroll-lock-top, 0px);
   width: 100%;
   overflow: hidden;
-}
-
-/* ===== Drawer Header ===== */
-[data-drawer-part="header"] {
-  @apply flex shrink-0 items-center justify-between gap-2 border-b px-4 py-3;
-  border-color: var(--border);
-}
-
-[data-drawer-part="header-content"] {
-  @apply flex-1;
-}
-
-/* ===== Drawer Content (scrollable area) ===== */
-[data-drawer-part="content"] {
-  @apply flex min-h-0 flex-1 flex-col gap-2 overflow-auto p-4;
-}
-
-/* ===== Drawer Footer ===== */
-[data-drawer-part="footer"] {
-  @apply flex shrink-0 flex-col gap-2 border-t p-4;
-  border-color: var(--border);
-}
-
-/* ===== Drawer Trigger ===== */
-
-[data-drawer-part="trigger"]:hover {
-  background-color: var(--accent-hover, var(--accent));
-  color: var(--accent-foreground);
-}
-
-/* ===== Drawer Title ===== */
-[data-drawer-part="title"] {
-  @apply text-lg font-semibold;
-}
-
-/* ===== Drawer Description ===== */
-[data-drawer-part="description"] {
-  @apply text-sm text-muted-foreground;
-}
-
-/* ===== Drawer Close Button ===== */
-[data-drawer-part="close"] {
-  @apply inline-flex items-center justify-center p-1;
-  @apply transition-colors;
-  border-radius: var(--drawer-close-radius, var(--control-radius, 0.375rem));
-  color: var(--foreground);
-}
-
-/* outline, not a ring: the drawer panel clips box-shadow rings */
-[data-drawer-part="close"]:focus-visible {
-  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-           var(--focus-ring-color, var(--ring));
-  outline-offset: var(--focus-ring-offset, 0px);
-}
-
-[data-drawer-part="close"]:hover {
-  background-color: var(--accent-hover, var(--accent));
-  color: var(--accent-foreground);
-}
-
-[data-drawer-part="close"] svg {
-  @apply size-4;
-}
-
-/* ===== Drawer Section ===== */
-[data-drawer-part="section"] {
-  @apply flex flex-col gap-2;
-}
-
-/* ===== Drawer Separator ===== */
-[data-drawer-part="separator"] {
-  @apply mx-4 my-2 w-auto;
-  background-color: var(--border);
 }

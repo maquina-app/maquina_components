@@ -10,95 +10,102 @@
  *   - body
  *     - text (title, value, subtitle)
  *     - icon
+ *
+ * Cascade order in this file (full contract documented in form.css):
+ *   1. base      [data-component="stats-card"|"stats-grid"], [data-stats-part="…"]
+ *   2. sizes     — none
+ *   3. variants  […]:where([data-columns="…"], [data-with-action], [data-position="…"])
+ *   4. states    — none
+ *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
+ *
+ * The whole file lives in @layer components so caller utility classes
+ * (css_classes / value_classes / icon_classes, e.g. text-green-600 or
+ * sm:grid-cols-2) always win: the utilities layer is defined to beat the
+ * components layer, while unlayered rules would beat utilities regardless of
+ * specificity. Rules are additionally flattened to 0,1,0 with :where(), so
+ * source order is the only tie-breaker inside the layer.
  */
 
-/* ===== Card ===== */
-[data-component="stats-card"] {
-  @apply border p-4;
-  border-radius: var(--stats-radius, var(--surface-radius, 0.5rem));
-  box-shadow: var(--stats-shadow, var(--elevation-raised, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1))));
-  background-color: var(--card);
-  border-color: var(--border);
-}
-
-[data-component="stats-card"] [data-stats-part="body"] {
-  @apply flex items-center justify-between;
-}
-
-[data-component="stats-card"] [data-stats-part="title"] {
-  @apply text-sm;
-  color: var(--muted-foreground);
-}
-
-[data-component="stats-card"] [data-stats-part="value"] {
-  @apply text-2xl;
-  font-weight: var(--value-weight, 700);
-}
-
-[data-component="stats-card"] [data-stats-part="subtitle"] {
-  @apply mt-1 text-xs;
-  color: var(--muted-foreground);
-}
-
-[data-component="stats-card"] [data-stats-part="icon"] svg {
-  @apply size-8 shrink-0;
-}
-
-/* Color defaults live in the components layer so caller utility classes
-   (value_classes / icon_classes, e.g. text-green-600) always win — the
-   utilities layer is defined to beat the components layer, and unlayered
-   rules would beat utilities regardless of specificity */
 @layer components {
-  [data-component="stats-card"] [data-stats-part="value"] {
+  /* ===== Card ===== */
+  [data-component="stats-card"] {
+    @apply border p-4;
+    border-radius: var(--stats-radius, var(--surface-radius, 0.5rem));
+    box-shadow: var(--stats-shadow, var(--elevation-raised, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1))));
+    background-color: var(--card);
+    border-color: var(--border);
+  }
+
+  :where([data-component="stats-card"]) [data-stats-part="body"] {
+    @apply flex items-center justify-between;
+  }
+
+  :where([data-component="stats-card"]) [data-stats-part="title"] {
+    @apply text-sm;
+    color: var(--muted-foreground);
+  }
+
+  :where([data-component="stats-card"]) [data-stats-part="value"] {
+    @apply text-2xl;
+    font-weight: var(--value-weight, 700);
     color: var(--foreground);
   }
 
-  [data-component="stats-card"] [data-stats-part="icon"] {
+  :where([data-component="stats-card"]) [data-stats-part="subtitle"] {
+    @apply mt-1 text-xs;
     color: var(--muted-foreground);
   }
-}
 
-/* ===== Grid ===== */
-[data-component="stats-grid"][data-with-action="true"] {
-  @apply flex flex-col gap-4 lg:flex-row lg:items-center;
-}
+  :where([data-component="stats-card"]) [data-stats-part="icon"] {
+    color: var(--muted-foreground);
+  }
 
-[data-component="stats-grid"] [data-stats-part="grid"] {
-  @apply grid grid-cols-1 gap-4;
-}
+  :where([data-component="stats-card"]) [data-stats-part="icon"] svg {
+    @apply size-8 shrink-0;
+  }
 
-[data-component="stats-grid"][data-with-action="true"] [data-stats-part="grid"] {
-  @apply flex-1;
-}
+  /* ===== Grid ===== */
+  [data-component="stats-grid"]:where([data-with-action="true"]) {
+    @apply flex flex-col gap-4 lg:flex-row lg:items-center;
+  }
 
-[data-component="stats-grid"][data-columns="2"] [data-stats-part="grid"] {
-  @apply sm:grid-cols-2;
-}
+  :where([data-component="stats-grid"]) [data-stats-part="grid"] {
+    @apply grid grid-cols-1 gap-4;
+  }
 
-[data-component="stats-grid"][data-columns="3"] [data-stats-part="grid"] {
-  @apply sm:grid-cols-3;
-}
+  :where([data-component="stats-grid"][data-with-action="true"]) [data-stats-part="grid"] {
+    @apply flex-1;
+  }
 
-[data-component="stats-grid"][data-columns="4"] [data-stats-part="grid"] {
-  @apply sm:grid-cols-4;
-}
+  :where([data-component="stats-grid"][data-columns="2"]) [data-stats-part="grid"] {
+    @apply sm:grid-cols-2;
+  }
 
-[data-component="stats-grid"][data-columns="5"] [data-stats-part="grid"] {
-  @apply sm:grid-cols-5;
-}
+  :where([data-component="stats-grid"][data-columns="3"]) [data-stats-part="grid"] {
+    @apply sm:grid-cols-3;
+  }
 
-[data-component="stats-grid"][data-columns="6"] [data-stats-part="grid"] {
-  @apply sm:grid-cols-6;
-}
+  :where([data-component="stats-grid"][data-columns="4"]) [data-stats-part="grid"] {
+    @apply sm:grid-cols-4;
+  }
 
-[data-component="stats-grid"] [data-stats-part="action"] {
-  @apply flex justify-center;
-}
+  :where([data-component="stats-grid"][data-columns="5"]) [data-stats-part="grid"] {
+    @apply sm:grid-cols-5;
+  }
 
-[data-component="stats-grid"] [data-stats-part="action"][data-position="start"] {
-  @apply lg:justify-start;
-}
+  :where([data-component="stats-grid"][data-columns="6"]) [data-stats-part="grid"] {
+    @apply sm:grid-cols-6;
+  }
 
-[data-component="stats-grid"] [data-stats-part="action"][data-position="end"] {
-  @apply lg:justify-end;
+  :where([data-component="stats-grid"]) [data-stats-part="action"] {
+    @apply flex justify-center;
+  }
+
+  :where([data-component="stats-grid"]) [data-stats-part="action"]:where([data-position="start"]) {
+    @apply lg:justify-start;
+  }
+
+  :where([data-component="stats-grid"]) [data-stats-part="action"]:where([data-position="end"]) {
+    @apply lg:justify-end;
+  }
 }
