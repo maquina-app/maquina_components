@@ -1,0 +1,28 @@
+# Runs the dummy app against the gem as Bundler would resolve it for a real
+# consumer — from the GitHub branch rather than this working tree.
+#
+#   BUNDLE_GEMFILE=Gemfile.branch bundle install
+#   BUNDLE_GEMFILE=Gemfile.branch bin/test
+#
+# Point it at whatever you want to exercise; it defaults to the current release
+# branch:
+#
+#   MAQUINA_BRANCH=main BUNDLE_GEMFILE=Gemfile.branch bundle install
+#
+# Two things to know. It resolves the *pushed* commit, so anything committed
+# locally and not pushed is not what you are testing — `bundle list` prints the
+# SHA. And Bundler resolves a git source from a checkout, so every file is on
+# disk whether or not the gemspec lists it: this catches a bad dependency or a
+# broken require path, but not a file missing from `spec.files`. Only building
+# the gem and installing what comes out catches that.
+#
+# test/dummy/config/boot.rb keys off this file's name to stop the source tree's
+# lib/ from shadowing the resolved gem on $LOAD_PATH.
+
+source "https://rubygems.org"
+
+BRANCH = ENV.fetch("MAQUINA_BRANCH", "themeable-engine-0.6.0")
+
+gem "maquina-components", github: "maquina-app/maquina_components", branch: BRANCH
+
+eval_gemfile "Gemfile.common"

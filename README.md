@@ -509,39 +509,45 @@ cd test/dummy && bin/rails tailwindcss:build && cd -
 bin/test
 ```
 
-### Verifying the packaged gem
+### Running against the published branch
 
-Both commands above run against the source tree, which hides one class of
-release bug: `spec.files` is a `Dir` glob, so a file that exists on disk can
-still be missing from the `.gem`. A stylesheet or partial that never ships looks
-fine in development and breaks on the first `gem install`.
-
-`bin/vendor-gem` builds the gem and unpacks it into
-`test/dummy/vendor/gems/`, and `Gemfile.vendored` boots the same dummy app
-against that copy instead of `lib/` and `app/`:
+Both commands above run against the source tree. To exercise the gem the way a
+consuming app resolves it — from GitHub rather than from `lib/` and `app/` —
+use `Gemfile.branch`:
 
 ```bash
-bin/vendor-gem
-BUNDLE_GEMFILE=Gemfile.vendored bundle install
-BUNDLE_GEMFILE=Gemfile.vendored bin/test
+BUNDLE_GEMFILE=Gemfile.branch bundle install
+BUNDLE_GEMFILE=Gemfile.branch bin/test
 
 # or drive the app by hand
 cd test/dummy
-BUNDLE_GEMFILE=../../Gemfile.vendored bin/rails tailwindcss:build
-BUNDLE_GEMFILE=../../Gemfile.vendored bin/rails server
+BUNDLE_GEMFILE=../../Gemfile.branch bin/rails tailwindcss:build
+BUNDLE_GEMFILE=../../Gemfile.branch bin/rails server
 ```
 
+It defaults to the current release branch; override with `MAQUINA_BRANCH`.
+
 `test/dummy/config/boot.rb` skips its `$LOAD_PATH` unshift under
-`Gemfile.vendored`, so the source tree cannot shadow the packaged gem — without
-that, the check would pass no matter what shipped. `Gemfile.common` holds the
-app gems both Gemfiles share so the two cannot drift.
+`Gemfile.branch`, so the source tree cannot shadow the resolved gem — without
+that the check would pass no matter what was on the branch. `Gemfile.common`
+holds the app gems both Gemfiles share, so the two cannot drift.
 
-Worth confirming in vendored mode: `bin/rails -T | grep maquina` (the rake task
+Two limits worth knowing. It resolves the **pushed** commit, so local work you
+have not pushed is not what you are testing — `bundle list | grep maquina`
+prints the SHA. And Bundler resolves a git source from a checkout, so every
+file is present whether or not `spec.files` lists it: this catches a bad
+dependency or a broken require path, but a file missing from the packaged gem
+stays invisible. For that, build the gem and install what comes out:
+
+```bash
+gem build maquina-components.gemspec
+gem contents --show-install-dir maquina-components   # after installing it
+```
+
+Worth confirming either way: `bin/rails -T | grep maquina` (the rake task
 ships), `bin/rails generate --help` (the generators are found), and that the
-previews render — those exercise `lib/tasks`, `lib/generators/**/templates`, and
-`app/**`, which are the parts a file-list mistake tends to drop.
-
-The built `.gem` and the unpacked copy are gitignored.
+previews render — those exercise `lib/tasks`, `lib/generators/**/templates` and
+`app/**`, which are the parts a packaging mistake tends to drop.
 
 ---
 
