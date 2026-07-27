@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-07-27
+
+A `maquina:doctor` fix. No component, CSS or API changes — if the doctor
+reported findings for you on 0.6.0, its report was correct and nothing here
+changes it.
+
+### Fixed
+
+- `maquina:doctor` scanned zero files, and reported `No at-risk patterns found`,
+  when the app's own path contained a directory named `tmp`, `vendor`,
+  `node_modules` or `coverage`. The exclusion list names directories *inside* an
+  app, but it was matched against the absolute path, so the root's own prefix
+  could match it and reject every file. A migration scanner that says *clean*
+  when it means *nothing* is worse than one that errors, so re-run
+  `bin/rails maquina:doctor` on 0.6.1 if your checkout sits under any of those
+  names — the "Scanned N files" line in the report header is the tell
+
+### Docs
+
+- The README now warns about the 0.6.0 breaking changes under the tagline,
+  naming the unlayered `theme.css` shim that affects every existing app and
+  fails silently, and `Upgrading` is a top-level section rather than a
+  subsection of `Generator Options`
+
 ## [0.6.0] - 2026-07-27
 
 A theming release. Shape, focus rings, elevation and weight become design tokens, every engine rule moves into `@layer components` at specificity 0,1,0, and a set of long-standing CSS and rendering defects are fixed. Read [docs/upgrading.md](docs/upgrading.md) before upgrading, then run `bin/rails maquina:doctor` — it prints file:line for every pattern this release changes and never edits anything.
@@ -312,7 +336,8 @@ Thanks to the contributors who made this release possible:
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/maquina-app/maquina_components/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/maquina-app/maquina_components/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/maquina-app/maquina_components/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/maquina-app/maquina_components/compare/v0.4.4...v0.5.0
