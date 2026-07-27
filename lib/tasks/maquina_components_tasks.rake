@@ -1,4 +1,16 @@
-# desc "Explaining what the task does"
-# task :maquina_components do
-#   # Task goes here
-# end
+# frozen_string_literal: true
+
+namespace :maquina do
+  desc "Scan this app's CSS/views/JS for patterns that maquina-components 0.6.0 changes (advisory, always exits 0)"
+  task :doctor, [:path] do |_task, args|
+    require_relative "../maquina_components/doctor"
+
+    # Scans Rails.root by default; a path argument or MAQUINA_DOCTOR_PATH lets
+    # you point it somewhere else: rake "maquina:doctor[../other_app]"
+    root = args[:path].to_s
+    root = ENV["MAQUINA_DOCTOR_PATH"].to_s if root.empty?
+    root = ((defined?(Rails) && Rails.respond_to?(:root) && Rails.root) || Dir.pwd).to_s if root.empty?
+
+    puts MaquinaComponents::Doctor.new(root).run.report
+  end
+end

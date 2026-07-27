@@ -37,17 +37,9 @@
         action: "click->calendar#selectDay keydown->calendar#handleKeydown"
       }.compact
     %>
-    <button type="button"
-            data-calendar-part="day"
-            data-calendar-target="day"
-            data-date="<%= day.iso8601 %>"
-            <%= "data-state=\"#{day_state}\"" if day_state %>
-            <%= "data-outside" if is_outside %>
-            <%= "data-today" if is_today %>
-            data-action="click->calendar#selectDay keydown->calendar#handleKeydown"
-            <%= "disabled" if is_disabled %>
-            tabindex="<%= is_today ? '0' : '-1' %>"
-            <%= "aria-selected=\"true\"" if day_state&.include?("selected") || day_state == "range-start" || day_state == "range-end" %>
-            <%= "aria-current=\"date\"" if is_today %>><%= day.day %></button>
+    <%= tag.button day.day, type: "button", disabled: is_disabled,
+          tabindex: (is_today ? 0 : -1),
+          aria: {selected: (day_state ? true : nil), current: (is_today ? "date" : nil)}.compact,
+          data: day_data %>
   <% end %>
 <% end %>

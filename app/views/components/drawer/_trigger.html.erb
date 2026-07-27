@@ -1,13 +1,30 @@
-<%# locals: (variant: :default, size: :default, icon_name: nil, css_classes: "", **html_options) %>
-<% merged_data = merge_component_data(html_options,
+<%# locals: (variant: :default, size: :default, icon_name: nil, for_id: nil, css_classes: "", **html_options) %>
+<%
+  # `for` is a Ruby keyword and cannot be a strict-local name, so the local is
+  # for_id: — but a caller-supplied for: is accepted too, popped out of
+  # html_options before it can leak onto the button as a stray attribute.
+  target = for_id.presence || html_options.delete(:for).presence
+
+  # Default keeps the document-wide selector, so single-drawer pages behave as
+  # before. A bare value is treated as an element id (the drawer provider's);
+  # anything starting with #, [ or . is used verbatim as a selector.
+  drawer_selector =
+    if target.blank?
+      "[data-outlet='drawer']"
+    elsif target.to_s.start_with?("#", "[", ".")
+      target.to_s
+    else
+      "##{target}"
+    end
+
+  merged_data = merge_component_data(html_options,
     drawer_part: :trigger,
     controller: "drawer-trigger",
     action: "click->drawer-trigger#triggerClick",
-    drawer_trigger_drawer_outlet: "[data-outlet='drawer']"
-  ) %>
-<% button_data = merged_data.merge(
-    component: "button"
-  ) %>
+    drawer_trigger_drawer_outlet: drawer_selector
+  )
+  button_data = merged_data.merge(component: "button")
+%>
 <%= content_tag :button, type: :button, class: css_classes, data: button_data, **html_options do %>
   <%= icon_for(icon_name) if icon_name %>
   <%= yield %>
