@@ -1,3 +1,6 @@
+/* Token defaults must come first: every component stylesheet reads them. */
+@import "./tokens.css";
+
 @source "../../../views/";
 
 @import "../../stylesheets/alert.css";

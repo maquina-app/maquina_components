@@ -34,7 +34,8 @@
 /* ===== Breadcrumb Link ===== */
 [data-breadcrumb-part="link"] {
   @apply inline-flex items-center;
-  @apply text-sm font-medium;
+  @apply text-sm;
+  font-weight: var(--label-weight, 500);
   @apply underline-offset-4;
   @apply transition-colors;
   color: var(--muted-foreground);
@@ -62,7 +63,8 @@
 /* ===== Breadcrumb Page (current) ===== */
 [data-breadcrumb-part="page"] {
   @apply inline-flex items-center;
-  @apply text-sm font-medium;
+  @apply text-sm;
+  font-weight: var(--label-weight, 500);
   color: var(--foreground);
 }
 

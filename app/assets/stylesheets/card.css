@@ -10,8 +10,10 @@
   display: flex;
   flex-direction: column;
   
-  /* Border & Radius */
-  @apply rounded-xl border shadow;
+  /* Border, radius & elevation */
+  @apply border;
+  border-radius: var(--card-radius, var(--surface-radius, 0.5rem));
+  box-shadow: var(--card-shadow, var(--elevation-raised, var(--shadow-sm, 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1))));
   border-color: var(--border);
   
   /* Colors */
@@ -41,7 +43,8 @@
 
 /* Small title variant (for compact headers) */
 [data-component="card"] [data-card-part="title"][data-size="sm"] {
-  @apply text-sm font-medium;
+  @apply text-sm;
+  font-weight: var(--label-weight, 500);
 }
 
 /* ===== Card Description ===== */
@@ -115,9 +118,9 @@ button[data-component="card"]:hover {
 
 a[data-component="card"]:focus-visible,
 button[data-component="card"]:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--background),
-              0 0 0 4px var(--ring);
+  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+           var(--focus-ring-color, var(--ring));
+  outline-offset: var(--focus-ring-offset, 0px);
 }
 
 /* ===== Dark Mode ===== */

@@ -10,10 +10,12 @@
   position: relative;
   display: grid;
   grid-template-columns: 1fr;
-  @apply w-full rounded-lg border p-4 text-sm;
-  
-  /* Default colors */
-  background-color: var(--background);
+  @apply w-full border p-4 text-sm;
+  border-radius: var(--alert-radius, var(--surface-radius, 0.5rem));
+
+  /* Default colors — an alert sits *on* a surface, so it paints --card, not
+     the page background (painting --background measures ΔL 0.00 inside a card) */
+  background-color: var(--card, var(--background));
   color: var(--foreground);
   border-color: var(--border);
 }
@@ -35,7 +37,8 @@
 
 /* ===== Alert Title ===== */
 [data-component="alert"] [data-alert-part="title"] {
-  @apply font-medium leading-none tracking-tight;
+  @apply leading-none tracking-tight;
+  font-weight: var(--label-weight, 500);
   color: var(--foreground);
 }
 
@@ -62,7 +65,7 @@
 
 /* ===== Variant: Default ===== */
 [data-component="alert"][data-variant="default"] {
-  background-color: var(--background);
+  background-color: var(--card, var(--background));
   color: var(--foreground);
   border-color: var(--border);
 }
@@ -95,44 +98,69 @@
 
 /* ===== Variant: Success ===== */
 [data-component="alert"][data-variant="success"] {
-  background-color: var(--success);
-  color: var(--success-foreground);
-  border-color: var(--success);
+  background-color: var(--success, oklch(0.627 0.194 149.214));
+  color: var(--success-foreground, oklch(0.985 0 0));
+  border-color: var(--success, oklch(0.627 0.194 149.214));
 }
 
 [data-component="alert"][data-variant="success"] [data-alert-part="title"] {
-  color: var(--success-foreground);
+  color: var(--success-foreground, oklch(0.985 0 0));
 }
 
 [data-component="alert"][data-variant="success"] [data-alert-part="description"] {
-  color: var(--success-foreground);
+  color: var(--success-foreground, oklch(0.985 0 0));
   opacity: 0.9;
 }
 
 [data-component="alert"][data-variant="success"] > svg:first-child,
 [data-component="alert"][data-variant="success"] [data-alert-part="icon"] {
-  color: var(--success-foreground);
+  color: var(--success-foreground, oklch(0.985 0 0));
 }
 
 /* ===== Variant: Warning ===== */
 [data-component="alert"][data-variant="warning"] {
-  background-color: var(--warning);
-  color: var(--warning-foreground);
-  border-color: var(--warning);
+  background-color: var(--warning, oklch(0.769 0.188 70.08));
+  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+  border-color: var(--warning, oklch(0.769 0.188 70.08));
 }
 
 [data-component="alert"][data-variant="warning"] [data-alert-part="title"] {
-  color: var(--warning-foreground);
+  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
 }
 
 [data-component="alert"][data-variant="warning"] [data-alert-part="description"] {
-  color: var(--warning-foreground);
+  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
   opacity: 0.9;
 }
 
 [data-component="alert"][data-variant="warning"] > svg:first-child,
 [data-component="alert"][data-variant="warning"] [data-alert-part="icon"] {
-  color: var(--warning-foreground);
+  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+}
+
+/* ===== Variant: Info ===== */
+/*
+ * --info has no engine default on purpose: an undefined --info must fall back
+ * to the neutral default treatment, never to --primary (that renders an
+ * informational alert in the brand accent, so it reads as a call to action).
+ */
+[data-component="alert"][data-variant="info"] {
+  background-color: var(--info, var(--card, var(--background)));
+  color: var(--info-foreground, var(--foreground));
+  border-color: var(--info, var(--border));
+}
+
+[data-component="alert"][data-variant="info"] [data-alert-part="title"] {
+  color: var(--info-foreground, var(--foreground));
+}
+
+[data-component="alert"][data-variant="info"] [data-alert-part="description"] {
+  color: var(--info-foreground, var(--muted-foreground));
+}
+
+[data-component="alert"][data-variant="info"] > svg:first-child,
+[data-component="alert"][data-variant="info"] [data-alert-part="icon"] {
+  color: var(--info-foreground, var(--foreground));
 }
 
 /* ===== Dark Mode ===== */

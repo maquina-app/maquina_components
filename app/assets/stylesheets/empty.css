@@ -34,7 +34,7 @@
 }
 
 [data-component="empty"][data-variant="outline"] {
-  @apply rounded-lg;
+  border-radius: var(--empty-radius, var(--surface-radius, 0.5rem));
   border: 1px dashed var(--border);
 }
 
@@ -71,7 +71,8 @@
 
 /* Avatar variant */
 [data-empty-part="media"][data-variant="avatar"] {
-  @apply size-16 rounded-full overflow-hidden;
+  @apply size-16 overflow-hidden;
+  border-radius: var(--pill-radius, calc(infinity * 1px));
   background-color: var(--muted);
 }
 
@@ -82,7 +83,8 @@
 /* ===== Title ===== */
 [data-empty-part="title"] {
   color: var(--foreground);
-  @apply text-base font-medium;
+  @apply text-base;
+  font-weight: var(--label-weight, 500);
 }
 
 /* Compact size */

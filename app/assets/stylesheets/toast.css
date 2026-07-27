@@ -76,7 +76,9 @@
   background-color: var(--popover, var(--background));
   color: var(--popover-foreground, var(--foreground));
   border-color: var(--border);
-  @apply w-full max-w-sm gap-3 rounded-lg border p-4 pr-10 shadow-lg;
+  @apply w-full max-w-sm gap-3 border p-4 pr-10;
+  border-radius: var(--toast-radius, var(--surface-radius, 0.5rem));
+  box-shadow: var(--toast-shadow, var(--elevation-overlay, var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1))));
 }
 
 /* ===== Icon ===== */
@@ -124,7 +126,8 @@
   cursor: pointer;
   opacity: 0.5;
   color: var(--foreground);
-  @apply size-6 rounded-sm transition-opacity;
+  @apply size-6 transition-opacity;
+  border-radius: var(--toast-close-radius, var(--control-radius, 0.375rem));
 }
 
 [data-toast-part="close"]:hover {
@@ -133,8 +136,9 @@
 
 [data-toast-part="close"]:focus-visible {
   opacity: 1;
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+           var(--focus-ring-color, var(--ring));
+  outline-offset: var(--focus-ring-offset, 0px);
 }
 
 [data-toast-part="close"] svg {
@@ -151,17 +155,20 @@
   color: var(--foreground);
   cursor: pointer;
   text-decoration: none;
-  @apply mt-2 h-8 rounded-md px-3 text-xs font-medium transition-colors;
+  @apply mt-2 h-8 px-3 text-xs transition-colors;
+  border-radius: var(--toast-action-radius, var(--control-radius, 0.375rem));
+  font-weight: var(--label-weight, 500);
 }
 
 [data-toast-part="action"]:hover {
-  background-color: var(--accent);
+  background-color: var(--accent-hover, var(--accent));
   color: var(--accent-foreground);
 }
 
 [data-toast-part="action"]:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
+           var(--focus-ring-color, var(--ring));
+  outline-offset: var(--focus-ring-offset, 0px);
 }
 
 /* ===== Variant: Default ===== */
@@ -173,86 +180,90 @@
 
 /* ===== Variant: Success ===== */
 [data-component="toast"][data-variant="success"] {
-  background-color: var(--success);
-  color: var(--success-foreground);
-  border-color: var(--success);
+  background-color: var(--success, oklch(0.627 0.194 149.214));
+  color: var(--success-foreground, oklch(0.985 0 0));
+  border-color: var(--success, oklch(0.627 0.194 149.214));
 }
 
 [data-component="toast"][data-variant="success"] [data-toast-part="icon"],
 [data-component="toast"][data-variant="success"] [data-toast-part="title"],
 [data-component="toast"][data-variant="success"] [data-toast-part="close"] {
-  color: var(--success-foreground);
+  color: var(--success-foreground, oklch(0.985 0 0));
 }
 
 [data-component="toast"][data-variant="success"] [data-toast-part="description"] {
-  color: var(--success-foreground);
+  color: var(--success-foreground, oklch(0.985 0 0));
   opacity: 0.9;
 }
 
 [data-component="toast"][data-variant="success"] [data-toast-part="action"] {
-  border-color: var(--success-foreground);
-  color: var(--success-foreground);
+  border-color: var(--success-foreground, oklch(0.985 0 0));
+  color: var(--success-foreground, oklch(0.985 0 0));
 }
 
 [data-component="toast"][data-variant="success"] [data-toast-part="action"]:hover {
-  background-color: var(--success-foreground);
-  color: var(--success);
+  background-color: var(--success-foreground, oklch(0.985 0 0));
+  color: var(--success, oklch(0.627 0.194 149.214));
 }
 
 /* ===== Variant: Info ===== */
+/*
+ * --info deliberately falls back to the neutral default treatment, not to
+ * --primary: an undefined --info used to render informational toasts in the
+ * brand accent, which reads as a call to action.
+ */
 [data-component="toast"][data-variant="info"] {
-  background-color: var(--info, var(--primary));
-  color: var(--info-foreground, var(--primary-foreground));
-  border-color: var(--info, var(--primary));
+  background-color: var(--info, var(--popover, var(--background)));
+  color: var(--info-foreground, var(--foreground));
+  border-color: var(--info, var(--border));
 }
 
 [data-component="toast"][data-variant="info"] [data-toast-part="icon"],
 [data-component="toast"][data-variant="info"] [data-toast-part="title"],
 [data-component="toast"][data-variant="info"] [data-toast-part="close"] {
-  color: var(--info-foreground, var(--primary-foreground));
+  color: var(--info-foreground, var(--foreground));
 }
 
 [data-component="toast"][data-variant="info"] [data-toast-part="description"] {
-  color: var(--info-foreground, var(--primary-foreground));
-  opacity: 0.9;
+  color: var(--info-foreground, var(--muted-foreground));
 }
 
 [data-component="toast"][data-variant="info"] [data-toast-part="action"] {
-  border-color: var(--info-foreground, var(--primary-foreground));
-  color: var(--info-foreground, var(--primary-foreground));
+  border-color: var(--info-foreground, var(--border));
+  color: var(--info-foreground, var(--foreground));
 }
 
 [data-component="toast"][data-variant="info"] [data-toast-part="action"]:hover {
-  background-color: var(--info-foreground, var(--primary-foreground));
-  color: var(--info, var(--primary));
+  background-color: var(--info-foreground, var(--accent-hover, var(--accent)));
+  color: var(--info, var(--accent-foreground));
 }
 
 /* ===== Variant: Warning ===== */
 [data-component="toast"][data-variant="warning"] {
-  background-color: var(--warning);
-  color: var(--warning-foreground);
-  border-color: var(--warning);
+  background-color: var(--warning, oklch(0.769 0.188 70.08));
+  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+  border-color: var(--warning, oklch(0.769 0.188 70.08));
 }
 
 [data-component="toast"][data-variant="warning"] [data-toast-part="icon"],
 [data-component="toast"][data-variant="warning"] [data-toast-part="title"],
 [data-component="toast"][data-variant="warning"] [data-toast-part="close"] {
-  color: var(--warning-foreground);
+  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
 }
 
 [data-component="toast"][data-variant="warning"] [data-toast-part="description"] {
-  color: var(--warning-foreground);
+  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
   opacity: 0.9;
 }
 
 [data-component="toast"][data-variant="warning"] [data-toast-part="action"] {
-  border-color: var(--warning-foreground);
-  color: var(--warning-foreground);
+  border-color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+  color: var(--warning-foreground, oklch(0.216 0.006 56.043));
 }
 
 [data-component="toast"][data-variant="warning"] [data-toast-part="action"]:hover {
-  background-color: var(--warning-foreground);
-  color: var(--warning);
+  background-color: var(--warning-foreground, oklch(0.216 0.006 56.043));
+  color: var(--warning, oklch(0.769 0.188 70.08));
 }
 
 /* ===== Variant: Error ===== */
@@ -421,8 +432,7 @@
 
 /* ===== Hover Pause Indicator ===== */
 [data-component="toast"]:hover {
-  /* Slight scale to indicate interaction */
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  box-shadow: var(--toast-hover-shadow, var(--elevation-overlay, var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1))));
 }
 
 /* ===== Dark Mode ===== */

@@ -28,7 +28,8 @@
  * to match the inset content area styling.
  */
 [data-sidebar-part="inset"] [data-component="header"] {
-  @apply rounded-t-xl;
+  border-start-start-radius: var(--inset-radius, var(--surface-radius, 0.5rem));
+  border-start-end-radius: var(--inset-radius, var(--surface-radius, 0.5rem));
 }
 
 /* ===== Header Elements ===== */
@@ -41,7 +42,8 @@
 
 /* Title text */
 [data-component="header"] [data-header-part="title"] {
-  @apply text-sm font-medium;
+  @apply text-sm;
+  font-weight: var(--label-weight, 500);
   color: var(--foreground);
 }
 

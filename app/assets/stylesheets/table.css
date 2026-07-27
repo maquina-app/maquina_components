@@ -13,7 +13,8 @@
 /* Bordered variant */
 [data-table-part="container"][data-variant="bordered"] {
   border: 1px solid var(--border);
-  @apply rounded-lg overflow-hidden;
+  @apply overflow-hidden;
+  border-radius: var(--table-radius, var(--surface-radius, 0.5rem));
 }
 
 /* ===== Table ===== */
@@ -57,7 +58,7 @@
 /* ===== Footer ===== */
 [data-table-part="footer"] {
   background-color: color-mix(in oklch, var(--muted) 50%, transparent);
-  font-weight: 500;
+  font-weight: var(--label-weight, 500);
   border-top: 1px solid var(--border);
 }
 
@@ -87,7 +88,8 @@
   color: var(--foreground);
   text-align: left;
   vertical-align: middle;
-  @apply h-10 px-4 py-2.5 font-medium whitespace-nowrap text-xs uppercase tracking-wider;
+  @apply h-10 px-4 py-2.5 whitespace-nowrap text-xs uppercase tracking-wider;
+  font-weight: var(--label-weight, 500);
 }
 
 /* First column - extra left padding */
@@ -162,7 +164,7 @@
 
 /* Font weight for emphasis */
 [data-table-part="cell"].font-medium {
-  @apply font-medium;
+  font-weight: var(--label-weight, 500);
 }
 
 /* ===== Striped Variant ===== */
