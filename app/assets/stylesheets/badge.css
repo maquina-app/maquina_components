@@ -123,7 +123,7 @@ a[data-component="badge"]:focus-visible,
 button[data-component="badge"]:focus-visible {
   @apply outline-none;
   box-shadow: 0 0 0 2px var(--background),
-              0 0 0 4px var(--border);
+              0 0 0 4px var(--ring);
 }
 
 /* Active/pressed state */

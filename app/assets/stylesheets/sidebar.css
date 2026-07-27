@@ -364,12 +364,6 @@
   color: var(--accent-foreground);
 }
 
-@media (prefers-color-scheme: dark) {
-  [data-sidebar-part="trigger"]:hover {
-    background-color: color-mix(in oklch, var(--accent) 50%, transparent);
-  }
-}
-
 [data-sidebar-part="trigger"] svg {
   @apply pointer-events-none size-4 shrink-0;
 }

@@ -10,11 +10,15 @@
    =================================================================== */
 [data-component="form"] {
   @apply grid gap-6;
+  /* Pack rows at the start so a stretched/height-constrained parent does not
+     distribute leftover height between implicit rows. */
+  align-content: start;
 }
 
 /* Form Group - wraps label + input + help/error text */
 [data-form-part="group"] {
   @apply grid gap-2;
+  align-content: start;
 }
 
 /* Inline form group (horizontal layout) */
@@ -404,13 +408,6 @@
   @apply pointer-events-none opacity-50;
 }
 
-/* Focus ring - applies to all variants */
-[data-component="button"]:focus-visible {
-  box-shadow:
-    0 0 0 2px var(--background),
-    0 0 0 4px var(--ring);
-}
-
 /* ----- Variants ----- */
 
 /* Default (Primary) */
@@ -437,12 +434,6 @@
 
 [data-component="button"][data-variant="destructive"]:hover {
   background-color: color-mix(in oklch, var(--destructive) 90%, black);
-}
-
-[data-component="button"][data-variant="destructive"]:focus-visible {
-  box-shadow:
-    0 0 0 2px var(--background),
-    0 0 0 4px var(--destructive);
 }
 
 /* Outline */
@@ -493,6 +484,26 @@
 
 [data-component="button"][data-variant="link"]:hover {
   text-decoration-line: underline;
+}
+
+/* ----- Focus ring ----- */
+/*
+ * Must come after every variant rule: each variant re-declares box-shadow for
+ * its elevation, and the [data-variant] selector matches the variants'
+ * specificity, so both source order and the extra attribute are required for
+ * the ring to survive.
+ */
+[data-component="button"]:focus-visible,
+[data-component="button"][data-variant]:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--ring);
+}
+
+[data-component="button"][data-variant="destructive"]:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--destructive);
 }
 
 /* ----- Sizes ----- */
