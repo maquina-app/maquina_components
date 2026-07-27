@@ -214,6 +214,76 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/assets/tailwind/application.css"
   end
 
+  # === Shape/State Token Block Tests ===
+
+  test "appends the shape and state token block with the new tokens" do
+    run_generator
+
+    assert_file "app/assets/tailwind/application.css" do |content|
+      assert_match %r{maquina_components:shape-state-tokens}, content
+
+      # Real defaults for new installs
+      assert_match %r{^\s+--info: }, content
+      assert_match %r{^\s+--info-foreground: }, content
+      assert_match %r{^\s+--primary-hover: }, content
+      assert_match %r{^\s+--secondary-hover: }, content
+      assert_match %r{^\s+--destructive-hover: }, content
+      assert_match %r{^\s+--accent-hover: }, content
+
+      # Commented out at their 0.5.1 values, ready to be pinned
+      %w[
+        --control-radius --surface-radius --mark-radius --pill-radius
+        --focus-ring-width --focus-ring-offset --focus-ring-style --focus-ring-color
+        --elevation-control --elevation-raised --elevation-overlay
+        --label-weight --value-weight --control-fill
+        --checkbox-mark-image --checkbox-indeterminate-image --radio-mark-image
+        --switch-thumb-image --select-chevron-image
+      ].each do |token|
+        assert_match %r{/\* #{Regexp.escape(token)}: }, content, "#{token} should be listed commented out"
+      end
+    end
+  end
+
+  test "re-running the generator appends the token block without clobbering the palette" do
+    create_tailwind_css_file(<<~CSS)
+      @import "tailwindcss";
+
+      @import "../builds/tailwind/maquina_components_engine.css";
+
+      :root {
+        --color-primary: var(--primary);
+        --primary: oklch(0.5 0.2 250);
+      }
+    CSS
+
+    run_generator
+
+    content = css_file_content
+
+    # The app's own palette survives untouched, and the engine's theme block
+    # is not appended on top of it.
+    assert_match %r{--primary: oklch\(0\.5 0\.2 250\)}, content
+    assert_equal 1, content.scan("--primary:").count
+    assert_match %r{maquina_components:shape-state-tokens}, content
+  end
+
+  test "token block is not duplicated on a second run" do
+    run_generator
+    run_generator
+
+    content = css_file_content
+
+    assert_equal 1, content.scan("maquina_components:shape-state-tokens").count
+    assert_equal 1, content.scan("--primary-hover:").count
+    assert_equal 1, content.scan('@import "../builds/tailwind/maquina_components_engine.css";').count
+  end
+
+  test "skips the token block with --skip-theme" do
+    run_generator %w[--skip-theme]
+
+    refute_match %r{maquina_components:shape-state-tokens}, css_file_content
+  end
+
   # === Combined Options Tests ===
 
   test "both skip options together" do

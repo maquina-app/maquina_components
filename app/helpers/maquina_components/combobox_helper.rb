@@ -8,13 +8,13 @@ module MaquinaComponents
   # @example Basic usage
   #   <%= combobox placeholder: "Select framework..." do |cb| %>
   #     <% cb.trigger %>
-  #     <% cb.content do %>
-  #       <% cb.input placeholder: "Search..." %>
-  #       <% cb.list do %>
-  #         <% cb.option value: "nextjs" do %>Next.js<% end %>
-  #         <% cb.option value: "remix" do %>Remix<% end %>
+  #     <% cb.content do |content| %>
+  #       <% content.input placeholder: "Search..." %>
+  #       <% content.list do |list| %>
+  #         <% list.option value: "nextjs" do %>Next.js<% end %>
+  #         <% list.option value: "remix" do %>Remix<% end %>
   #       <% end %>
-  #       <% cb.empty %>
+  #       <% content.empty %>
   #     <% end %>
   #   <% end %>
   #
@@ -28,21 +28,21 @@ module MaquinaComponents
   # @example With groups
   #   <%= combobox placeholder: "Select..." do |cb| %>
   #     <% cb.trigger %>
-  #     <% cb.content do %>
-  #       <% cb.input %>
-  #       <% cb.list do %>
-  #         <% cb.group do %>
-  #           <% cb.label "Frontend" %>
-  #           <% cb.option value: "react" do %>React<% end %>
-  #           <% cb.option value: "vue" do %>Vue<% end %>
+  #     <% cb.content do |content| %>
+  #       <% content.input %>
+  #       <% content.list do |list| %>
+  #         <% list.group do |group| %>
+  #           <% group.label "Frontend" %>
+  #           <% group.option value: "react" do %>React<% end %>
+  #           <% group.option value: "vue" do %>Vue<% end %>
   #         <% end %>
-  #         <% cb.separator %>
-  #         <% cb.group do %>
-  #           <% cb.label "Backend" %>
-  #           <% cb.option value: "rails" do %>Rails<% end %>
+  #         <% list.separator %>
+  #         <% list.group do |group| %>
+  #           <% group.label "Backend" %>
+  #           <% group.option value: "rails" do %>Rails<% end %>
   #         <% end %>
   #       <% end %>
-  #       <% cb.empty %>
+  #       <% content.empty %>
   #     <% end %>
   #   <% end %>
   #
@@ -100,17 +100,17 @@ module MaquinaComponents
       combobox(placeholder: placeholder, value: value, name: name) do |cb|
         cb.trigger(**trigger_options)
 
-        cb.content(**content_options) do
-          cb.input(placeholder: search_placeholder)
-          cb.list do
+        cb.content(**content_options) do |content|
+          content.input(placeholder: search_placeholder)
+          content.list do |list|
             options.each do |opt|
               selected = value.present? && opt[:value].to_s == value.to_s
-              cb.option(value: opt[:value], selected: selected, disabled: opt[:disabled]) do
+              list.option(value: opt[:value], selected: selected, disabled: opt[:disabled]) do
                 opt[:label] || opt[:value]
               end
             end
           end
-          cb.empty(text: empty_text)
+          content.empty(text: empty_text)
         end
       end
     end
@@ -149,7 +149,15 @@ module MaquinaComponents
       # @yield Block containing combobox content
       def content(align: :start, width: :default, **options, &block)
         content_builder = ComboboxContentBuilder.new(@view)
-        @view.capture(content_builder, &block)
+        # Exposed for the input/list/empty shortcuts below, so a caller can
+        # either take the yielded builder or keep using `cb.input` & friends.
+        previous_content_builder = @current_content_builder
+        @current_content_builder = content_builder
+        begin
+          @view.capture(content_builder, &block)
+        ensure
+          @current_content_builder = previous_content_builder
+        end
 
         @parts << @view.render(
           "components/combobox/content",

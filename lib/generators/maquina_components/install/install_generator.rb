@@ -9,6 +9,12 @@ module MaquinaComponents
 
       desc "Install maquina_components into your Rails application"
 
+      # Marker comment carried by the shape/state token block. Its presence is
+      # what makes a second `rails g maquina_components:install` a no-op for
+      # that block instead of a second copy.
+      TOKENS_MARKER = "maquina_components:shape-state-tokens"
+      APP_CSS_PATH = "app/assets/tailwind/application.css"
+
       class_option :skip_theme, type: :boolean, default: false,
         desc: "Skip adding theme variables to application.css"
       class_option :skip_helper, type: :boolean, default: false,
@@ -73,6 +79,30 @@ module MaquinaComponents
         say_status :append, "Added theme variables to application.css", :green
       end
 
+      # Safe to re-run against an app that installed an earlier version: the
+      # existing palette is left exactly as it is and only the new shape/state
+      # token block is appended, guarded by TOKENS_MARKER.
+      def add_shape_and_state_tokens
+        return if options[:skip_theme]
+
+        full_path = File.join(destination_root, APP_CSS_PATH)
+
+        unless File.exist?(full_path)
+          say_status :skip, "#{APP_CSS_PATH} not found", :yellow
+          return
+        end
+
+        if File.read(full_path).include?(TOKENS_MARKER)
+          say_status :skip, "Shape/state tokens already present", :blue
+          return
+        end
+
+        tokens = File.read(File.expand_path("templates/shape_state_tokens.css.tt", __dir__))
+        append_to_file APP_CSS_PATH, "\n#{tokens}"
+
+        say_status :append, "Added shape/state token block to #{APP_CSS_PATH}", :green
+      end
+
       def create_helper
         return if options[:skip_helper]
 
@@ -97,7 +127,12 @@ module MaquinaComponents
         say "Next steps:"
         say ""
         say "1. Customize theme variables in app/assets/tailwind/application.css"
-        say "   to match your design system."
+        say "   to match your design system. Shape, focus-ring, elevation and"
+        say "   control-mark tokens are listed there too, commented out at their"
+        say "   0.5.1 values - uncomment a line to pin the old look."
+        say ""
+        say "   Upgrading an existing app? Run `bin/rails maquina:doctor` for a"
+        say "   report of app CSS the 0.6 token layer makes redundant or breaks."
         say ""
         say "2. Override the icon helper in app/helpers/maquina_components_helper.rb"
         say "   to use your own icon system (Heroicons, Lucide, etc.)."
