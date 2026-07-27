@@ -3,25 +3,9 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in maquina_components.gemspec.
 gemspec
 
-gem "puma"
-gem "thruster", ">= 0.1.1"
-
-# Reduces boot times through caching; required in config/boot.rb
-gem "bootsnap", require: false
-
-gem "sqlite3"
-
-# Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
-gem "standard", require: false
-
 # Start debugger with binding.b [https://github.com/ruby/debug]
 # gem "debug", ">= 1.0.0"
 
-gem "propshaft", "~> 1.1"
-gem "tailwindcss-rails", "~> 4.4"
-
-# Hotwire (importmap-rails and stimulus-rails come from the gemspec)
-gem "turbo-rails"
-
-# CORS for preview embeds
-gem "rack-cors"
+# Shared with Gemfile.vendored, which boots the same dummy app against the
+# packaged gem instead of this source tree. See bin/vendor-gem.
+eval_gemfile "Gemfile.common"

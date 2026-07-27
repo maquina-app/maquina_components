@@ -23,3 +23,8 @@ AGENTS.md
 .claude/
 /references/
 .playwright-mcp/
+
+# Local pre-release check: built gem + its unpacked copy (bin/vendor-gem)
+/maquina-components-*.gem
+/test/dummy/vendor/gems/
+/Gemfile.vendored.lock
