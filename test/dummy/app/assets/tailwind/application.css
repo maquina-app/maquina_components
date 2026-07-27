@@ -293,16 +293,14 @@
   --label-weight: 700;
   --value-weight: 900;
 
-  /* Dark control marks. These are whole SVG images rather than a color token
-     because var() cannot be interpolated into url(); they still theme from
-     :root like everything else, because the engine keeps its own artwork in an
-     inherited fallback instead of declaring it on the control — including the
-     chevron's per-scheme default, so these apply in both light and dark. */
-  --checkbox-mark-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-  --checkbox-indeterminate-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'%3e%3crect x='3' y='7' width='10' height='2' rx='1'/%3e%3c/svg%3e");
-  --radio-mark-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
-  --switch-thumb-image: url("data:image/svg+xml,%3csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='10' cy='10' r='8' fill='%23000000'/%3e%3c/svg%3e");
-  --select-chevron-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23000000' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  /* No mark inks here on purpose. A shape theme changes radius, elevation,
+     focus geometry and weight; ink is a color concern and belongs to the color
+     theme. This block used to force the five mark images to black, which reads
+     as a solid black square the moment --primary is dark — measured 2.63:1
+     against the default palette's oklch(0.21) primary, where the stock white
+     ink measures 17.75:1. Re-inking marks is per-palette work: set the
+     --*-image properties in a color theme, or use data-mark="dark" on the
+     control. See previews/specimen/marks. */
 }
 
 /* ===== Shape Theme: Soft — round, floating ===== */

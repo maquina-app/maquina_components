@@ -73,7 +73,7 @@
   <% end %>
 
   <%= specimen_section "Theming a mark",
-        note: "The engine keeps its own artwork in the use-site fallback rather than declaring it on the control, so setting one of the five properties anywhere above the control — :root, a theme block, or a single element as below — retints it. data-mark still wins over a global default, because an explicit opt-in should. Try ?shape_theme=brutal: it re-inks all five from tokens alone." do %>
+        note: "The engine keeps its own artwork in the use-site fallback rather than declaring it on the control, so setting one of the five properties anywhere above the control — :root, a theme block, or a single element as below — retints it. data-mark still wins over a global default, because an explicit opt-in should. Ink belongs to a color theme, not a shape theme: the stock white mark is sized to a dark --primary, and re-inking it black is only right when the palette makes the fill light. ?shape_theme=brutal deliberately leaves the marks alone." do %>
     <%= specimen_grid do %>
       <%= specimen_cell "custom checkbox mark" do %>
         <input data-component="checkbox" type="checkbox" checked
