@@ -222,9 +222,16 @@ Add these to your `app/assets/tailwind/application.css`:
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* Global border color */
-* {
-  border-color: var(--color-border);
+/* Global border color.
+ *
+ * Keep this inside @layer base. Unlayered CSS outranks every layer at any
+ * specificity, so an unlayered `*` would override the border-color of every
+ * component in @layer components — the tinted borders on the alert and toast
+ * variants would silently fall back to --border. */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
 }
 ```
 
