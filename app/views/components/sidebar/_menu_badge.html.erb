@@ -1,0 +1,10 @@
+<%# locals: (text: nil, content: nil, css_classes: "", **html_options) %>
+<%# Pinned inside a menu_item, next to the button or link. It is decorative
+    for pointer users — the CSS makes it pointer-events-none — so keep the
+    count meaningful in the button's own label when it matters. %>
+<% merged_data = merge_component_data(html_options,
+    sidebar_part: "menu-badge"
+  ) %>
+<%= content_tag :span, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= text || content || yield %>
+<% end %>

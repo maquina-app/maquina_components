@@ -403,4 +403,77 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     assert_includes content, "<em>Try again</em>"
     assert_includes block, "Block title"
   end
+
+  # These six parts were styled by the engine with no partial emitting the
+  # hook, so the rules read as API that nothing could reach. See
+  # test/stylesheets/css_hooks_test.rb.
+  test "drawer section and separator emit their styling hooks" do
+    section = view.render("components/drawer/section") { "Body" }
+    separator = view.render("components/drawer/separator")
+
+    assert_includes section, %(data-drawer-part="section")
+    assert_includes section, "Body"
+    assert_includes separator, %(data-drawer-part="separator")
+    # the divider is the separator primitive, so it keeps its 1px track
+    assert_includes separator, %(data-component="separator")
+    assert_includes separator, %(data-orientation="horizontal")
+  end
+
+  test "sidebar separator renders the separator primitive with the sidebar part" do
+    separator = view.render("components/sidebar/separator",
+      css_classes: "my-1", data: {testid: "sep"})
+
+    assert_includes separator, %(data-sidebar-part="separator")
+    assert_includes separator, %(data-component="separator")
+    assert_includes separator, %(data-testid="sep")
+    assert_includes separator, "my-1"
+    refute_includes separator, "{" # regression: options hash rendered as content
+  end
+
+  test "sidebar menu_badge renders its text and hook" do
+    text = view.render("components/sidebar/menu_badge", text: "24")
+    block = view.render("components/sidebar/menu_badge") { "9+" }
+
+    assert_includes text, %(data-sidebar-part="menu-badge")
+    assert_includes text, "24"
+    assert_includes block, "9+"
+  end
+
+  test "sidebar menu_action renders a button by default and a link with url" do
+    button = view.render("components/sidebar/menu_action", label: "More options")
+    link = view.render("components/sidebar/menu_action", label: "More options", url: "/settings")
+
+    assert_includes button, %(data-sidebar-part="menu-action")
+    assert_includes button, %(<button)
+    assert_includes button, %(type="button")
+    assert_includes button, %(aria-label="More options")
+    assert_includes button, "More options</span>"
+    refute_includes button, "<a "
+
+    assert_includes link, %(<a )
+    assert_includes link, %(href="/settings")
+    assert_includes link, %(data-sidebar-part="menu-action")
+  end
+
+  test "sidebar menu_action opts into hover-only visibility" do
+    hover = view.render("components/sidebar/menu_action", label: "More", show_on_hover: true)
+    always = view.render("components/sidebar/menu_action", label: "More")
+
+    assert_includes hover, %(data-show-on-hover="true")
+    refute_includes always, "data-show-on-hover"
+  end
+
+  test "sidebar group_action renders a button by default and a link with url" do
+    button = view.render("components/sidebar/group_action", label: "Add project")
+    link = view.render("components/sidebar/group_action", label: "Add project", url: "/projects/new")
+
+    assert_includes button, %(data-sidebar-part="group-action")
+    assert_includes button, %(<button)
+    assert_includes button, %(aria-label="Add project")
+    refute_includes button, "<a "
+
+    assert_includes link, %(<a )
+    assert_includes link, %(href="/projects/new")
+    assert_includes link, %(data-sidebar-part="group-action")
+  end
 end

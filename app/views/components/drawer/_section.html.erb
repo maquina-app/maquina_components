@@ -1,0 +1,7 @@
+<%# locals: (css_classes: "", **html_options) %>
+<% merged_data = merge_component_data(html_options,
+    drawer_part: :section
+  ) %>
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= yield %>
+<% end %>

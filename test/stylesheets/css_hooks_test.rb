@@ -27,20 +27,12 @@ class CssHooksTest < ActiveSupport::TestCase
     "previews" => "#{REPO_ROOT}/test/dummy/app/views/**/*.erb"
   }.freeze
 
-  # Hooks that are styled and written nowhere as of 0.6.0 — dead rules inherited
-  # from earlier releases, kept only so this guard can pass while it blocks new
-  # ones. This list may shrink; it must never grow. Deleting the rule (or adding
-  # the partial that emits it) is the fix.
-  KNOWN_DEAD_HOOKS = [
-    ["drawer-part", "section"],
-    ["drawer-part", "separator"],
-    ["sidebar-part", "group-action"],
-    ["sidebar-part", "menu-action"],
-    ["sidebar-part", "menu-badge"],
-    ["sidebar-part", "menu-skeleton"],
-    ["sidebar-part", "rail"],
-    ["sidebar-part", "separator"]
-  ].freeze
+  # Hooks that are styled and written nowhere — dead rules kept only so this
+  # guard can pass while it blocks new ones. Empty as of 0.6.0: every inherited
+  # entry either gained the partial that emits it or had its rule deleted.
+  # This list may shrink; it must never grow. Deleting the rule (or adding the
+  # partial that emits it) is the fix.
+  KNOWN_DEAD_HOOKS = [].freeze
 
   test "every styled component and part hook is emitted somewhere" do
     orphans = styled_hooks.reject { |attribute, value| emitted?(attribute, value) } - KNOWN_DEAD_HOOKS

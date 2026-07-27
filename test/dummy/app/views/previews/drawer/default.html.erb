@@ -16,21 +16,24 @@
       <% end %>
 
       <%= render "components/drawer/content" do %>
-        <div class="space-y-4">
+        <%= render "components/drawer/section" do %>
           <p class="text-sm">
             This is a drawer component that slides in from the right side of the
             screen. It provides additional content without leaving the current page.
           </p>
-          <div class="space-y-2">
-            <p class="text-sm font-medium">Features:</p>
-            <ul class="text-sm text-muted-foreground list-disc pl-4 space-y-1">
-              <li>Keyboard shortcut support (CTRL + D)</li>
-              <li>Cookie state persistence</li>
-              <li>Backdrop click to close</li>
-              <li>Escape key to close</li>
-            </ul>
-          </div>
-        </div>
+        <% end %>
+
+        <%= render "components/drawer/separator" %>
+
+        <%= render "components/drawer/section" do %>
+          <p class="text-sm font-medium">Features:</p>
+          <ul class="text-sm text-muted-foreground list-disc pl-4 space-y-1">
+            <li>Keyboard shortcut support (CTRL + D)</li>
+            <li>Cookie state persistence</li>
+            <li>Backdrop click to close</li>
+            <li>Escape key to close</li>
+          </ul>
+        <% end %>
       <% end %>
 
       <%= render "components/drawer/footer" do %>

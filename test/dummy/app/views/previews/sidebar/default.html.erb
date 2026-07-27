@@ -25,21 +25,34 @@
 
     <%= render "components/sidebar/content" do %>
       <%= render "components/sidebar/group", title: "Navigation" do %>
+        <%# The group action sits beside the group label, pushed right by ml-auto. %>
+        <%= render "components/sidebar/group_action", label: "Add navigation item" %>
+
         <%= render "components/sidebar/menu" do %>
           <%= render "components/sidebar/menu_item" do %>
             <%= render "components/sidebar/menu_button",
                   url: "#", icon_name: :layout_dashboard, title: "Dashboard", active: true %>
           <% end %>
+          <%# The badge pins to the right edge of the item, over the button. %>
           <%= render "components/sidebar/menu_item" do %>
             <%= render "components/sidebar/menu_button",
                   url: "#", icon_name: :inbox, title: "Inbox" %>
+            <%= render "components/sidebar/menu_badge", text: "24" %>
           <% end %>
+          <%#
+            The action is a sibling of the button inside the same menu_item:
+            that nesting is what makes menu-item:has(menu-action) reserve the
+            button's right padding, so the two never overlap.
+          %>
           <%= render "components/sidebar/menu_item" do %>
             <%= render "components/sidebar/menu_button",
                   url: "#", icon_name: :calendar, title: "Calendar" %>
+            <%= render "components/sidebar/menu_action", label: "Calendar options" %>
           <% end %>
         <% end %>
       <% end %>
+
+      <%= render "components/sidebar/separator" %>
 
       <%= render "components/sidebar/group", title: "Settings" do %>
         <%= render "components/sidebar/menu" do %>

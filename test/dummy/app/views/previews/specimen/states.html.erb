@@ -242,6 +242,52 @@
     <% end %>
   <% end %>
 
+  <%= specimen_section "Sidebar menu parts", note: "Badge and action pin inside the menu item; the item with an action reserves the button's right padding." do %>
+    <%= specimen_grid do %>
+      <%= specimen_cell "plain button" do %>
+        <div class="w-52 rounded-md border p-1">
+          <%= render "components/sidebar/menu" do %>
+            <%= render "components/sidebar/menu_item" do %>
+              <%= render "components/sidebar/menu_button", url: "#", icon_name: :inbox, title: "Inbox" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "with badge" do %>
+        <div class="w-52 rounded-md border p-1">
+          <%= render "components/sidebar/menu" do %>
+            <%= render "components/sidebar/menu_item" do %>
+              <%= render "components/sidebar/menu_button", url: "#", icon_name: :inbox, title: "Inbox" %>
+              <%= render "components/sidebar/menu_badge", text: "24" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "with action" do %>
+        <div class="w-52 rounded-md border p-1">
+          <%= render "components/sidebar/menu" do %>
+            <%= render "components/sidebar/menu_item" do %>
+              <%= render "components/sidebar/menu_button", url: "#", icon_name: :calendar, title: "Calendar" %>
+              <%= render "components/sidebar/menu_action", label: "Calendar options" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "group action" do %>
+        <div class="w-52 rounded-md border">
+          <%= render "components/sidebar/group", title: "Projects" do %>
+            <%= render "components/sidebar/group_action", label: "Add project" %>
+          <% end %>
+        </div>
+      <% end %>
+      <%= specimen_cell "separator" do %>
+        <div class="w-52 rounded-md border py-2">
+          <%= render "components/sidebar/separator" %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
   <%= specimen_section "Table row" do %>
     <%= render "components/table" do %>
       <%= render "components/table/header" do %>

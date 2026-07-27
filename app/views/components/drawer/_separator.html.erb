@@ -1,0 +1,11 @@
+<%# locals: (orientation: :horizontal, css_classes: "", **html_options) %>
+<%# Renders the separator primitive so the divider keeps its 1px track, then
+    tags it with the drawer part that re-spaces it for the panel. %>
+<% merged_data = merge_component_data(html_options,
+    drawer_part: :separator
+  ) %>
+<%= render "components/separator",
+      orientation: orientation,
+      css_classes: css_classes,
+      data: merged_data,
+      **html_options %>
