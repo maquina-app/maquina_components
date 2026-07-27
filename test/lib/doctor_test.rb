@@ -75,6 +75,19 @@ class DoctorTest < ActiveSupport::TestCase
     assert_match(/--checkbox-mark-image/, breaking.first.suggestion)
   end
 
+  # Assigning a data URI to a mark property is the 0.6.0 pattern the previous
+  # test recommends. Reporting it would tell people their correct code is broken.
+  test "does not flag a data URI assigned to a mark property" do
+    write "app/assets/tailwind/application.css", <<~CSS
+      :root {
+        --checkbox-mark-image: url("data:image/svg+xml,%3csvg%3e%3c/svg%3e");
+        --select-chevron-image: url("data:image/svg+xml,%3csvg%3e%3c/svg%3e");
+      }
+    CSS
+
+    assert_empty doctor.findings.select { |finding| finding.rule == "restated-svg-uri" }
+  end
+
   test "flags hardcoded radius and focus-ring shadows on component selectors" do
     write "app/assets/stylesheets/overrides.css", <<~CSS
       [data-component="button"] {

@@ -48,6 +48,9 @@ module MaquinaComponents
     PRESENCE_ACTIVE = /\[data-active\](?!\s*[~|^$*]?=)/
     TAILWIND_ACTIVE_VARIANT = /data-\[active\]/
     SVG_DATA_URI = /data:image\/svg\+xml/
+    # Assigning a data URI to one of the five mark properties IS the 0.6.0
+    # pattern, so it must not be reported as a restated rule.
+    MARK_TOKEN_ASSIGNMENT = /--(?:checkbox-mark|checkbox-indeterminate|radio-mark|switch-thumb|select-chevron)-image\s*:/
     RADIUS_DECL = /(?:border-radius\s*:|@apply[^;{}]*\brounded(?:-[a-z0-9\[\].\/-]+)?\b)/
     SHADOW_DECL = /(?:box-shadow\s*:|@apply[^;{}]*\b(?:shadow|ring)(?:-[a-z0-9\[\].\/-]+)?\b)/
     FOCUS_SELECTOR = /:focus(-visible|-within)?\b/
@@ -241,7 +244,7 @@ module MaquinaComponents
           "data-[active] variant relies on an attribute 0.6.0 no longer emits when false.")
       end
 
-      if SVG_DATA_URI.match?(line)
+      if SVG_DATA_URI.match?(line) && !MARK_TOKEN_ASSIGNMENT.match?(line)
         add(path, index, line, :breaking, "restated-svg-uri",
           "0.6.0 exposes these marks as overridable custom properties:\n" \
           "--checkbox-mark-image, --checkbox-indeterminate-image, --radio-mark-image,\n" \
