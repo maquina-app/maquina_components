@@ -43,6 +43,7 @@ If you're open to trying maquina_components and providing feedback, you're welco
 - **Stimulus controllers** only used where interactivity is needed
 - **Dark mode** support via CSS variables
 - **shadcn/ui theming** convention (works with their color system)
+- **Design tokens** for shape, focus rings, elevation and weight — [theming guide](docs/theming.md)
 - **Composable** — small partials you can combine freely
 
 ![Test dummy app with light mode](/imgs/light.png)
@@ -133,6 +134,21 @@ This installs `index`, `show`, `new`, `edit`, `_form`, and partial templates to
 generates views built with maquina_components. Customize the templates as needed.
 
 **Prerequisite:** [tailwindcss-rails](https://github.com/rails/tailwindcss-rails) must be installed first.
+
+### Upgrading
+
+Re-running the install generator is safe — it is idempotent and never rewrites
+your palette. After upgrading, run the doctor:
+
+```bash
+bin/rails maquina:doctor
+```
+
+It scans your CSS, views and JavaScript and prints file:line for every pattern
+the new release changes, grouped `BREAKING` / `REVIEW` / `CLEANUP`. It is
+advisory: it never edits anything and never fails a build. See
+[docs/upgrading.md](docs/upgrading.md) for what changed and how to keep the
+previous look.
 
 ---
 
@@ -381,6 +397,22 @@ flash[:success] = "Changes saved successfully!"
 
 Components use CSS variables following the [shadcn/ui theming convention](https://ui.shadcn.com/docs/theming).
 
+Colors are not the only variables: shape, focus rings, elevation and weight are
+design tokens too, so reshaping the whole library is a short list of
+declarations rather than override CSS fighting the cascade.
+
+```css
+:root {
+  --control-radius: 0;   /* buttons, inputs, badges, menu items */
+  --surface-radius: 0;   /* cards, popovers, toasts, alerts */
+  --elevation-raised: none;
+}
+```
+
+**[Theming guide](docs/theming.md)** — the full token list, flat and brutalist
+themes in a dozen lines each, recoloring the control marks, dark mode, and how
+to pin a single component without redefining a role.
+
 The install generator adds default theme variables. Customize them in `app/assets/tailwind/application.css`:
 
 ```css
@@ -469,10 +501,12 @@ cd test/dummy
 bin/rails server
 ```
 
-Run tests:
+Run tests (build the dummy app's CSS first — the stylesheet guards assert on the
+compiled output):
 
 ```bash
-bin/rails test
+cd test/dummy && bin/rails tailwindcss:build && cd -
+bin/test
 ```
 
 ---

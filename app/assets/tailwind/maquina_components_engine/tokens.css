@@ -5,9 +5,14 @@
  * these tokens give the rest of the engine the same treatment, so theming is a
  * short list of declarations instead of override CSS fighting the cascade.
  *
- * `static` is required, not stylistic: the engine reads these from hand-written
- * var() calls and never from a utility class, and without `static` Tailwind
- * tree-shakes theme variables that no utility references.
+ * `static` is deliberate. The engine reads these from hand-written var() calls
+ * and never from a utility class, so they are exactly the kind of variable
+ * Tailwind prunes when nothing references them. Measured against Tailwind
+ * 4.1.16: dropping `static` leaves the output byte-identical *at these names*,
+ * because pruning applies to its own namespaces — rename --control-radius to
+ * --radius-control and it disappears without `static`. Keep `static` anyway; it
+ * makes the guarantee independent of the names and of Tailwind's version.
+ * test/stylesheets/compiled_css_test.rb asserts the tokens reach the output.
  *
  * `@theme` also emits into `@layer theme`, which loses unconditionally to a
  * host's unlayered `:root` — so an engine default can never clobber a

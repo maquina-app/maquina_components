@@ -166,6 +166,51 @@ Related, and also reported by the doctor as `breaking`: a sidebar item now omits
 
 ---
 
+### 6. Surfaces above the page stop painting the page color
+
+An alert, a calendar and the date-picker popover painted `--background` — the
+page. Anything floating above the page is a surface, so they now paint `--card`
+or `--popover`.
+
+If your theme sets those to the same value, nothing moves. That is exactly why
+this went unnoticed: in the default light theme all three are white. In the
+default dark theme they separate.
+
+```
+alert, calendar background (dark)   oklch(0.13 0.028 261) → oklch(0.178 0.032 260)
+```
+
+Measured the old way, the calendar sat at ΔL 0.00 against the page — an
+invisible surface. Related: the `outline` and `ghost` buttons and the active
+pagination link now paint `transparent` instead of `--background`, so they work
+inside a card, which they previously did not.
+
+To pin the old behavior, point the surface tokens at the page:
+
+```css
+:root {
+  --popover: var(--background);
+  --card: var(--background);
+}
+```
+
+> Checking surface-against-surface contrast? Use ΔL on the CIE L\* axis, not a
+> WCAG ratio. WCAG contrast is a text metric; on two adjacent large surfaces it
+> reads a misleading ~1.1 and tells you nothing.
+
+### 7. Tinted badges lose a stray hairline
+
+Badge's `success` / `warning` / `destructive` variants have always set
+`border-color: transparent`. The unlayered `*` shim from step 1 was overriding
+it with `--border`, so those badges carried a grey 1px outline they were never
+meant to have. Once the shim is layered, the intended transparent border shows
+through.
+
+Nothing to do — but if you had compensated for the hairline elsewhere, remove
+the compensation.
+
+---
+
 ## Appendix: keeping the 0.5.1 look
 
 Everything above is a value, so a single token block reverts the visual changes.
