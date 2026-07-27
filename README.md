@@ -2,6 +2,19 @@
 
 UI components for Ruby on Rails, built with ERB, TailwindCSS 4.0, and Stimulus.
 
+> [!IMPORTANT]
+> **0.6.0 has breaking changes.** Engine CSS moved into `@layer components`,
+> which changes what wins in your app. Most notably, the `* { border-color }`
+> shim in the `theme.css` you already installed must be wrapped in
+> `@layer base` — unlayered, it now outranks every engine rule and flattens
+> the tinted alert, toast and badge borders. That one affects every existing
+> app and fails silently.
+>
+> Before upgrading, read [docs/upgrading.md](docs/upgrading.md). After
+> upgrading, run `bin/rails maquina:doctor` — it prints file:line for every
+> pattern the release changes and never edits anything. An appendix in the
+> upgrading guide restores the 0.5.1 look with one token block.
+
 ---
 
 ## Why This Exists
@@ -135,7 +148,14 @@ generates views built with maquina_components. Customize the templates as needed
 
 **Prerequisite:** [tailwindcss-rails](https://github.com/rails/tailwindcss-rails) must be installed first.
 
-### Upgrading
+---
+
+## Upgrading
+
+**0.5.1 → 0.6.0 is a breaking upgrade** — see the note at the top of this
+README and [docs/upgrading.md](docs/upgrading.md) for the seven changes, each
+with measurements, plus an appendix that reverts every visual change with one
+token block.
 
 Re-running the install generator is safe — it is idempotent and never rewrites
 your palette. After upgrading, run the doctor:

@@ -50,7 +50,7 @@ See [docs/upgrading.md](docs/upgrading.md) for the full migration, including an 
 ### Docs
 
 - [docs/theming.md](docs/theming.md): role tokens, flat and brutalist themes in a dozen lines each, recoloring control marks, dark mode, pinning one component
-- [docs/upgrading.md](docs/upgrading.md): the five breaking changes with measurements, and an appendix that restores the 0.5.1 look
+- [docs/upgrading.md](docs/upgrading.md): the seven breaking changes with measurements, and an appendix that restores the 0.5.1 look
 
 ## [0.5.1] - 2026-07-20
 
