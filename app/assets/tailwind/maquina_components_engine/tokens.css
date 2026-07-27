@@ -59,3 +59,35 @@
   --label-weight: 500;
   --value-weight: 700;
 }
+
+/* ----- Engine-internal defaults that differ by color scheme -----
+ *
+ * NOT public API. Set the public token instead (--control-fill,
+ * --select-chevron-image); these only supply the value it falls back to.
+ *
+ * They live on an inherited scope rather than on the control, and that is the
+ * whole point. An element's own custom property beats an inherited one, so a
+ * dark-mode value declared on `[data-component="select"]` would sit *above* a
+ * consumer's `:root` override and quietly win — the public token would work in
+ * light mode and be ignored in dark. Declaring the default here instead keeps
+ * the public token first in every var() chain, in both schemes.
+ *
+ * `.dark` follows `:root` on purpose: both are (0,1,0) on the same element, so
+ * source order decides, and both are ours.
+ *
+ * A component stylesheet should never reference `.dark` — if a component needs
+ * a different value in dark mode, that is a missing token, not a missing
+ * selector. test/stylesheets/css_conventions_test.rb enforces it.
+ */
+:root {
+  --maquina-control-fill-default: transparent;
+  --maquina-select-fill-default: var(--background);
+  --maquina-select-chevron-default: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}
+
+.dark {
+  --maquina-control-fill-default: color-mix(in oklch, var(--input) 30%, transparent);
+  --maquina-select-fill-default: color-mix(in oklch, var(--input) 30%, transparent);
+  /* gray-500 alone is low-contrast on a dark field */
+  --maquina-select-chevron-default: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+}

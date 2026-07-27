@@ -330,6 +330,31 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     assert_includes view.render("components/drawer/provider") { "" }, %(id="drawer-provider")
   end
 
+  # drawer.css styled these two parts from the start, but no partial emitted
+  # them, so the documented usage was a hand-rolled <h2 class="text-lg
+  # font-semibold"> duplicating a rule it could not reach.
+  test "drawer title and description emit their styling hooks" do
+    title = view.render("components/drawer/title", text: "Filters")
+    description = view.render("components/drawer/description", text: "Narrow the results")
+
+    assert_includes title, %(data-drawer-part="title")
+    assert_includes title, "Filters"
+    assert_includes title, "<h2"
+    assert_includes description, %(data-drawer-part="description")
+    assert_includes description, "Narrow the results"
+    assert_includes description, "<p"
+  end
+
+  test "drawer title accepts a different heading level and extra data" do
+    rendered = view.render("components/drawer/title",
+      text: "Filters", tag: :h3, css_classes: "truncate", data: {testid: "drawer-title"})
+
+    assert_includes rendered, "<h3"
+    assert_includes rendered, %(class="truncate")
+    assert_includes rendered, %(data-testid="drawer-title")
+    assert_includes rendered, %(data-drawer-part="title")
+  end
+
   test "label renders required indicator hook and for attribute" do
     required = view.render("components/label", text: "Email", for_id: "user_email", required: true)
     plain = view.render("components/label", text: "Name")

@@ -11,8 +11,8 @@
 
     <%= render "components/drawer", id: "drawer", state: :closed, side: :right do %>
       <%= render "components/drawer/header" do %>
-        <h3 class="text-lg font-semibold">Drawer Title</h3>
-        <p class="text-sm text-muted-foreground">Slide-out panel example</p>
+        <%= render "components/drawer/title", text: "Drawer Title", tag: :h3 %>
+        <%= render "components/drawer/description", text: "Slide-out panel example" %>
       <% end %>
 
       <%= render "components/drawer/content" do %>

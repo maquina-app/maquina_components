@@ -1,0 +1,6 @@
+<%# locals: (text: nil, content: nil, tag: :h2, css_classes: "", **html_options) %>
+<% merged_data = merge_component_data(html_options, drawer_part: :title) %>
+
+<%= content_tag tag, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%= text || content %>
+<% end %>

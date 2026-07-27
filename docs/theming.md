@@ -134,14 +134,14 @@ attribute fixes it with no CSS at all:
 control, so an explicit per-instance opt-in beats a global default — which is the
 right way round.
 
-The select chevron has one more scoped default: the engine re-inks it under
-`.dark`, because gray-500 alone is low-contrast on a dark field. A single `:root`
-override therefore applies in light mode only; give dark mode its own line.
+The select chevron carries a different default per color scheme, because
+gray-500 alone is low-contrast on a dark field. That default is inherited rather
+than declared on the control, so one `:root` line still retints it in both
+schemes. If you want a different ink per scheme, say so explicitly:
 
 ```css
-.dark [data-component="select"] {
-  --select-chevron-image: url("…");
-}
+:root      { --select-chevron-image: url("…dark ink…"); }
+.dark      { --select-chevron-image: url("…light ink…"); }
 ```
 
 <!-- preview:marks height:420 -->

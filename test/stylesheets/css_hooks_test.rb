@@ -34,10 +34,8 @@ class CssHooksTest < ActiveSupport::TestCase
   KNOWN_DEAD_HOOKS = [
     ["alert-part", "icon"],
     ["breadcrumb-part", "dropdown"],
-    ["drawer-part", "description"],
     ["drawer-part", "section"],
     ["drawer-part", "separator"],
-    ["drawer-part", "title"],
     ["sidebar-part", "group-action"],
     ["sidebar-part", "menu-action"],
     ["sidebar-part", "menu-badge"],

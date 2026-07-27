@@ -55,8 +55,30 @@ module CssSource
     end
 
     # Every custom property declared in tokens.css's @theme block.
+    # Public role tokens: the ones declared inside `@theme`. Excludes the
+    # engine-internal `--maquina-*` defaults, which live on :root/.dark
+    # precisely so they stay inheritable rather than landing in @layer theme.
     def declared_tokens
-      @declared_tokens ||= uncomment(tokens_css).scan(/^\s*(--[a-z0-9-]+)\s*:/).flatten.to_set
+      @declared_tokens ||= theme_block.scan(/^\s*(--[a-z0-9-]+)\s*:/).flatten.to_set
+    end
+
+    def theme_block
+      @theme_block ||= begin
+        css = uncomment(tokens_css)
+        start = css.index("@theme")
+        raise "no @theme block in tokens.css" unless start
+
+        depth = 0
+        finish = nil
+        css[start..].each_char.with_index do |char, offset|
+          depth += 1 if char == "{"
+          if char == "}"
+            depth -= 1
+            (finish = start + offset) && break if depth.zero?
+          end
+        end
+        css[start..finish]
+      end
     end
 
     # Blocks of one stylesheet, in source order.

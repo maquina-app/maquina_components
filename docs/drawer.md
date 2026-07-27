@@ -10,7 +10,7 @@
 <%%= render "components/drawer/provider", default_open: drawer_open? do %>
   <%%= render "components/drawer", state: drawer_state do %>
     <%%= render "components/drawer/header" do %>
-      <h2 class="text-lg font-semibold">Drawer Title</h2>
+      <%%= render "components/drawer/title", text: "Drawer Title" %>
       <%%= render "components/drawer/close" %>
     <%% end %>
 
@@ -84,6 +84,8 @@
 | Partial | Description |
 |---------|-------------|
 | drawer/header | Top section with title and close button |
+| drawer/title | Heading inside the header. `text:` / `content:`, `tag:` (default `:h2`) |
+| drawer/description | Supporting line under the title. `text:` / `content:`, `tag:` (default `:p`) |
 | drawer/content | Scrollable middle section |
 | drawer/footer | Bottom section for actions |
 | drawer/trigger | Toggle button for drawer |
