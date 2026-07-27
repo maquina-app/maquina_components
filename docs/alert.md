@@ -70,6 +70,24 @@
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
+#### Custom icon markup
+
+`icon:` renders a built-in glyph as the alert's first child, which is what the
+variant icon colors key off. If you need your own markup instead — an inline
+SVG, an icon font, an `<img>`, or an icon that is not the first child — mark it
+with `data-alert-part="icon"` and it picks up the same sizing and per-variant
+color:
+
+```erb
+<%%= render "components/alert", variant: :success do %>
+  <span data-alert-part="icon"><%%= image_tag "check.svg" %></span>
+  <%%= render "components/alert/title", text: "Saved" %>
+<%% end %>
+```
+
+Pass `data: { has_icon: true }` alongside it so the alert reserves the left
+padding it normally adds for `icon:`.
+
 ### Alert Title
 
 | Parameter | Type | Default | Description |

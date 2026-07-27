@@ -32,8 +32,6 @@ class CssHooksTest < ActiveSupport::TestCase
   # ones. This list may shrink; it must never grow. Deleting the rule (or adding
   # the partial that emits it) is the fix.
   KNOWN_DEAD_HOOKS = [
-    ["alert-part", "icon"],
-    ["breadcrumb-part", "dropdown"],
     ["drawer-part", "section"],
     ["drawer-part", "separator"],
     ["sidebar-part", "group-action"],
@@ -101,14 +99,24 @@ class CssHooksTest < ActiveSupport::TestCase
   # (`card_part: :title`, `"combobox-part": "option"`) or as literal HTML
   # (`data-card-part="title"`), so accept both spellings of both.
   def emitted?(attribute, value)
-    names = [attribute, attribute.tr("-", "_")].uniq
+    names = [attribute, attribute.tr("-", "_"), camelize(attribute)].uniq
     values = [value, value.tr("-", "_")].uniq
 
     emitter_sources.each_value.any? do |source|
       names.product(values).any? do |name, candidate|
+        # Ruby/ERB hash form: sidebar_part: :rail / "sidebar-part" => "rail"
         source.match?(/["']?#{Regexp.escape(name)}["']?\s*:\s*[:"']?#{Regexp.escape(candidate)}\b/) ||
-          source.match?(/data-#{Regexp.escape(attribute)}=\\?["']#{Regexp.escape(value)}/)
+          # literal attribute in markup
+          source.match?(/data-#{Regexp.escape(attribute)}=\\?["']#{Regexp.escape(value)}/) ||
+          # Stimulus/JS form: el.dataset.breadcrumbPart = "dropdown"
+          source.match?(/dataset\.#{Regexp.escape(camelize(name))}\s*=\s*["']#{Regexp.escape(candidate)}["']/)
       end
     end
+  end
+
+  # data-breadcrumb-part -> breadcrumbPart, matching the DOM dataset API.
+  def camelize(attribute)
+    head, *rest = attribute.split("-")
+    [head, *rest.map(&:capitalize)].join
   end
 end
