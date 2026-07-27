@@ -1,4 +1,13 @@
+<%# align: :end anchors the menu's right edge to the trigger's, so the menu
+    opens leftward. That only makes sense with the trigger at the right of its
+    row — a table row's actions, a card header. Left-aligned, a right-aligned
+    menu runs off the edge, because the engine positions with plain CSS and has
+    no collision detection. %>
 <%= preview_container width: :md do %>
+  <div class="flex items-center justify-between gap-3 rounded-lg border p-3"
+       style="border-color: var(--border)">
+    <span class="text-sm font-medium">Project settings</span>
+
   <%= render "components/dropdown_menu" do %>
     <%= render "components/dropdown_menu/trigger", as_child: true do %>
       <button type="button"
@@ -20,4 +29,5 @@
       <%= render "components/dropdown_menu/item", href: "#", variant: :destructive do %>Delete<% end %>
     <% end %>
   <% end %>
+  </div>
 <% end %>
