@@ -80,12 +80,20 @@
  * selector. test/stylesheets/css_conventions_test.rb enforces it.
  */
 :root {
+  /* Tells the browser which scheme the page is in, so OS-drawn chrome follows:
+     the native <select> option list, scrollbars, spinners, the caret. It is the
+     only lever a page has over those — they are drawn outside the document and
+     ignore its CSS. Without it a dark page pops a light option menu. */
+  color-scheme: light;
+
   --maquina-control-fill-default: transparent;
   --maquina-select-fill-default: var(--background);
   --maquina-select-chevron-default: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
 }
 
 .dark {
+  color-scheme: dark;
+
   --maquina-control-fill-default: color-mix(in oklch, var(--input) 30%, transparent);
   --maquina-select-fill-default: color-mix(in oklch, var(--input) 30%, transparent);
   /* gray-500 alone is low-contrast on a dark field */
