@@ -2,6 +2,64 @@
 
 > What breaks between releases, and what to do about it.
 
+## 0.6.1 → 0.7.0
+
+No breaking changes and nothing to migrate — an accessibility release. One
+deprecation, and a good deal of host-side code you can now delete.
+
+```bash
+bundle update maquina-components
+```
+
+### What changes on its own
+
+- **Focus rings appear instantly.** They used to fade in over 150ms from the
+  control's own text colour, because every component painting a token ring also
+  carried `transition-colors` and Tailwind v4 folds `outline-color` into that
+  utility. On a filled variant that meant a near-white ring for the first frames
+  — no visible focus indicator on the highest-stakes controls in a page. If you
+  built your own components against `--focus-ring-*`, they have the same latent
+  bug; see [theming](theming.md#never-transition-outline-color).
+- **Two triggers gain the chevron they never had.** The dropdown menu trigger and
+  the combobox trigger both asked for icon names the engine did not ship, and
+  rendered nothing. Any `as_child` trigger you wrote *purely* to supply a chevron
+  can collapse back to the default path — but keep the ones carrying their own
+  content.
+- **A collapsed off-canvas sidebar leaves the tab order,** and below 768px the
+  sidebar reserves no layout. Both are structural now; see
+  [sidebar](sidebar.md#accessibility).
+- **Breadcrumbs collapse on available space.** The width measurement never
+  actually fired before — the last item's flex-shrink absorbed the overflow, so
+  the row reported a perfect fit at every width.
+
+### Deprecated: `collapse_after`
+
+`responsive_breadcrumbs(..., collapse_after: 3)` still accepts the argument and
+now ignores it. It existed only to fake collapsing while the measurement was
+broken, and it collapsed on item count alone — so it also collapsed a trail with
+plenty of room. Delete it from your calls; it goes away in 0.8.0.
+
+```erb
+<%%# before %>
+<%%= responsive_breadcrumbs(links, current, collapse_after: 3) %>
+
+<%%# after %>
+<%%= responsive_breadcrumbs(links, current) %>
+```
+
+### Workarounds you can delete
+
+Several apps carry host-side code for the bugs above. Deleting it is the right
+outcome, not keeping it:
+
+- a restated focus ring on buttons — especially a `box-shadow` one on a filled
+  variant, which collides with the elevation each variant declares and is clipped
+  by any `overflow-hidden` ancestor
+- a low-specificity `:focus-visible` baseline standing in for engine rings that
+  "did not paint", and any rule restoring the ring on breadcrumb links
+- a controller setting `inert` on the sidebar when it is off-canvas
+- an unlayered `@media (width < 768px)` rule forcing the sidebar gap to 0
+
 ## 0.5.1 → 0.6.0
 
 Start here, then run the scanner:
