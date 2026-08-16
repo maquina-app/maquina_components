@@ -297,6 +297,51 @@ class CssConventionsTest < ActiveSupport::TestCase
     MESSAGE
   end
 
+  # The responsive breadcrumb measures whether it fits by reading scrollWidth
+  # against clientWidth on the list. That only works while the last item is
+  # pinned to its natural width -- otherwise flex resolves the deficit by
+  # shrinking the current-page label instead of overflowing the line, and
+  # scrollWidth equals clientWidth at every width. Measured before the fix:
+  # content wanting 430px in a 300px box reported zero overflow, so the bar
+  # never collapsed and a count-based `collapse_after` had to be invented to
+  # fake it. The class below is the contract between the controller and the
+  # stylesheet, and a rename on either side restores that bug silently.
+  test "the breadcrumb measuring class is defined in CSS and toggled by the controller" do
+    controller = File.read(File.expand_path("../../app/javascript/controllers/breadcrumb_controller.js", __dir__))
+    declared = controller[/MEASURING_CLASS\s*=\s*"([a-z0-9-]+)"/, 1]
+
+    assert declared, "breadcrumb_controller.js no longer declares a MEASURING_CLASS"
+
+    css = CssSource.stylesheets.fetch("breadcrumbs.css")
+
+    assert_includes CssSource.uncomment(css), ".#{declared}",
+      "breadcrumbs.css defines no rule for .#{declared}, so entering measuring mode changes nothing and " \
+      "the fit check silently reads a bar that always appears to fit"
+
+    measuring_rule = CssSource.rules("breadcrumbs.css").find do |rule|
+      rule.selector.include?(".#{declared}")
+    end
+
+    assert measuring_rule, "no rule selects .#{declared}"
+    assert_equal "0", measuring_rule.declarations.to_h["flex-shrink"]&.strip,
+      "measuring mode must pin the last item with flex-shrink: 0; without it the label still absorbs the overflow"
+  end
+
+  test "the breadcrumb controller re-fits on container resize, not window resize" do
+    controller = File.read(File.expand_path("../../app/javascript/controllers/breadcrumb_controller.js", __dir__))
+
+    assert_includes controller, "ResizeObserver",
+      "the breadcrumb must observe its own container"
+
+    refute_match(/addEventListener\(\s*['"]resize['"]/, controller, <<~MESSAGE)
+      A window resize listener cannot see the container changing width on its own,
+      which is the common case in this engine: collapsing the sidebar re-flows the
+      header without resizing the window, and the breadcrumb would keep a stale
+      collapsed state until something else happened to fire a resize. Observe the
+      list element instead.
+    MESSAGE
+  end
+
   test "every rule lives in @layer components except the documented scroll lock" do
     offenders = []
 

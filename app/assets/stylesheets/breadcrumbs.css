@@ -172,15 +172,36 @@
     @apply shrink-0 whitespace-nowrap;
   }
 
-  /* Allow the last item (current page) to truncate gracefully instead of hard-clipping */
+  /* The last item (current page) is the overflow sponge of last resort: when a
+     single long title cannot be helped by collapsing anything, it truncates
+     rather than pushing the bar out of its box. */
   :where([data-controller="breadcrumb"]) [data-breadcrumb-part="item"]:where(:last-child) {
     @apply shrink min-w-0 overflow-hidden;
+  }
+
+  /* display:block, not the inline-flex the other parts get. text-overflow has
+     no effect on a flex container's own box, so this rule used to hard-clip
+     mid-word -- "A Very Long Current Pag" -- while claiming to truncate
+     gracefully. A block box renders the ellipsis. An icon inside still flows
+     inline and keeps its margin. */
+  :where([data-controller="breadcrumb"] [data-breadcrumb-part="item"]:last-child) :is([data-breadcrumb-part="page"], [data-breadcrumb-part="link"]) {
+    @apply block overflow-hidden whitespace-nowrap;
     text-overflow: ellipsis;
   }
 
-  :where([data-controller="breadcrumb"] [data-breadcrumb-part="item"]:last-child) :is([data-breadcrumb-part="page"], [data-breadcrumb-part="link"]) {
-    @apply overflow-hidden;
-    text-overflow: ellipsis;
+  /* Measuring mode, toggled by breadcrumb_controller.js for the length of one
+     measurement. The sponge above is exactly what makes scrollWidth useless:
+     flex resolves a deficit by shrinking a shrinkable item *before* it lets the
+     line overflow, so the label absorbs everything down to 0px and
+     scrollWidth === clientWidth at every width. Measured: content wanting 430px
+     in a 300px box reported no overflow at all, which is why the width-based
+     collapse never fired and collapse_after had to be invented to fake it.
+     Pinning the last item to its natural width for the measurement makes the
+     list report the space it actually wants. */
+  :where([data-controller="breadcrumb"]) [data-breadcrumb-part="list"].breadcrumb-measuring [data-breadcrumb-part="item"]:where(:last-child) {
+    flex-shrink: 0;
+    min-width: max-content;
+    overflow: visible;
   }
 
   /* Items hidden by Stimulus controller */
@@ -198,11 +219,6 @@
   @media (max-width: 640px) {
     [data-breadcrumb-part="list"] {
       @apply gap-1;
-    }
-
-    /* Hide middle items on very small screens by default */
-    :where([data-component="breadcrumbs"][data-auto-collapse]) [data-breadcrumb-part="item"]:where(:not(:first-child):not(:last-child)) {
-      @apply hidden sm:inline-flex;
     }
   }
 

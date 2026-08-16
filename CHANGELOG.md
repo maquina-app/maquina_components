@@ -79,6 +79,45 @@ release is an invitation to delete them.
   structurally, so no JS has to have run
 - `menu_button`'s ring fell back to `var(--sidebar-ring)` with no `var(--ring)`
   arm, so it had no color in a theme that defines only the base palette
+- **The responsive breadcrumb collapsed on item count, never on available
+  space — and in the default configuration never collapsed at all.** Every item
+  was `shrink-0` so that `scrollWidth` could exceed `clientWidth`, but the last
+  item was then given `shrink min-w-0`, which is exactly the case that rule
+  existed to prevent: flex resolves a deficit by shrinking a shrinkable item
+  *before* it lets the line overflow, so the current-page label absorbed the
+  whole deficit down to 0px and the row reported a perfect fit at every width.
+  Measured: content wanting 430px in a 300px container reported zero overflow.
+  The bar silently clipped instead of collapsing. `collapse_after` was added in
+  0.4.4 to work around this by counting items, which meant it collapsed a trail
+  with metres of room to spare. The controller now pins the last item to its
+  natural width for the duration of a measurement, so the row reports the space
+  it actually wants, and collapses only when it genuinely does not fit
+- The breadcrumb hid middle items from the *back*, nearest the current page,
+  while the ellipsis renders immediately after the *first* item — so the `…`
+  stood in front of items it did not represent and its dropdown listed the tail
+  rather than the head. It now hides from the front
+- The breadcrumb collapsed everything when it happened to be measured at zero
+  width — inside a collapsing sidebar, a Turbo Frame mid-swap, an unshown tab
+  panel — and nothing scheduled a re-measure. A zero-width container is now read
+  as "not laid out yet" rather than as infinite overflow
+- The breadcrumb watched `window.resize`, so a container that changed width on
+  its own never re-fit. Collapsing this engine's own sidebar re-flows the header
+  without resizing the window, and the trail kept a stale state until something
+  else happened to fire a resize. It now uses a `ResizeObserver` on the list,
+  re-fits once on `document.fonts.ready`, and re-fits on `turbo:morph` (morphing
+  does not replace the element, so `connect()` never re-ran)
+- The breadcrumb compared integer-rounded widths with no tolerance, so a 0.4px
+  shortfall collapsed a row that visually fits. There is a 1px buffer now
+- **The breadcrumb's last item never truncated with an ellipsis.**
+  `text-overflow` has no effect on a flex container's own box and the item was
+  `inline-flex`, so a long current-page title hard-clipped mid-word — "A Very
+  Long Current Pag". 0.4.3 traded away working collapse detection for a graceful
+  truncation that never rendered. The inner element is `display: block` now, so
+  it truncates as intended
+- Removed a dead `@media (max-width: 640px)` breadcrumb rule keyed on
+  `[data-auto-collapse]`, which nothing in the engine emits. It was a third,
+  viewport-only collapse mechanism that would have pre-hidden items behind the
+  controller's back
 
 ### Changed
 
@@ -89,11 +128,26 @@ release is an invitation to delete them.
   never consults `main_icon_svg_for` — so silence was the wrong default. The error
   message says so, rather than sending you to an override that cannot help
 
+### Deprecated
+
+- `collapse_after:` on `responsive_breadcrumbs` and the breadcrumbs partial. It
+  existed only to fake collapsing while the width measurement was broken, and it
+  collapses without consulting available width, which is the opposite of what
+  the component is for. Still accepted so existing calls do not raise, now
+  ignored, removed in 0.8.0 — delete it from your calls
+
 ### Added
 
 - Stylesheet guards: no rule may transition `outline-color` (`transition-colors`
   is banned outright, since v4 always folds it in), and a part that clears its
   outline must restore a token ring unless it is listed as roving-focus
+- Breadcrumb guards: the measuring class must exist in both the controller and
+  `breadcrumbs.css` and must pin the last item with `flex-shrink: 0` (a rename on
+  either side silently restores the never-collapses bug with no visible symptom),
+  and the controller must observe its container rather than the window. Plus the
+  first render tests this component has ever had: the trail renders fully
+  expanded with a hidden ellipsis, the ellipsis sits ahead of the items it stands
+  for, and `collapse_after` reaches the DOM no more
 - An icon guard that renders every literal `builtin_icon_for` call site in the
   engine's views and asserts the name resolves — the sweep that names both
   chevron bugs in one failure
@@ -110,6 +164,9 @@ release is an invitation to delete them.
 - [docs/dropdown_menu.md](docs/dropdown_menu.md): the default trigger renders its
   own chevron; `as_child` is for different content, not for an affordance, and it
   hands you the aria attributes to write yourself
+- [docs/breadcrumbs.md](docs/breadcrumbs.md): what `responsive:` actually
+  guarantees, the deprecation of `collapse_after` and why, and the ellipsis
+  dropdown — which has existed since 0.4.3 and was never documented
 
 ### Workarounds you can now delete
 
