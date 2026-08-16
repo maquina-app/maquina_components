@@ -55,7 +55,7 @@
     @apply text-sm;
     font-weight: var(--label-weight, 500);
     @apply underline-offset-4;
-    @apply transition-colors;
+    @apply transition-[color,background-color,border-color,text-decoration-color];
     color: var(--muted-foreground);
   }
 
@@ -73,9 +73,16 @@
     @apply underline;
   }
 
+  /* The underline is kept, but it cannot be the *only* signal: on a page whose
+     breadcrumbs are the sole keyboard stops, a text-decoration change reads as
+     nothing happening. Ring first, underline as reinforcement. */
   [data-breadcrumb-part="link"]:where(:focus-visible) {
-    @apply outline-none underline;
+    @apply underline;
     color: var(--foreground);
+    outline-width: var(--focus-ring-width, 3px);
+    outline-style: var(--focus-ring-style, solid);
+    outline-color: var(--focus-ring-color, var(--ring));
+    outline-offset: var(--focus-ring-offset, 0px);
   }
 
   /* ===== Breadcrumb Page (current) ===== */
@@ -124,6 +131,15 @@
   /* Ellipsis as dropdown trigger */
   [data-breadcrumb-part="ellipsis"]:where([data-state="open"], :hover) {
     color: var(--foreground);
+  }
+
+  /* It is a trigger, so it is a tab stop, so it rings. */
+  [data-breadcrumb-part="ellipsis"]:where(:focus-visible) {
+    color: var(--foreground);
+    outline-width: var(--focus-ring-width, 3px);
+    outline-style: var(--focus-ring-style, solid);
+    outline-color: var(--focus-ring-color, var(--ring));
+    outline-offset: var(--focus-ring-offset, 0px);
   }
 
   /* ===== Overflow Dropdown (top-layer popover) ===== */

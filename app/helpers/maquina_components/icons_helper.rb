@@ -21,11 +21,19 @@ module MaquinaComponents
 
     # Internal icon helper for engine components. Always uses built-in SVGs
     # so components work reliably regardless of the app's icon configuration.
+    #
+    # It raises under strict_icons for the same reason icon_for does, and the
+    # reason is sharper here: a component asking for an icon the engine does not
+    # ship renders nothing, and no host-app override can rescue it. That is how
+    # the dropdown and combobox triggers shipped without their chevrons.
     def builtin_icon_for(name, options = {})
       return nil unless name
 
       svg = icon_svg_for(name.to_sym)
-      return nil unless svg
+      unless svg
+        raise MaquinaComponents::UnknownIconError, unknown_builtin_icon_message(name) if MaquinaComponents.strict_icons?
+        return nil
+      end
 
       apply_icon_options(svg, options)
     end
@@ -34,6 +42,17 @@ module MaquinaComponents
     end
 
     private
+
+    def unknown_builtin_icon_message(name)
+      "Unknown built-in icon #{name.to_sym.inspect}. An engine component asked " \
+      "for an icon the engine does not ship. Defining it in your app's " \
+      "main_icon_svg_for override will NOT help: builtin_icon_for deliberately " \
+      "never consults it, so that components render the same in every app. Add " \
+      "the icon to icon_svg_for in " \
+      "app/helpers/maquina_components/icons_helper.rb and report it upstream. " \
+      "Set MaquinaComponents.strict_icons = false to fall back to rendering " \
+      "nothing."
+    end
 
     def unknown_icon_message(name)
       "Unknown icon #{name.to_sym.inspect}. Define it in your app's " \
@@ -57,6 +76,19 @@ module MaquinaComponents
 
       if options[:stroke_width]
         svg = svg.gsub('stroke-width="2"', "stroke-width=\"#{options[:stroke_width]}\"")
+      end
+
+      # Without this, options[:data] was accepted and silently dropped, which
+      # left dropdown_menu.css's chevron rotation targeting an attribute that
+      # never reached the DOM.
+      if options[:data].is_a?(Hash)
+        attributes = options[:data].filter_map do |key, value|
+          next if value.nil? || value == false
+
+          name = ERB::Util.html_escape("data-#{key.to_s.tr("_", "-")}")
+          %(#{name}="#{ERB::Util.html_escape(value.to_s)}")
+        end
+        svg = svg.sub(/<svg(?=(\s|>))/, "<svg #{attributes.join(" ")}") if attributes.any?
       end
 
       svg.html_safe
@@ -142,7 +174,7 @@ module MaquinaComponents
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
         SVG
-      when :select_chevron
+      when :select_chevron, :chevron_down
         <<~SVG.freeze
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="" aria-hidden="true">
             <path d="m6 9 6 6 6-6"></path>
@@ -170,7 +202,7 @@ module MaquinaComponents
             <line x1="21" x2="9" y1="12" y2="12"></line>
           </svg>
         SVG
-      when :chevron_up_down
+      when :chevron_up_down, :chevrons_up_down
         <<~SVG.freeze
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
             <path d="m7 15 5 5 5-5"></path>

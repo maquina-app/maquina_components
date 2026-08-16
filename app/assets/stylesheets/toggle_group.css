@@ -37,7 +37,7 @@
     @apply gap-2 text-sm;
     border-radius: var(--toggle-group-radius, var(--control-radius, 0.375rem));
     font-weight: var(--label-weight, 500);
-    @apply transition-colors duration-150;
+    @apply transition-[color,background-color,border-color,text-decoration-color] duration-150;
 
     /* Default size */
     @apply h-9 px-3;
@@ -132,8 +132,9 @@
   [data-toggle-group-part="item"]:where(:focus-visible) {
     z-index: 1;
     position: relative;
-    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-             var(--focus-ring-color, var(--ring));
+    outline-width: var(--focus-ring-width, 3px);
+    outline-style: var(--focus-ring-style, solid);
+    outline-color: var(--focus-ring-color, var(--ring));
     outline-offset: var(--focus-ring-offset, 0px);
   }
 

@@ -7,6 +7,131 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-08-15
+
+An accessibility release, from two reports filed by a consumer app. Every focus
+ring in the engine appeared 150ms late and faded in from the control's own text
+color; two triggers had been shipping with no chevron at all; and a collapsed
+mobile sidebar stayed in the tab order while reserving a sidebar's width of
+layout. No API changes — if you carry workarounds for any of the below, this
+release is an invitation to delete them.
+
+### Fixed
+
+- **Focus rings now appear instantly, in the right color.** Every component that
+  paints a token ring also carried `transition-colors`, and Tailwind v4 folds
+  `outline-color` into that utility. `outline-width`, `-style` and `-offset` are
+  not in its property list, so they applied immediately while the *color*
+  animated over 150ms from its pre-focus value — which, on a control that has
+  never painted an outline, is the initial `currentColor`: the control's own text
+  color. On a ghost or outline button that looked correct by accident; on a
+  filled variant (near-white text on a saturated fill) the ring was near-white
+  for the first frames, i.e. no visible focus indicator on the highest-stakes
+  controls in a page. Sixteen rules dropped `transition-colors` for an explicit
+  `transition-[color,background-color,border-color,text-decoration-color]`.
+
+  The same transition is why `--focus-ring-color` was reported as an inert token:
+  a `getComputedStyle` read taken right after a `Tab` press returns the previous
+  color. The token was working. If you wrote your own component against the focus
+  tokens, it has the same latent bug — see [docs/theming.md](docs/theming.md)
+- Focus rings are written as `outline-width` / `-style` / `-color` longhands
+  rather than the `outline` shorthand, at all 30 sites. The shorthand is invalid
+  at computed-value time as a unit: one unresolvable `var()` reset all three
+  longhands to their initial values and took the whole ring down, and
+  `outline-color: currentColor` looks plausible enough on a dark-text control
+  that nobody reports it
+- **Breadcrumb links had no focus ring** — `:focus-visible` applied `outline-none`
+  and substituted an underline, which was also its hover treatment, so on a page
+  whose breadcrumbs are the only keyboard stops nothing appeared to happen. The
+  ring is restored and the underline kept. The breadcrumb ellipsis is a dropdown
+  trigger and had no focus rule at all; it has one now
+- **The combobox search field had no focus ring.** It clears its outline in the
+  base rule and never painted one back, despite being the tab stop the popover
+  opens onto
+- **The dropdown menu trigger rendered no chevron.** It asks
+  `builtin_icon_for :chevron_down`, and the engine's built-in set had no
+  `chevron_down` — so the default trigger read as a static text label with
+  everything behind it undiscoverable. `chevron_down` now ships
+- **The combobox trigger rendered no chevron either**, for a different reason: it
+  asked for `:chevrons_up_down` (plural) against a singular `:chevron_up_down`
+  built-in. The call site is fixed and the plural now resolves as an alias
+- **`apply_icon_options` silently dropped `data:`.** It handled only `class:` and
+  `stroke_width:`, so `data-dropdown-menu-target="chevron"` never reached the DOM
+  and the chevron-rotation rules in `dropdown_menu.css` were dead. Fixing the icon
+  name alone would not have restored the affordance
+- **A collapsed off-canvas sidebar stayed in the tab order.** It is parked at
+  `left: calc(var(--sidebar-width) * -1)` with `visibility: visible`, so a phone
+  user tabbed through every off-screen link before reaching page content — focus
+  landing where no pointer can go. The container now carries `inert` for exactly
+  the off-canvas-collapsed case, server-side as well as from the controller, so
+  the invariant holds before Stimulus connects. A `collapsible: "icon"` sidebar is
+  a visible rail and stays reachable. `inert` rather than `aria-hidden`: the
+  latter hides the subtree from the accessibility tree while leaving it focusable
+- **The sidebar gap reserved a sidebar's width of layout on phones.**
+  `[data-sidebar-part="gap"]` only dropped to 0 under
+  `[data-collapsible="offcanvas"]`, and the controller computes
+  `isOpen ? "none" : (isMobile ? "offcanvas" : "icon")` — `isOpen` wins over
+  `isMobile`. So a phone load carrying an expanded `sidebar_state` cookie rendered
+  a ~102px content column until the mobile check ran and a 200ms width transition
+  finished, on every mobile load; a desktop window narrowed past 768px kept that
+  column permanently; and a sidebar *opened* on a phone reserved the full width
+  behind its own overlay. A `@media (width < 768px)` rule now zeroes it
+  structurally, so no JS has to have run
+- `menu_button`'s ring fell back to `var(--sidebar-ring)` with no `var(--ring)`
+  arm, so it had no color in a theme that defines only the base palette
+
+### Changed
+
+- `builtin_icon_for` raises `MaquinaComponents::UnknownIconError` under
+  `strict_icons` (development and test by default) instead of returning `nil`,
+  the way `icon_for` already did. An engine component asking for an icon the
+  engine does not ship is unfixable from an app — `builtin_icon_for` deliberately
+  never consults `main_icon_svg_for` — so silence was the wrong default. The error
+  message says so, rather than sending you to an override that cannot help
+
+### Added
+
+- Stylesheet guards: no rule may transition `outline-color` (`transition-colors`
+  is banned outright, since v4 always folds it in), and a part that clears its
+  outline must restore a token ring unless it is listed as roving-focus
+- An icon guard that renders every literal `builtin_icon_for` call site in the
+  engine's views and asserts the name resolves — the sweep that names both
+  chevron bugs in one failure
+- Render tests asserting the dropdown and combobox triggers each emit exactly one
+  chevron, and that the dropdown's carries the target attribute its rotation CSS
+  keys off
+
+### Docs
+
+- [docs/theming.md](docs/theming.md): `--focus-ring-color` has no single default —
+  the three per-family defaults are documented, along with the two states that
+  deliberately outrank a `:root` override, and a warning never to transition
+  `outline-color` in your own components
+- [docs/dropdown_menu.md](docs/dropdown_menu.md): the default trigger renders its
+  own chevron; `as_child` is for different content, not for an affordance, and it
+  hands you the aria attributes to write yourself
+
+### Workarounds you can now delete
+
+If your app carries any of these, this release removes the reason for them.
+Delete rather than keep — several are the exact patterns the engine's own guard
+tests now forbid.
+
+- A restated focus ring on buttons, especially a `box-shadow` one on a filled
+  variant. Uncomment your `--focus-ring-color` and drop the shadow; a box-shadow
+  ring collides with the elevation each variant declares and is clipped by any
+  `overflow-hidden` ancestor, which is why the engine does not use one
+- A 0,0,0 `:focus-visible` baseline in `@layer components` standing in for
+  engine rings that "did not paint"
+- A higher-specificity rule restoring the ring on breadcrumb links
+- `as_child` hand-written dropdown triggers that exist *only* to supply a
+  chevron. Keep the ones that carry their own content — icons, `sr-only` labels,
+  a `title` — since `as_child` still hands you the whole button
+- A controller that sets `inert` on the sidebar for the off-canvas-collapsed case
+- An unlayered `@media (width < 768px)` rule forcing `[data-sidebar-part="gap"]`
+  to 0
+
+
 ## [0.6.1] - 2026-07-27
 
 A `maquina:doctor` fix. No component, CSS or API changes — if the doctor

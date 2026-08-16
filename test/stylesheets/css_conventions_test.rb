@@ -39,6 +39,15 @@ class CssConventionsTest < ActiveSupport::TestCase
   # State tiers, in the order the cascade needs them declared: after variants.
   STATE_PSEUDO = /:hover\b|:focus-visible\b|:disabled\b|\[aria-invalid/
 
+  # Parts that clear their outline on purpose: roving-focus menu items carrying
+  # tabindex="-1", where focus moves under arrow keys and is shown as a
+  # background change. They are never reached by Tab, so a ring would be noise.
+  ROVING_FOCUS_PARTS = [
+    "data-dropdown-menu-part=item",
+    "data-combobox-part=option",
+    "data-combobox-part=content"
+  ].freeze
+
   # The only engine rule outside @layer components. It is a functional scroll
   # lock, not appearance: layered, a host's own unlayered `body { position: … }`
   # would beat it and the page would scroll behind an open drawer.
@@ -157,6 +166,81 @@ class CssConventionsTest < ActiveSupport::TestCase
       outline does not need.
 
       #{(offenders + faked_band).join("\n")}
+    MESSAGE
+  end
+
+  test "no rule transitions outline-color" do
+    offenders = []
+
+    CssSource.all_rules.each_value do |rules|
+      rules.reject(&:at_rule?).each do |rule|
+        rule.own_declarations.scan(/@apply\s+([^;]+);/) do |(utilities)|
+          utilities.split(/\s+/).each do |utility|
+            next unless utility.match?(/(?<![\w-])transition-/)
+            next unless utility == "transition-colors" || utility.include?("outline-color")
+
+            offenders << "#{rule.where} @apply #{utility} (#{rule.selector.squeeze(" ")[0, 60]})"
+          end
+        end
+
+        rule.declarations.each do |property, value|
+          next unless property == "transition" || property == "transition-property"
+          next unless value.include?("outline-color")
+
+          offenders << "#{rule.where} #{property}: #{value.strip[0, 60]}"
+        end
+      end
+    end
+
+    assert_empty offenders, <<~MESSAGE
+      A focus ring must appear instantly. Tailwind v4 folds `outline-color` into
+      `transition-colors`, so that utility is unusable in this engine: the ring
+      animates from its pre-focus value, which on a control that has never
+      painted an outline is the initial `currentColor` — the control's own text
+      color. On a filled variant that is a near-white ring for the first 150ms,
+      i.e. no focus indicator on exactly the highest-stakes controls, and it
+      makes every getComputedStyle read taken right after a Tab press report the
+      previous color. That is what got --focus-ring-color reported as an inert
+      token when it was working the whole time. Name the properties instead:
+      transition-[color,background-color,border-color,text-decoration-color].
+
+      #{offenders.join("\n")}
+    MESSAGE
+  end
+
+  test "a part that suppresses its outline restores a token ring" do
+    suppressed = {}
+    restored = Set.new
+
+    CssSource.all_rules.each_value do |rules|
+      rules.reject(&:at_rule?).each do |rule|
+        key = CssSource.subject(rule.selector)
+
+        if rule.own_declarations.match?(/@apply[^;]*(?<![\w-])outline-(none|hidden)\b/) ||
+            rule.declarations.any? { |property, value| property == "outline" && value.strip == "none" }
+          suppressed[key] ||= rule
+        end
+
+        restored << key if rule.declarations.any? { |property, _| property == "outline-color" }
+      end
+    end
+
+    offenders = (suppressed.keys - restored.to_a - ROVING_FOCUS_PARTS).map do |key|
+      "#{suppressed[key].where} #{key} (#{suppressed[key].selector.squeeze(" ")[0, 60]})"
+    end
+
+    assert_empty offenders, <<~MESSAGE
+      This part clears its outline and never paints one back from the
+      --focus-ring-* tokens, so it is a tab stop with no focus indicator. That
+      is how breadcrumb links shipped with an underline as their *only* focus
+      signal — measured as the sole ringless stops on a dashboard header — and
+      how the combobox search field shipped with nothing at all. Add a
+      :focus-visible rule reading outline-width / -style / -color / -offset.
+
+      Add to ROVING_FOCUS_PARTS only for a part that is genuinely not a tab stop
+      (tabindex="-1" menu items whose focus is shown as a background change).
+
+      #{offenders.join("\n")}
     MESSAGE
   end
 

@@ -77,6 +77,28 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     refute_includes html, "}" # regression: stray brace inside the button tag
   end
 
+  # Both triggers shipped without a chevron: dropdown asked for a :chevron_down
+  # the engine did not have, and combobox asked for a plural :chevrons_up_down
+  # against a singular built-in. builtin_icon_for returned nil for both and the
+  # partials rendered a bare text label -- a control that reads as static text,
+  # with everything behind it undiscoverable.
+  test "the dropdown menu trigger renders its chevron affordance" do
+    html = view.render("components/dropdown_menu/trigger") { "Phase" }
+
+    assert_includes html, %(aria-haspopup="menu")
+    assert_includes html, %(aria-expanded="false")
+    assert_equal 1, html.scan("<svg").size, "expected exactly one chevron svg"
+    # The rotation in dropdown_menu.css hangs off this attribute, and
+    # apply_icon_options used to drop data: on the floor, so the CSS was dead.
+    assert_includes html, %(data-dropdown-menu-target="chevron")
+  end
+
+  test "the combobox trigger renders its chevron affordance" do
+    html = view.render("components/combobox/trigger", for_id: "c", placeholder: "Pick one")
+
+    assert_equal 1, html.scan("<svg").size, "expected exactly one chevron svg"
+  end
+
   test "dropdown panel wires aria to the menu_button trigger" do
     html = view.render("components/menu_button", title: "Acme") do |menu_id|
       view.render("components/dropdown", id: menu_id) { "Items" }
