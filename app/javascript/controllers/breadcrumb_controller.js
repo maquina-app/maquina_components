@@ -2,7 +2,16 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["item", "ellipsis", "ellipsisSeparator"]
-  static values = { collapseAfter: { type: Number, default: 0 } }
+
+  // Shared with breadcrumbs.css. While it is on the list, the last item is
+  // pinned to its natural width; see _fits() for why that is the whole trick.
+  // test/stylesheets/css_conventions_test.rb asserts the two agree.
+  static MEASURING_CLASS = "breadcrumb-measuring"
+
+  // Sub-pixel slack. scrollWidth and clientWidth are integer-rounded, so
+  // content of 500.4px in a 500px box reports 501 > 500 and would collapse a
+  // bar that visually fits.
+  static FIT_TOLERANCE = 1
 
   // True when CSS anchor positioning (breadcrumbs.css) places the popover
   static supportsAnchorPositioning =
@@ -12,20 +21,56 @@ export default class extends Controller {
 
   connect() {
     this._dropdown = null
+    this._fitting = false
+    this._frame = null
     this._popoverToggleHandler = this._handlePopoverToggle.bind(this)
     this._teardownHandler = this._teardown.bind(this)
+    this._morphHandler = this.fit.bind(this)
 
     document.addEventListener("turbo:before-cache", this._teardownHandler)
+    // Morphing does not replace the element, so connect() never re-runs and the
+    // bar would keep whatever collapsed state it had for different content.
+    document.addEventListener("turbo:morph", this._morphHandler)
 
-    this.windowResizeHandler = this.handleResize.bind(this)
-    window.addEventListener('resize', this.windowResizeHandler)
-    this.handleResize()
+    // A ResizeObserver on the list, not a window resize listener. The container
+    // changes width without the window doing anything -- most obviously when
+    // this engine's own sidebar collapses -- and a window listener never sees it.
+    const list = this._list()
+    if (list && typeof ResizeObserver !== "undefined") {
+      this._observer = new ResizeObserver(() => this._scheduleFit())
+      this._observer.observe(list)
+    }
+
+    // Fallback metrics are wider than the real face often enough to matter, and
+    // nothing else would re-measure once the swap lands.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => this.fit())
+    }
+
+    this.fit()
   }
 
   disconnect() {
-    window.removeEventListener('resize', this.windowResizeHandler)
+    if (this._observer) {
+      this._observer.disconnect()
+      this._observer = null
+    }
+    if (this._frame) cancelAnimationFrame(this._frame)
     this._teardown()
     document.removeEventListener("turbo:before-cache", this._teardownHandler)
+    document.removeEventListener("turbo:morph", this._morphHandler)
+  }
+
+  // fit() writes classes, which resizes the list, which re-notifies the
+  // observer. Coalescing into one frame and guarding re-entry keeps that from
+  // becoming a "ResizeObserver loop completed with undelivered notifications".
+  _scheduleFit() {
+    if (this._fitting) return
+    if (this._frame) cancelAnimationFrame(this._frame)
+    this._frame = requestAnimationFrame(() => {
+      this._frame = null
+      this.fit()
+    })
   }
 
   ellipsisTargetConnected(element) {
@@ -45,8 +90,11 @@ export default class extends Controller {
     }
   }
 
-  handleResize() {
-    const list = this.element.querySelector('[data-breadcrumb-part="list"]')
+  // Collapse only when the bar genuinely does not fit, and re-expand when it
+  // does. Both halves are the same pass: every run starts fully expanded and
+  // re-derives the answer, so nothing is one-way.
+  fit() {
+    const list = this._list()
     if (!list) return
 
     const items = this.itemTargets
@@ -55,50 +103,59 @@ export default class extends Controller {
 
     if (items.length < 1 || !ellipsis) return
 
-    // Reset all items and their adjacent separators to visible
-    ellipsis.classList.add('hidden')
-    if (ellipsisSeparator) ellipsisSeparator.classList.add('hidden')
-    items.forEach(item => {
-      item.classList.remove('hidden')
-      const sep = this._adjacentSeparator(item)
-      if (sep) sep.classList.remove('hidden')
-    })
+    // A zero-width container means "not laid out yet" -- inside a collapsing
+    // sidebar, a Turbo Frame mid-swap, an unshown tab panel. Measuring there
+    // reads as infinite overflow and hides every middle item, permanently,
+    // because nothing used to schedule a re-measure. The observer will call us
+    // back once it has a width.
+    if (list.clientWidth === 0) return
 
-    // Count-based collapsing: force-collapse when total items exceed threshold
-    // items are middle targets only; total visible = middle targets + first + last (2)
-    const totalItems = items.length + 2
-    if (this.collapseAfterValue > 0 && totalItems > this.collapseAfterValue) {
+    this._fitting = true
+
+    try {
+      // Reset to fully expanded before deciding anything.
+      ellipsis.classList.add('hidden')
+      if (ellipsisSeparator) ellipsisSeparator.classList.add('hidden')
+      items.forEach(item => {
+        item.classList.remove('hidden')
+        const sep = this._adjacentSeparator(item)
+        if (sep) sep.classList.remove('hidden')
+      })
+
+      list.classList.add(this.constructor.MEASURING_CLASS)
+
+      if (this._fits(list)) return
+
       ellipsis.classList.remove('hidden')
       if (ellipsisSeparator) ellipsisSeparator.classList.remove('hidden')
 
-      // collapseAfterValue includes first + last, so middle budget = collapseAfterValue - 2
-      const maxMiddleVisible = Math.max(this.collapseAfterValue - 2, 0)
-      let visibleMiddle = items.length
-
-      for (let i = items.length - 1; i >= 0 && visibleMiddle > maxMiddleVisible; i--) {
+      // Hide from the FRONT. The ellipsis is rendered immediately after the
+      // first item, so it can only honestly stand for the items that follow it.
+      // Hiding from the back put the "..." in front of items it did not
+      // represent and listed the tail in its dropdown.
+      for (let i = 0; i < items.length; i++) {
         items[i].classList.add('hidden')
         const sep = this._adjacentSeparator(items[i])
         if (sep) sep.classList.add('hidden')
-        visibleMiddle--
+        if (this._fits(list)) break
       }
+    } finally {
+      list.classList.remove(this.constructor.MEASURING_CLASS)
+      this._fitting = false
+      this._updateDropdown()
     }
+  }
 
-    // Check overflow using scrollWidth vs clientWidth
-    if (list.scrollWidth > list.clientWidth) {
-      ellipsis.classList.remove('hidden')
-      if (ellipsisSeparator) ellipsisSeparator.classList.remove('hidden')
+  // Only meaningful inside measuring mode. Outside it the last item is
+  // flex-shrinkable, so the flex algorithm absorbs the whole deficit into the
+  // current-page label rather than overflowing the line, and scrollWidth equals
+  // clientWidth at every width -- which is why the old check never fired.
+  _fits(list) {
+    return list.scrollWidth <= list.clientWidth + this.constructor.FIT_TOLERANCE
+  }
 
-      // Hide middle items one at a time until it fits
-      const visibleItems = items.filter(item => !item.classList.contains('hidden'))
-      for (let i = visibleItems.length - 1; i >= 0; i--) {
-        visibleItems[i].classList.add('hidden')
-        const sep = this._adjacentSeparator(visibleItems[i])
-        if (sep) sep.classList.add('hidden')
-        if (list.scrollWidth <= list.clientWidth) break
-      }
-    }
-
-    this._updateDropdown()
+  _list() {
+    return this.element.querySelector('[data-breadcrumb-part="list"]')
   }
 
   // Find the next sibling separator <li> (not the managed ellipsisSeparator)

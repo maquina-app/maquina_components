@@ -36,6 +36,7 @@ module MaquinaComponents
     # @param links [Hash] Hash of text => path pairs
     # @param current_page [String, nil] Text for current page (no link)
     # @param css_classes [String] Additional CSS classes for nav element
+    # @param collapse_after [Integer] Deprecated, ignored. Removed in 0.8.0.
     # @return [String] HTML string
     #
     # @example
@@ -44,8 +45,15 @@ module MaquinaComponents
     #     "Button"
     #   )
     #
-    def responsive_breadcrumbs(links = {}, current_page = nil, css_classes: "", collapse_after: 0)
-      render "components/breadcrumbs", css_classes: css_classes, responsive: true, collapse_after: collapse_after do
+    # collapse_after is accepted and ignored. It existed only because the
+    # width-based collapse never fired -- the last item's flex-shrink absorbed
+    # the overflow, so scrollWidth never exceeded clientWidth -- and it
+    # compensated by collapsing on item count alone, with no idea how much room
+    # there was. Space-based collapsing works now, so a count threshold can only
+    # collapse a bar that fits. Still in the signature so existing callers do
+    # not raise; drop it in 0.8.0.
+    def responsive_breadcrumbs(links = {}, current_page = nil, css_classes: "", collapse_after: nil)
+      render "components/breadcrumbs", css_classes: css_classes, responsive: true do
         render "components/breadcrumbs/list" do
           build_breadcrumb_items(links, current_page, responsive: true)
         end

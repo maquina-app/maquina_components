@@ -23,13 +23,55 @@ surfaces can be shaped independently.
 | --focus-ring-width | 3px | Every focus ring |
 | --focus-ring-offset | 0px | Every focus ring |
 | --focus-ring-style | solid | Every focus ring |
-| --focus-ring-color | var(--ring) | Every focus ring; invalid fields override it with the destructive tint |
+| --focus-ring-color | *see below* | Every focus ring; invalid fields and destructive buttons override it with the destructive tint |
 | --elevation-control | shadow-xs | Inputs, selects, textareas, checkbox, radio |
 | --elevation-raised | shadow-sm | Cards, stats cards, floating sidebar, every filled button |
 | --elevation-overlay | shadow-md | Dropdown and combobox popovers, the date-picker popover, toasts, the drawer panel |
 | --elevation-none | none | Ghost and link buttons, the inset sidebar |
 | --label-weight | 500 | Labels, buttons |
 | --value-weight | 700 | Stat values |
+
+### `--focus-ring-color` has no single default
+
+The other three focus tokens are declared in the engine's `@theme` block and have
+one value each. `--focus-ring-color` is declared nowhere: each rule supplies its
+own default as the `var()` fallback, because the right resting colour differs by
+family.
+
+| Family | Default when you do not set the token |
+|--------|---------------------------------------|
+| Buttons, cards, badges, toasts, drawer, pagination, calendar, toggle group, date picker | `var(--ring)` |
+| Everything inside the sidebar, and the menu button | `var(--sidebar-ring, var(--ring))` |
+| Form fields — input, textarea, select, checkbox, radio | `color-mix(in oklch, var(--ring) 50%, transparent)` |
+
+Setting `--focus-ring-color` once at `:root` overrides all three at the same
+time, which is usually what you want — a declared token means no fallback ever
+fires. Set it in a narrower scope to keep the families apart.
+
+Two states deliberately outrank a `:root` override, because a state must win: an
+`aria-invalid` field (and anything inside `.field_with_errors`) and a
+`data-variant="destructive"` button declare `--focus-ring-color` on the element
+itself. An element's own custom property beats an inherited one, so those rings
+stay on the destructive tint whatever `:root` says. This is the same rule
+`--control-fill` follows.
+
+### Never transition `outline-color`
+
+If you write your own component against these tokens, keep `outline-color` out of
+its `transition` — and that means not using Tailwind's `transition-colors`, which
+includes `outline-color` in v4. A transitioned ring animates from its pre-focus
+value, which on a control that has never painted an outline is the initial
+`currentColor`: the control's own text colour. On a filled variant that is a
+near-white ring for the first 150ms, which is no focus indicator at all on
+exactly the controls that matter most. It also makes `getComputedStyle` read the
+*previous* colour if you measure right after a `Tab` press, which is a reliable
+way to convince yourself a working ring is broken.
+
+Name the properties instead:
+
+```css
+transition-property: color, background-color, border-color, text-decoration-color;
+```
 | --control-fill | transparent | Field background; re-set under .dark |
 
 <!-- preview:shape height:520 -->

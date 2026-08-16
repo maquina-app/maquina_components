@@ -1,5 +1,18 @@
-<%= preview_row do %>
-  <div class="w-80 overflow-hidden">
+<%= preview_stack gap: 4 do %>
+  <%# Roomy: everything fits, so nothing collapses and the ellipsis stays hidden. %>
+  <div class="w-full">
+    <%= responsive_breadcrumbs({
+          "Home" => "#",
+          "Workspaces" => "#",
+          "Acme Inc" => "#"
+        }, "Settings") %>
+  </div>
+
+  <%# Tight: the same trail with no room. Middle items collapse from the front,
+      so the ellipsis stands for the items directly behind it. Drag the resize
+      handle to watch it collapse and re-expand -- it measures the container, so
+      resizing this box alone is enough. %>
+  <div class="w-80 resize-x overflow-auto border border-dashed p-2" style="min-width: 12rem">
     <%= responsive_breadcrumbs({
           "Home" => "#",
           "Workspaces" => "#",

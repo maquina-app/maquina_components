@@ -49,6 +49,14 @@
 
 ### Icon Trigger
 
+The default trigger renders its own chevron, which rotates 180° while the menu is
+open. Reach for `as_child` when you need different content — an icon-only button,
+an `sr-only` label — not merely to get an affordance. Note that `as_child` hands
+you the whole button: `data-dropdown-menu-target="trigger"`,
+`data-action="dropdown-menu#toggle"`, `aria-haspopup` and `aria-expanded` are all
+yours to write. The controller updates `aria-expanded` at runtime, but only if the
+attribute is there to begin with.
+
 <!-- preview:icon_trigger height:180 -->
 
 ```erb

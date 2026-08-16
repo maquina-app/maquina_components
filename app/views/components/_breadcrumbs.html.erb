@@ -1,14 +1,10 @@
-<%# locals: (css_classes: "", responsive: false, collapse_after: 0, **html_options) %>
+<%# locals: (css_classes: "", responsive: false, collapse_after: nil, **html_options) %>
+<%# collapse_after is deprecated and ignored; see BreadcrumbsHelper. %>
 <% merged_data = merge_component_data(html_options,
     component: :breadcrumbs
   )
 
-  if responsive
-    merged_data[:controller] = "breadcrumb"
-    if collapse_after > 0
-      merged_data[:breadcrumb_collapse_after_value] = collapse_after
-    end
-  end %>
+  merged_data[:controller] = "breadcrumb" if responsive %>
 
 <nav
   aria-label="Breadcrumb"

@@ -133,8 +133,9 @@
 
   /* Focus state for keyboard navigation */
   [data-component="badge"]:where(a:focus-visible, button:focus-visible) {
-    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-             var(--focus-ring-color, var(--ring));
+    outline-width: var(--focus-ring-width, 3px);
+    outline-style: var(--focus-ring-style, solid);
+    outline-color: var(--focus-ring-color, var(--ring));
     outline-offset: var(--focus-ring-offset, 0px);
   }
 

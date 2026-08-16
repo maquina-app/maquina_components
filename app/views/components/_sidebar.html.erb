@@ -27,10 +27,14 @@
   ></div>
 
   <%# Sidebar container (fixed positioned) %>
+  <%# inert for the offcanvas-collapsed case, server-side, so the sidebar is out
+      of the tab order before Stimulus connects rather than after. The controller
+      keeps it in sync from updateInert(); see sidebar_controller.js. %>
   <div
     id="<%= stable_id %>-container"
     data-sidebar-part="container"
     data-sidebar-target="container"
+    <%= tag.attributes(inert: true) if state.to_s == "collapsed" && collapsible.to_s == "offcanvas" %>
   >
     <%# Inner sidebar content wrapper %>
     <div id="<%= stable_id %>-inner" data-sidebar-part="inner">

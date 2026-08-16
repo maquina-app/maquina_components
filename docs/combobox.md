@@ -2,6 +2,9 @@
 
 > Displays a searchable dropdown with autocomplete for selecting from a list.
 
+The trigger renders its own up/down chevron, and the search field inside the
+popover carries a focus ring like any other form control.
+
 <!-- preview:default height:320 -->
 
 ## Usage

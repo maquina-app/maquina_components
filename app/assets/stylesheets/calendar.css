@@ -65,7 +65,7 @@
     cursor: pointer;
     background-color: transparent;
     color: var(--foreground);
-    @apply transition-colors duration-150;
+    @apply transition-[color,background-color,border-color,text-decoration-color] duration-150;
   }
 
   [data-calendar-part="header"] button svg {
@@ -78,8 +78,9 @@
   }
 
   [data-calendar-part="header"] button:where(:focus-visible) {
-    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-             var(--focus-ring-color, var(--ring));
+    outline-width: var(--focus-ring-width, 3px);
+    outline-style: var(--focus-ring-style, solid);
+    outline-color: var(--focus-ring-color, var(--ring));
     outline-offset: var(--focus-ring-offset, 0px);
   }
 
@@ -135,7 +136,7 @@
     cursor: pointer;
     background-color: transparent;
     color: var(--foreground);
-    @apply transition-colors duration-150;
+    @apply transition-[color,background-color,border-color,text-decoration-color] duration-150;
   }
 
   /* ===== Day Variants ===== */
@@ -228,8 +229,9 @@
   [data-calendar-part="day"]:where(:focus-visible) {
     position: relative;
     z-index: 10;
-    outline: var(--focus-ring-width, 3px) var(--focus-ring-style, solid)
-             var(--focus-ring-color, var(--ring));
+    outline-width: var(--focus-ring-width, 3px);
+    outline-style: var(--focus-ring-style, solid);
+    outline-color: var(--focus-ring-color, var(--ring));
     outline-offset: var(--focus-ring-offset, 0px);
   }
 }

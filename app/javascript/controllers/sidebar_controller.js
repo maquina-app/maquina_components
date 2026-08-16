@@ -149,6 +149,8 @@ export default class extends Controller {
     // Update sidebar visual state
     this.sidebarTarget.setAttribute("data-collapsible", collapsible)
 
+    this.updateInert(state, collapsible)
+
     // Update backdrop (only visible on mobile when open)
     if (this.hasBackdropTarget) {
       const backdropState = (isOpen && isMobile) ? "visible" : "hidden"
@@ -174,6 +176,27 @@ export default class extends Controller {
       } else {
         this.unlockScroll()
       }
+    }
+  }
+
+  // An offcanvas-collapsed sidebar is parked at `left: -(--sidebar-width)` with
+  // visibility: visible, so without this every link in it stays a tab stop --
+  // a keyboard user walks through a screenful of off-screen destinations that
+  // no pointer can reach. `inert`, not `aria-hidden`: the latter hides the
+  // subtree from the accessibility tree while leaving it focusable, which is
+  // the worse outcome of a focused element the screen reader will not announce.
+  //
+  // Only the offcanvas-collapsed case. A `collapsible: "icon"` sidebar is a
+  // visible rail and must stay reachable, and an open one obviously must.
+  updateInert(state, collapsible) {
+    if (!this.hasContainerTarget) return
+
+    const offscreen = state === "collapsed" && collapsible === "offcanvas"
+
+    if (offscreen) {
+      this.containerTarget.setAttribute("inert", "")
+    } else {
+      this.containerTarget.removeAttribute("inert")
     }
   }
 

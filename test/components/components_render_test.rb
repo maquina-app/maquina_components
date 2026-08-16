@@ -77,6 +77,77 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     refute_includes html, "}" # regression: stray brace inside the button tag
   end
 
+  # Both triggers shipped without a chevron: dropdown asked for a :chevron_down
+  # the engine did not have, and combobox asked for a plural :chevrons_up_down
+  # against a singular built-in. builtin_icon_for returned nil for both and the
+  # partials rendered a bare text label -- a control that reads as static text,
+  # with everything behind it undiscoverable.
+  test "the dropdown menu trigger renders its chevron affordance" do
+    html = view.render("components/dropdown_menu/trigger") { "Phase" }
+
+    assert_includes html, %(aria-haspopup="menu")
+    assert_includes html, %(aria-expanded="false")
+    assert_equal 1, html.scan("<svg").size, "expected exactly one chevron svg"
+    # The rotation in dropdown_menu.css hangs off this attribute, and
+    # apply_icon_options used to drop data: on the floor, so the CSS was dead.
+    assert_includes html, %(data-dropdown-menu-target="chevron")
+  end
+
+  test "the combobox trigger renders its chevron affordance" do
+    html = view.render("components/combobox/trigger", for_id: "c", placeholder: "Pick one")
+
+    assert_equal 1, html.scan("<svg").size, "expected exactly one chevron svg"
+  end
+
+  # Nothing collapses server-side: every item renders visible and the ellipsis
+  # renders hidden, so a no-JS page shows the full trail. The controller derives
+  # the collapsed state from measured width on connect.
+  test "responsive breadcrumbs render fully expanded with a hidden ellipsis" do
+    html = view.responsive_breadcrumbs(
+      {"Home" => "/", "Workspaces" => "/w", "Acme" => "/w/acme", "Projects" => "/w/acme/p"},
+      "Settings"
+    )
+
+    assert_includes html, %(data-controller="breadcrumb")
+    assert_includes html, %(data-breadcrumb-target="ellipsis")
+    assert_includes html, %(data-breadcrumb-target="ellipsisSeparator")
+
+    ellipsis = html[/<li[^>]*data-breadcrumb-target="ellipsis"[^>]*>/]
+    assert_includes ellipsis, "hidden", "the ellipsis must start hidden"
+
+    refute_match(/<li(?![^>]*breadcrumb-target)[^>]*class="[^"]*\bhidden\b/, html,
+      "no real breadcrumb item may render hidden -- collapsing is measured, not guessed")
+  end
+
+  # The ellipsis sits immediately after the first item, so it can only honestly
+  # stand for the items that follow it -- which is why the controller hides from
+  # the front. If the ellipsis ever moves, that hide order has to move with it.
+  test "the ellipsis renders directly after the first item and its separator" do
+    html = view.responsive_breadcrumbs({"Home" => "/", "Docs" => "/d", "Deep" => "/d/x"}, "Here")
+
+    first_link = html.index(%(href="/"))
+    ellipsis = html.index(%(data-breadcrumb-target="ellipsis"))
+    second_link = html.index(%(href="/d"))
+
+    assert first_link, "expected the first link"
+    assert ellipsis, "expected an ellipsis"
+    assert second_link, "expected a second link"
+
+    assert_operator first_link, :<, ellipsis, "the ellipsis must come after the first item"
+    assert_operator ellipsis, :<, second_link,
+      "the ellipsis must come before the first collapsible middle -- it stands for the items that FOLLOW it, " \
+      "which is why the controller hides from the front"
+  end
+
+  # collapse_after existed only to fake collapsing while the width check was
+  # broken. It is accepted so existing callers do not raise, and ignored.
+  test "collapse_after is accepted and emits nothing" do
+    html = view.responsive_breadcrumbs({"Home" => "/", "Docs" => "/d"}, "Here", collapse_after: 2)
+
+    refute_includes html, "collapse-after",
+      "collapse_after must no longer reach the DOM -- it collapses without consulting available width"
+  end
+
   test "dropdown panel wires aria to the menu_button trigger" do
     html = view.render("components/menu_button", title: "Acme") do |menu_id|
       view.render("components/dropdown", id: menu_id) { "Items" }
