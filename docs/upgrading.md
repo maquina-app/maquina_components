@@ -108,9 +108,14 @@ Three changes in one:
   box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
-/* 0.6.0 — an outline, keyboard focus only, from tokens */
+/* 0.6.0 onward — an outline, keyboard focus only, from tokens.
+   Written as longhands since 0.7.0: the shorthand is invalid at
+   computed-value time as a unit, so one unresolvable var() took the
+   whole ring down and left outline-color: currentColor behind. */
 [data-component="input"]:focus-visible {
-  outline: var(--focus-ring-width) var(--focus-ring-style) var(--focus-ring-color);
+  outline-width: var(--focus-ring-width);
+  outline-style: var(--focus-ring-style);
+  outline-color: var(--focus-ring-color);
   outline-offset: var(--focus-ring-offset);
 }
 ```

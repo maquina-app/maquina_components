@@ -167,6 +167,18 @@ release is an invitation to delete them.
 - [docs/breadcrumbs.md](docs/breadcrumbs.md): what `responsive:` actually
   guarantees, the deprecation of `collapse_after` and why, and the ellipsis
   dropdown — which has existed since 0.4.3 and was never documented
+- [docs/getting-started.md](docs/getting-started.md): what the
+  `main_icon_svg_for` override reaches and what it deliberately does not — two
+  consumer apps lost an investigation each to the fact that an engine
+  component's own icons never consult it — plus `strict_icons`, which has been
+  on in development since 0.6.0 and was documented nowhere
+- [docs/sidebar.md](docs/sidebar.md): an Accessibility section covering the
+  `inert` off-canvas sidebar and the zero-width mobile gap, both of which apps
+  were working around by hand
+- [docs/combobox.md](docs/combobox.md): the trigger renders its own chevron and
+  the search field rings on focus
+- [docs/upgrading.md](docs/upgrading.md): the ring example shows longhands, the
+  form the engine actually emits
 
 ### Workarounds you can now delete
 

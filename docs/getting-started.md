@@ -356,6 +356,39 @@ end
 
 Icons are sourced from [Lucide](https://lucide.dev). Copy SVG code directly from their website.
 
+### What the override does and does not reach
+
+`main_icon_svg_for` backs the public `icon_for` helper — every icon *you* render,
+plus the component parameters that take an icon name (`alert`, sidebar menu
+items, empty states, breadcrumb separators).
+
+It deliberately does **not** reach the icons an engine component renders for
+itself: a dropdown trigger's chevron, the toast close button, the calendar's
+arrows. Those go through an internal `builtin_icon_for` that only ever reads the
+engine's own set, so a component looks the same in every app regardless of how
+you have configured icons — and so a partial override cannot leave a control
+without its affordance.
+
+The practical consequence: if an engine component's own icon looks wrong or
+missing, defining that name in `main_icon_svg_for` will not change it. That is a
+bug in the engine, not something to fix in your app — please report it.
+
+### Catching typos: `strict_icons`
+
+An unknown icon name renders nothing at all, which is invisible in review and in
+production. `MaquinaComponents.strict_icons` raises `UnknownIconError` instead.
+It is **on by default in development and test** and off in production, so a typo
+fails loudly while you work and can never take a page down for a user.
+
+```ruby
+# config/initializers/maquina_components.rb
+MaquinaComponents.strict_icons = false   # opt out; unknown names render nothing
+```
+
+This covers both helpers. If it raises for a name you never wrote yourself, an
+engine component asked for an icon the engine does not ship — the message says
+so, and says that a `main_icon_svg_for` entry will not help.
+
 ### Using Heroicons or Other Libraries
 
 ```ruby
@@ -514,6 +547,11 @@ If you already have `--color-primary:` in your CSS, the generator skips adding t
 
 - Check icon name matches your `main_icon_svg_for` cases
 - Verify helper is included in ApplicationHelper
+- Turn on `strict_icons` in development so an unknown name raises instead of
+  rendering nothing
+- If the missing icon belongs to a component rather than to your own markup
+  (a trigger's chevron, a close button), `main_icon_svg_for` cannot fix it —
+  see [What the override does and does not reach](#what-the-override-does-and-does-not-reach)
 
 ---
 

@@ -202,6 +202,22 @@ The sidebar controller integrates with Turbo Drive to maintain correct state acr
 - **Morph awareness:** When using `turbo_refresh_method_tag :morph`, the sidebar re-reads its cookie to preserve the desktop toggle state and forces closed on mobile after a morph refresh.
 - **Desktop persistence:** The sidebar state is stored in a cookie, so it survives full page loads and Turbo navigations without extra configuration.
 
+## Accessibility
+
+- **A collapsed off-canvas sidebar is out of the tab order.** When it is parked
+  off-screen, its container carries `inert`, so keyboard focus skips it entirely
+  rather than walking through a screenful of destinations no pointer can reach.
+  It is applied server-side as well as by the controller, so the invariant holds
+  before Stimulus connects. A `collapsible: :icon` sidebar is a visible rail and
+  stays reachable; an open sidebar obviously does too.
+- **Below 768px the sidebar reserves no layout.** The container is a fixed
+  overlay with a backdrop at that width, so the gap that normally holds space for
+  it collapses to zero — structurally, in CSS, whatever the state cookie says and
+  before any JavaScript has run. A phone load carrying an expanded cookie gets a
+  full-width content column in the first painted frame, with no settle.
+- Sidebar items expose `aria-current="page"` when active, and the trigger keeps
+  `aria-expanded` and `aria-controls` in sync with the sidebar it drives.
+
 ### Stable IDs
 
 The sidebar generates deterministic IDs based on its `side:` parameter (`sidebar-left`, `sidebar-right`) instead of random IDs. This allows idiomorph to match old and new elements across morph renders, preventing the sidebar from being destroyed and recreated.
