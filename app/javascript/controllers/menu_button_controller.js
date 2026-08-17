@@ -55,6 +55,44 @@ export default class extends Controller {
     this.contentTarget.hidden = false
 
     this.addEventListeners()
+
+    // Measure after the paint: the content is still at its pre-open box here.
+    requestAnimationFrame(() => this.positionContent())
+  }
+
+  // The placement the author asked for, read before we ever overwrite it.
+  get authoredSide() {
+    if (this._authoredSide === undefined) {
+      this._authoredSide = (this.hasContentTarget && this.contentTarget.dataset.side) || "bottom"
+    }
+
+    return this._authoredSide
+  }
+
+  // Flip above the button when the menu would open past the bottom of the
+  // viewport and there is room above. Mirrors dropdown_menu_controller.
+  positionContent() {
+    if (!this.hasContentTarget || !this.hasButtonTarget) return
+
+    const content = this.contentTarget
+    const side = this.authoredSide
+
+    // Reset first, so a menu flipped in a short window unflips once it grows.
+    content.dataset.side = side
+
+    if (side !== "bottom" && side !== "top") return
+
+    const buttonRect = this.buttonTarget.getBoundingClientRect()
+    const gap = 4 // matches the calc(100% + 4px) offsets in menu_button.css
+    const needed = content.getBoundingClientRect().height + gap
+    const roomBelow = window.innerHeight - buttonRect.bottom
+    const roomAbove = buttonRect.top
+
+    if (side === "bottom" && needed > roomBelow && needed <= roomAbove) {
+      content.dataset.side = "top"
+    } else if (side === "top" && needed > roomAbove && needed <= roomBelow) {
+      content.dataset.side = "bottom"
+    }
   }
 
   close() {

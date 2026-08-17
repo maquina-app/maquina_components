@@ -64,7 +64,7 @@
 | icon | Symbol | nil | Icon name (auto-selected by variant) |
 | duration | Integer | 5000 | Auto-dismiss time in ms |
 | dismissible | Boolean | true | Show close button |
-| content | String | nil | HTML content via `capture` (e.g., action buttons) |
+| content | String | nil | HTML content via `capture`, or use block (e.g., action buttons) |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -73,7 +73,7 @@
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | text | String | nil | Title text |
-| content | String | nil | HTML content via `capture` |
+| content | String | nil | HTML content via `capture`, or use block |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -82,7 +82,7 @@
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | text | String | nil | Description text |
-| content | String | nil | HTML content via `capture` |
+| content | String | nil | HTML content via `capture`, or use block |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 

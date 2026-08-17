@@ -445,4 +445,37 @@ class CssConventionsTest < ActiveSupport::TestCase
   def structural_zero?(file, selector)
     STRUCTURAL_ZERO_RADIUS.fetch(file, []).any? { |allowed| selector.include?(allowed) }
   end
+
+  # 0.7.1 -------------------------------------------------------------------
+
+  # --destructive-foreground is the color that sits ON a destructive fill.
+  # [data-form-part="error"] is body text on a card, and it was the only site in
+  # the engine reading that token without a matching fill -- which rendered the
+  # message near-invisible under a saturated palette. It routes through
+  # --destructive-text now, and the invalid border through --destructive-border.
+  test "field error text and invalid borders read their own tokens" do
+    error_rule = CssSource.rules("form.css").find { |rule|
+      rule.selector.include?('[data-form-part="error"]')
+    }
+
+    refute_nil error_rule, "form.css no longer declares [data-form-part=\"error\"]"
+
+    assert_match(/var\(--destructive-text,\s*var\(--destructive-foreground\)\)/,
+      error_rule.own_declarations,
+      "field error text must fall back through --destructive-text so it can be " \
+      "themed independently of the on-fill foreground")
+  end
+
+  # A pristine required field with no placeholder matched :invalid from first
+  # paint, painting an error nobody had earned -- and with no aria-invalid, so
+  # screen readers were told nothing.
+  test "no invalid state is keyed on :placeholder-shown" do
+    offenders = CssSource.all_rules.values.flatten.select { |rule|
+      rule.selector.include?(":placeholder-shown")
+    }
+
+    assert_empty offenders.map(&:where),
+      ":invalid:not(:placeholder-shown) is unconditionally true on a field with " \
+      "no placeholder. Use :user-invalid, which only matches after interaction."
+  end
 end

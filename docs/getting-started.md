@@ -44,6 +44,18 @@ This will:
 <%% end %>
 ```
 
+Every partial takes its content three ways, and they are interchangeable —
+containers and leaves alike:
+
+```erb
+<%%= render "components/card/title", text: "Welcome" %>
+<%%= render "components/card/title", content: "Welcome" %>
+<%%= render "components/card/title" do %>Welcome<%% end %>
+```
+
+`text:` wins when present, then `content:`, then the block. Pass a block whenever
+the content is markup rather than a string.
+
 For form elements, use data attributes:
 
 ```erb
@@ -140,9 +152,15 @@ Add these to your `app/assets/tailwind/application.css`:
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
 
-  /* Destructive */
+  /* Destructive.
+     --destructive is the fill and --destructive-foreground is the text that
+     sits ON it. Field error text is on the page, not on a fill, so it reads
+     --destructive-text instead -- without it this palette would paint error
+     messages near-white on a white card. Same for the invalid field border. */
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
+  --destructive-text: var(--destructive);
+  --destructive-border: var(--destructive);
 
   /* Borders & Inputs */
   --border: oklch(0.922 0 0);
@@ -177,6 +195,8 @@ Add these to your `app/assets/tailwind/application.css`:
     --accent-foreground: oklch(0.985 0 0);
     --destructive: oklch(0.704 0.191 22.216);
     --destructive-foreground: oklch(0.985 0 0);
+    --destructive-text: var(--destructive);
+    --destructive-border: var(--destructive);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);

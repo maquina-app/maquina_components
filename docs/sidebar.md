@@ -179,7 +179,7 @@ sidebar part re-spaces it and swaps in the sidebar's own border token.
 | sidebar/group | Groups menu items with optional title |
 | sidebar/menu | List container for menu items |
 | sidebar/menu_item | Individual menu item wrapper |
-| sidebar/menu_badge | Count or short label pinned inside a menu item. `text:` / `content:` |
+| sidebar/menu_badge | Count or short label pinned inside a menu item. `text:` / `content:` / block |
 | sidebar/menu_action | Icon control pinned right inside a menu item. `label:` (required), `url:`, `icon_name:`, `show_on_hover:` |
 | sidebar/group_action | Icon control pinned to the right of a group label. `label:` (required), `url:`, `icon_name:` |
 | sidebar/separator | Divider between groups. `orientation:` (default `:horizontal`) |

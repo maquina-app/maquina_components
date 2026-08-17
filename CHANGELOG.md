@@ -7,6 +7,116 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Four follow-ups from the same consumer app whose reports drove 0.7.0. No API
+changes; two of the four correct themselves on upgrade.
+
+### Fixed
+
+- **A `required` field with no `placeholder` painted the error state on first
+  paint.** The invalid rule for `input` and `textarea` was keyed on
+  `:invalid:not(:placeholder-shown)`. That guard only does anything on a field
+  that *has* a placeholder: without one `:placeholder-shown` never matches, so
+  its negation is unconditionally true and an empty `required` field matched
+  `:invalid` from load — red before focus, before blur, before submit. There was
+  no `aria-invalid` alongside it, so sighted users saw a rejection they had not
+  earned while screen-reader users were told nothing; the two channels
+  disagreed. `date_picker.css` had the same shape through a bare
+  `input:invalid`, with no guard at all.
+
+  All four now key on `:user-invalid`, which is the standardised form of the
+  behaviour that guard was reaching for — it matches only after the reader has
+  actually interacted with the field. It also fixes a second symptom nobody had
+  reported: on an `email` or `url` field *with* a placeholder, typing removes
+  `:placeholder-shown`, so the field went red mid-word.
+
+  The destructive outline is now gated behind `:focus-visible` like every other
+  ring in the engine. It was painting a permanent 3px halo on a resting field,
+  not just a border
+- **Field error text used the on-fill foreground token.**
+  `[data-form-part="error"]` painted `--destructive-foreground` — the colour
+  meant to sit *on* a destructive fill, which is how every other use of that
+  token in the engine reads it. A field error is text on a card.
+
+  The root cause was ours and it was bigger than the one rule: the engine has
+  been shipping **two inverted definitions of the same token pair**. The install
+  generator writes `--destructive` as a pale tint with `--destructive-foreground`
+  as the dark readable red (matching `--success` and `--warning`), while the
+  palette in `docs/getting-started.md` wrote the shadcn convention — saturated
+  fill, near-white foreground. `form.css` silently depended on both at once: the
+  error text only worked under the first, and the invalid *border* only worked
+  under the second. Under the docs palette the error message rendered near-white
+  on white and was simply not there; under the generator palette the invalid
+  border was a pale tint against a pale border and equally invisible.
+
+  Error text now reads `--destructive-text` (defaulting to
+  `--destructive-foreground`) and the invalid border reads `--destructive-border`
+  (defaulting to `--destructive`), using the same use-site-fallback idiom
+  `--focus-ring-color` and `--control-fill` already use. Apps on the generator's
+  palette need no change. Apps on a saturated palette set two lines; see
+  [docs/theming.md](docs/theming.md). The docs palette now ships them
+- **The dropdown menu and menu button opened past the bottom of the viewport.**
+  Neither controller measured anything — 243 lines with no
+  `getBoundingClientRect` — so a trigger near the fold opened straight through
+  it. Because the clipped items are the ones at the *end* of the menu, the
+  destructive action was the first thing to disappear, which is the worst
+  available failure ordering: a reader who cannot see Delete concludes the row
+  cannot be deleted. Both halves of the fix already shipped — the CSS styles all
+  four sides — but nothing chose a side from geometry.
+
+  Both controllers now measure on open and set `data-side` themselves. Two
+  details that are easy to get wrong and are built in: the measurement resets to
+  the authored placement first, so a menu flipped in a short window unflips once
+  the window grows; and it runs inside a `requestAnimationFrame`, because the
+  controller sets `data-state` and paints in the same tick and a synchronous
+  read returns the pre-open box
+- **Nine leaf partials silently dropped a block.** `alert/_title`,
+  `alert/_description`, `card/_title`, `card/_description`, `combobox/_label`,
+  `drawer/_title`, `drawer/_description`, `toast/_title` and
+  `toast/_description` rendered `text || content`, while nine others accepted a
+  block — so `render "components/alert" do … end` worked and
+  `render "components/alert/title" do … end`, one line below it, produced an
+  element with correct classes, correct data attributes and no content. No
+  error, no warning, no missing-local exception. In a form or a toast that is a
+  message that is simply absent, which is the failure mode least likely to be
+  caught in review.
+
+  All eighteen leaf partials now resolve `text.presence || content || yield`.
+  That also settles a third inconsistency nobody had reported: the block-aware
+  half was itself split between `text ||` and `text.presence ||`, so `text: ""`
+  rendered empty in four partials and fell through to the block in five. It now
+  falls through everywhere. The change is additive — `yield` is only reached
+  when both locals are nil, which rendered empty before
+
+### Added
+
+- `--destructive-text` and `--destructive-border`, so field error text and the
+  invalid field border can be themed independently of the destructive *fill*.
+  Both default to today's values
+- `maquina:doctor` gained five rules for this release, and now tags every
+  finding with the release it came from rather than describing a single 0.6.0
+  migration:
+  - `destructive-error-invisible` (breaking) — measures your own
+    `--destructive-foreground` against your own `--card` and reports when field
+    errors cannot be read. It measures the symptom rather than guessing the
+    convention: a tinted palette's *dark* block has the same numeric shape as a
+    saturated palette's *light* block, so a rule keyed on lightness alone would
+    fire on every app that ran our own generator
+  - `invalid-styling-without-aria` (breaking) — an app that renders errors but
+    never sets `aria-invalid` was relying on the `:invalid` fallback and will
+    lose its error border on upgrade
+  - `required-without-placeholder` (review) — matched against a whole tag rather
+    than a line, since Rails form helpers routinely span five or six
+  - `destructive-error-workaround` (cleanup) — a hand-rolled `text-destructive`
+    on top of the engine's error part
+  - `app-level-dropdown-flip` (cleanup) — an app-owned dropdown collision
+    controller that 0.7.1 makes redundant
+
+### Changed
+
+- The `maquina-ui-standards` skill sets `aria-invalid` in its form examples. Its
+  quick-start patterns rendered the error paragraph without it, which is what
+  led apps to depend on the `:invalid` styling this release narrows
+
 ## [0.7.0] - 2026-08-15
 
 An accessibility release, from two reports filed by a consumer app. Every focus

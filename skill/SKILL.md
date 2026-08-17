@@ -141,7 +141,8 @@ Choose the approach that best fits your use case. The goal is consistency within
 <%= form_with model: @user, data: { component: "form" } do |f| %>
   <div data-form-part="group">
     <%= f.label :email, data: { component: "label" } %>
-    <%= f.email_field :email, data: { component: "input" } %>
+    <%= f.email_field :email, data: { component: "input" },
+        aria: { invalid: @user.errors[:email].any? } %>
     <% if @user.errors[:email].any? %>
       <p data-form-part="error"><%= @user.errors[:email].first %></p>
     <% end %>

@@ -2,6 +2,97 @@
 
 > What breaks between releases, and what to do about it.
 
+## 0.7.0 → 0.7.1
+
+No API changes. Four fixes reported by a consuming app, all of which either
+correct themselves on upgrade or take one line of theme CSS.
+
+```bash
+bundle update maquina-components
+bin/rails maquina:doctor
+```
+
+The doctor gained five rules for this release, and every finding is now tagged
+with the release it came from.
+
+### A required field with no placeholder no longer paints the error state
+
+The invalid rule for `input` and `textarea` was keyed on
+`:invalid:not(:placeholder-shown)`. That guard only works on a field that *has* a
+placeholder: without one `:placeholder-shown` never matches, so its negation is
+always true and an empty `required` field matched `:invalid` from first paint —
+red before focus, before blur, before submit, and with no `aria-invalid`, so the
+visual and assistive channels disagreed. The same shape applied to the date
+picker through a bare `input:invalid`.
+
+Both now key on `:user-invalid`, which only matches once the reader has actually
+interacted with the field. The destructive outline is also gated behind
+`:focus-visible` now, rather than painting a permanent halo on a resting field.
+
+**If you were relying on the old behaviour** — that is, you render server-side
+errors and never set `aria-invalid` — the border will stop appearing. Set it
+explicitly:
+
+```erb
+<%= f.email_field :email, data: { component: "input" },
+    aria: { invalid: @user.errors[:email].any? } %>
+```
+
+The doctor reports this as `breaking` / `invalid-styling-without-aria`, and
+flags remaining required-without-placeholder fields as `review` /
+`required-without-placeholder`.
+
+### Field error text has its own colour token
+
+`[data-form-part="error"]` painted `--destructive-foreground`, which is the
+colour meant to sit **on** a destructive fill — every other use of that token in
+the engine pairs it with a `--destructive` background. A field error is text on
+a card, so under a saturated (shadcn-style) palette it rendered near-white on
+white and the message was simply not there.
+
+It now reads `--destructive-text`, defaulting to `--destructive-foreground`, and
+the invalid border reads `--destructive-border`, defaulting to `--destructive`.
+
+**Nothing to do if you use the palette the installer wrote.** If your
+`--destructive` is a saturated red and `--destructive-foreground` is near-white,
+add two lines:
+
+```css
+:root {
+  --destructive-text: var(--destructive);
+  --destructive-border: var(--destructive);
+}
+```
+
+The doctor measures your actual tokens against your `--card` and reports
+`breaking` / `destructive-error-invisible` when the error text cannot be read. If
+you worked around this with your own `text-destructive` utility, it reports
+`cleanup` / `destructive-error-workaround`.
+
+### The dropdown menu and menu button flip when they hit the fold
+
+Neither controller measured anything, so a trigger near the bottom of the window
+opened straight past it — and because the clipped items are the ones at the *end*
+of the menu, the destructive action was the first thing to disappear. Both now
+measure on open and set `data-side` themselves. The CSS for every side already
+shipped; nothing was choosing one.
+
+If you carry your own flip controller, you can delete it — the doctor reports it
+as `cleanup` / `app-level-dropdown-flip`.
+
+### Every leaf partial accepts a block
+
+Nine leaf partials rendered `text || content` and silently dropped a block, while
+nine others accepted one — so `render "components/alert" do … end` worked and
+`render "components/alert/title" do … end`, one line below it, produced an empty
+element with no error. All eighteen now take `text:`, `content:` or a block
+interchangeably, and `text: ""` consistently falls through to the block rather
+than rendering empty in half of them.
+
+This is additive: anything that worked before still works.
+
+---
+
 ## 0.6.1 → 0.7.0
 
 No breaking changes and nothing to migrate — an accessibility release. One

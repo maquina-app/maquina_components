@@ -6,5 +6,5 @@
     sidebar_part: "menu-badge"
   ) %>
 <%= content_tag :span, class: css_classes.presence, data: merged_data, **html_options do %>
-  <%= text || content || yield %>
+  <%= text.presence || content || yield %>
 <% end %>

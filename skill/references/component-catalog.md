@@ -1395,10 +1395,12 @@ Toggle switch for boolean values.
   <p data-form-part="description">We'll never share your email.</p>
 </div>
 
-<%# With error %>
+<%# With error. aria-invalid is what drives the error styling -- the engine
+    keys on it, so an error message without it is a visual-only signal. %>
 <div data-form-part="group">
   <%= f.label :email, data: { component: "label" } %>
-  <%= f.email_field :email, data: { component: "input" } %>
+  <%= f.email_field :email, data: { component: "input" },
+      aria: { invalid: @user.errors[:email].any? } %>
   <% if @user.errors[:email].any? %>
     <p data-form-part="error"><%= @user.errors[:email].first %></p>
   <% end %>

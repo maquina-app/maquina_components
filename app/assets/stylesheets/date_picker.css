@@ -113,11 +113,11 @@
   }
 
   /* Error state — the root :has() drives the trigger */
-  :where([data-component="date-picker"]:has(input:invalid), [data-component="date-picker"]:has(input[aria-invalid="true"])) [data-date-picker-part="trigger"] {
-    border-color: var(--destructive);
+  :where([data-component="date-picker"]:has(input:user-invalid), [data-component="date-picker"]:has(input[aria-invalid="true"])) [data-date-picker-part="trigger"] {
+    border-color: var(--destructive-border, var(--destructive));
   }
 
-  :where([data-component="date-picker"]:has(input:invalid), [data-component="date-picker"]:has(input[aria-invalid="true"])) [data-date-picker-part="trigger"]:where(:focus-visible) {
+  :where([data-component="date-picker"]:has(input:user-invalid), [data-component="date-picker"]:has(input[aria-invalid="true"])) [data-date-picker-part="trigger"]:where(:focus-visible) {
     --focus-ring-color: var(--destructive);
   }
 

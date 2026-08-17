@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :maquina do
-  desc "Scan this app's CSS/views/JS for patterns that maquina-components 0.6.0 changes (advisory, always exits 0)"
+  desc "Scan this app's CSS/views/JS for patterns a maquina-components release changes (advisory, always exits 0)"
   task :doctor, [:path] do |_task, args|
     require_relative "../maquina_components/doctor"
 

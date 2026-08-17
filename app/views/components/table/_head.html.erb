@@ -4,5 +4,5 @@
   html_options[:scope] = scope if scope
 %>
 <%= content_tag :th, class: css_classes.presence, data: merged_data, **html_options do %>
-  <%= text || content || yield %>
+  <%= text.presence || content || yield %>
 <% end %>

@@ -57,7 +57,8 @@ Before writing code, verify you have:
 - [ ] Inputs have `data-component="input|select|textarea"`
 - [ ] **Errors displayed inline per field** (not in an alert list)
 - [ ] Error messages use `data-form-part="error"`
-- [ ] Error fields have `aria-invalid` and `aria-describedby`
+- [ ] Error fields have `aria-invalid` and `aria-describedby` — `aria-invalid` is
+      what paints the error state; the engine no longer infers it from `:invalid`
 - [ ] Help text uses `data-form-part="description"`
 - [ ] Actions in `data-form-part="actions"`
 - [ ] Submit button has loading state (`group-aria-busy:` or `data-turbo-submits-with`)
