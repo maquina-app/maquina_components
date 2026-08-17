@@ -1,0 +1,77 @@
+<%# Error states. The point of this preview is as much what is NOT red as what
+    is: since 0.7.1 the error state is driven by aria-invalid, so a pristine
+    required field renders normally whether or not it has a placeholder. %>
+<%= preview_stack gap: 4 do %>
+  <%= preview_section "Driven by aria-invalid" do %>
+    <%= preview_stack gap: 4 do %>
+      <%= preview_container width: :md do %>
+        <div data-form-part="group">
+          <label data-component="label" data-required for="error-email">Email</label>
+          <input type="email" id="error-email" value="not-an-email"
+                 data-component="input" aria-invalid="true"
+                 aria-describedby="error-email-message">
+          <p data-form-part="error" id="error-email-message">Enter a valid email address.</p>
+        </div>
+      <% end %>
+
+      <%= preview_container width: :md do %>
+        <div data-form-part="group">
+          <label data-component="label" data-required for="error-bio">Bio</label>
+          <textarea data-component="textarea" id="error-bio" rows="2"
+                    aria-invalid="true" aria-describedby="error-bio-message">x</textarea>
+          <p data-form-part="error" id="error-bio-message">Bio must be at least 20 characters.</p>
+        </div>
+      <% end %>
+
+      <%= preview_container width: :md do %>
+        <div data-form-part="group">
+          <label data-component="label" data-required for="error-plan">Plan</label>
+          <select data-component="select" id="error-plan" aria-invalid="true"
+                  aria-describedby="error-plan-message">
+            <option value="">Choose a plan</option>
+            <option>Monthly</option>
+          </select>
+          <p data-form-part="error" id="error-plan-message">Select a plan to continue.</p>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%# Before 0.7.1 the first of these painted the error state on load, because
+      :invalid:not(:placeholder-shown) is unconditionally true without a
+      placeholder. Both should now look identical and untouched. %>
+  <%= preview_section "Untouched required fields stay neutral" do %>
+    <%= preview_stack gap: 4 do %>
+      <%= preview_container width: :md do %>
+        <div data-form-part="group">
+          <label data-component="label" data-required for="pristine-no-placeholder">Workspace ID (no placeholder)</label>
+          <input type="text" id="pristine-no-placeholder" data-component="input" required>
+          <p data-form-part="description">Empty, required, never focused — and not an error yet.</p>
+        </div>
+      <% end %>
+
+      <%= preview_container width: :md do %>
+        <div data-form-part="group">
+          <label data-component="label" data-required for="pristine-placeholder">Workspace ID (with placeholder)</label>
+          <input type="text" id="pristine-placeholder" placeholder="acme-prod"
+                 data-component="input" required>
+          <p data-form-part="description">Identical treatment; the placeholder is irrelevant now.</p>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%# Rails wraps a field with errors in .field_with_errors, which the engine
+      styles without the app setting anything. %>
+  <%= preview_section "Rails field_with_errors wrapper" do %>
+    <%= preview_container width: :md do %>
+      <div data-form-part="group">
+        <label data-component="label" for="wrapped">Company</label>
+        <div class="field_with_errors">
+          <input type="text" id="wrapped" value="" data-component="input">
+        </div>
+        <p data-form-part="error">Company can't be blank.</p>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

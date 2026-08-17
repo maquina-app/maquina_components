@@ -1,0 +1,37 @@
+<%# Collision handling. This preview only demonstrates anything inside a short
+    frame: the trigger is pinned near the bottom so the menu has nowhere to open
+    downward, and the controller should flip it above the trigger on open.
+    The docs iframe is sized to make that happen -- see the height on the
+    preview tag in docs/dropdown_menu.md. %>
+<div class="flex flex-col justify-end" style="min-height: 15rem;">
+  <p data-form-part="description" class="mb-2">
+    This trigger sits at the bottom of the frame. Opening it flips the menu upward,
+    because the items at the <em>end</em> of a menu — usually the destructive ones —
+    are the first to be clipped when it opens past the fold.
+  </p>
+
+  <div class="flex gap-4">
+    <%= render "components/dropdown_menu" do %>
+      <%= render "components/dropdown_menu/trigger" do %>Row actions<% end %>
+
+      <%= render "components/dropdown_menu/content" do %>
+        <%= render "components/dropdown_menu/item", href: "#" do %>Download<% end %>
+        <%= render "components/dropdown_menu/item", href: "#" do %>Rename<% end %>
+        <%= render "components/dropdown_menu/separator" %>
+        <%= render "components/dropdown_menu/item", href: "#", variant: :destructive do %>Delete<% end %>
+      <% end %>
+    <% end %>
+
+    <%# side: :top is honoured as-is when there is room above, and flipped back
+        to the bottom when there is not. The preference is a starting point,
+        not a fixed position. %>
+    <%= render "components/dropdown_menu" do %>
+      <%= render "components/dropdown_menu/trigger" do %>Prefers top<% end %>
+
+      <%= render "components/dropdown_menu/content", side: :top do %>
+        <%= render "components/dropdown_menu/item", href: "#" do %>Duplicate<% end %>
+        <%= render "components/dropdown_menu/item", href: "#" do %>Archive<% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
