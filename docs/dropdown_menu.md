@@ -74,6 +74,26 @@ attribute is there to begin with.
 <%% end %>
 ```
 
+## Placement
+
+<!-- preview:placement height:320 -->
+
+Since 0.7.1 the menu measures itself when it opens and flips above the trigger if
+it would otherwise open past the bottom of the viewport. It flips only when the
+space above genuinely fits — flipping into a gap that is also too small trades
+one clipped menu for another — and it re-measures from the placement you asked
+for each time, so a menu that flipped in a short window returns to its default
+once the window grows.
+
+`side:` is therefore an initial preference rather than a fixed position. The
+controller writes the resolved side to `data-side` on the content element, which
+is what the CSS positions against. Only the block axis flips; `:left` and
+`:right` are left alone.
+
+The menu button behaves the same way. If you carry your own collision or flip
+controller, you can delete it — `bin/rails maquina:doctor` reports it as
+`app-level-dropdown-flip`.
+
 ## API Reference
 
 ### Dropdown Menu
@@ -99,7 +119,7 @@ attribute is there to begin with.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | align | Symbol | :start | :start, :center, :end |
-| side | Symbol | :bottom | :top, :bottom, :left, :right |
+| side | Symbol | :bottom | :top, :bottom, :left, :right — a preference; see [Placement](#placement) |
 | width | Symbol | :default | :default, :sm, :md, :lg |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |

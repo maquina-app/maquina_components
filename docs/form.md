@@ -91,6 +91,64 @@
 <button data-component="button" data-variant="link">Link</button>
 ```
 
+## Error States
+
+<!-- preview:error height:560 -->
+
+The error state is driven by `aria-invalid` on the field. Set it from your model
+and the border, the focus ring and the message all follow:
+
+```erb
+<div data-form-part="group">
+  <%= f.label :email, data: { component: "label" } %>
+  <%= f.email_field :email, data: { component: "input" },
+      aria: { invalid: @user.errors[:email].any?,
+              describedby: ("email-error" if @user.errors[:email].any?) } %>
+  <% if @user.errors[:email].any? %>
+    <p data-form-part="error" id="email-error"><%= @user.errors[:email].first %></p>
+  <% end %>
+</div>
+```
+
+Rails' own `.field_with_errors` wrapper is styled too, so an app that leans on
+the default wrapper gets the same treatment without setting anything.
+
+### Do not rely on `:invalid` alone
+
+Before 0.7.1 the engine also matched `:invalid:not(:placeholder-shown)`, which
+meant a `required` field with no `placeholder` painted the error state on first
+paint — before focus, before blur, before submit — while telling screen readers
+nothing, because no `aria-invalid` accompanied it.
+
+That is now `:user-invalid`, which only matches once the reader has actually
+interacted with the field. Two consequences:
+
+- A pristine `required` field renders normally. You no longer need a placeholder
+  to suppress a false error.
+- If you render server-side errors and never set `aria-invalid`, you were relying
+  on the old `:invalid` match and the border will stop appearing. Set
+  `aria-invalid` as above.
+
+`bin/rails maquina:doctor` reports the second case as
+`invalid-styling-without-aria`.
+
+### Error text colour
+
+The message reads `--destructive-text` and the invalid border reads
+`--destructive-border`. Both default to what they painted before, so the
+installer's palette needs no change. If your palette is the saturated
+shadcn kind — `--destructive` a strong red, `--destructive-foreground`
+near-white — add:
+
+```css
+:root {
+  --destructive-text: var(--destructive);
+  --destructive-border: var(--destructive);
+}
+```
+
+See [theming](theming.md) for why the two palettes differ.
+
 ## API Reference
 
 ### Form Container
@@ -100,7 +158,7 @@
 | data-component="form" | Grid layout with gap |
 | data-form-part="group" | Field group container |
 | data-form-part="description" | Help text styling |
-| data-form-part="error" | Error message styling |
+| data-form-part="error" | Error message styling; colour from `--destructive-text` |
 | data-form-part="actions" | Submit area container |
 
 ### Input
