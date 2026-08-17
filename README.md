@@ -165,7 +165,8 @@ bin/rails maquina:doctor
 ```
 
 It scans your CSS, views and JavaScript and prints file:line for every pattern
-the new release changes, grouped `BREAKING` / `REVIEW` / `CLEANUP`. It is
+the new release changes, grouped `BREAKING` / `REVIEW` / `CLEANUP`, each tagged
+with the release it came from. It is
 advisory: it never edits anything and never fails a build. See
 [docs/upgrading.md](docs/upgrading.md) for what changed and how to keep the
 previous look.

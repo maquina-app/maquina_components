@@ -114,7 +114,7 @@ popover carries a focus ring like any other form control.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | text | String | "No results found." | Empty state message |
-| content | String | nil | HTML content via `capture` |
+| content | String | nil | HTML content via `capture`, or use block |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -130,7 +130,7 @@ popover carries a focus ring like any other form control.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | text | String | nil | Label text |
-| content | String | nil | HTML content via `capture` |
+| content | String | nil | HTML content via `capture`, or use block |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 

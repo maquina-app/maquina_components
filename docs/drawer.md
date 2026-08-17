@@ -105,8 +105,8 @@ Group the drawer body into stacked sections, divided by a separator.
 | Partial | Description |
 |---------|-------------|
 | drawer/header | Top section with title and close button |
-| drawer/title | Heading inside the header. `text:` / `content:`, `tag:` (default `:h2`) |
-| drawer/description | Supporting line under the title. `text:` / `content:`, `tag:` (default `:p`) |
+| drawer/title | Heading inside the header. `text:` / `content:` / block, `tag:` (default `:h2`) |
+| drawer/description | Supporting line under the title. `text:` / `content:` / block, `tag:` (default `:p`) |
 | drawer/content | Scrollable middle section |
 | drawer/footer | Bottom section for actions |
 | drawer/section | Groups related rows inside the content area. Container — pass a block |

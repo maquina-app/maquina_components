@@ -62,10 +62,55 @@ export default class extends Controller {
     // Add event listeners
     this.addEventListeners()
 
-    // Focus first item after animation
+    // Measure after the paint, not here: dataset.state was just set and the
+    // content is still laid out at its pre-open box in this tick.
     requestAnimationFrame(() => {
+      this.positionContent()
       this.focusFirstItem()
     })
+  }
+
+  // The placement the author asked for, captured before we ever overwrite it.
+  // Memoised on first read, which happens on the first open() -- i.e. while
+  // data-side is still whatever the partial rendered.
+  get authoredSide() {
+    if (this._authoredSide === undefined) {
+      this._authoredSide = (this.hasContentTarget && this.contentTarget.dataset.side) || "bottom"
+    }
+
+    return this._authoredSide
+  }
+
+  // Flip the menu above the trigger when it would otherwise open past the
+  // bottom of the viewport. CSS already styles every side; nothing was ever
+  // choosing one from geometry.
+  positionContent() {
+    if (!this.hasContentTarget) return
+
+    const content = this.contentTarget
+    const side = this.authoredSide
+
+    // Always re-measure from the authored placement. Without this reset a menu
+    // flipped once in a short window stays flipped after the window grows.
+    content.dataset.side = side
+
+    // Only the block axis flips; left/right placements are deliberate.
+    if (side !== "bottom" && side !== "top") return
+
+    const trigger = this.hasTriggerTarget ? this.triggerTarget : this.element
+    const triggerRect = trigger.getBoundingClientRect()
+    const gap = 4 // matches the mt-1 / mb-1 in dropdown_menu.css
+    const needed = content.getBoundingClientRect().height + gap
+    const roomBelow = window.innerHeight - triggerRect.bottom
+    const roomAbove = triggerRect.top
+
+    // Flip only when the other side genuinely fits. Flipping into a space that
+    // is also too small trades one clipped menu for another.
+    if (side === "bottom" && needed > roomBelow && needed <= roomAbove) {
+      content.dataset.side = "top"
+    } else if (side === "top" && needed > roomAbove && needed <= roomBelow) {
+      content.dataset.side = "bottom"
+    }
   }
 
   close() {

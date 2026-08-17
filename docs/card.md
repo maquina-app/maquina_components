@@ -97,7 +97,7 @@
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | text | String | nil | Title text |
-| content | String | nil | HTML content via `capture` |
+| content | String | nil | HTML content via `capture`, or use block |
 | size | Symbol | :default | :default or :sm |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
@@ -107,7 +107,7 @@
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | text | String | nil | Description text |
-| content | String | nil | HTML content via `capture` |
+| content | String | nil | HTML content via `capture`, or use block |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 

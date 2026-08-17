@@ -15,8 +15,9 @@ Building forms with maquina_components, validation, error handling, and common f
     
     <div data-form-part="group">
       <%= f.label :name, data: { component: "label", required: true } %>
-      <%= f.text_field :name, data: { component: "input" }, 
-          placeholder: t(".name_placeholder") %>
+      <%= f.text_field :name, data: { component: "input" },
+          placeholder: t(".name_placeholder"),
+          aria: { invalid: @user.errors[:name].any? } %>
       <% if @user.errors[:name].any? %>
         <p data-form-part="error"><%= @user.errors[:name].first %></p>
       <% end %>
@@ -25,7 +26,8 @@ Building forms with maquina_components, validation, error handling, and common f
     <div data-form-part="group">
       <%= f.label :email, data: { component: "label", required: true } %>
       <%= f.email_field :email, data: { component: "input" },
-          placeholder: t(".email_placeholder") %>
+          placeholder: t(".email_placeholder"),
+          aria: { invalid: @user.errors[:email].any? } %>
       <p data-form-part="description"><%= t(".email_hint") %></p>
       <% if @user.errors[:email].any? %>
         <p data-form-part="error"><%= @user.errors[:email].first %></p>
@@ -47,7 +49,8 @@ Every form field should be wrapped in a group:
 ```erb
 <div data-form-part="group">
   <%= f.label :field_name, data: { component: "label" } %>
-  <%= f.text_field :field_name, data: { component: "input" } %>
+  <%= f.text_field :field_name, data: { component: "input" },
+      aria: { invalid: @model.errors[:field_name].any? } %>
   <p data-form-part="description">Optional help text</p>
   <% if @model.errors[:field_name].any? %>
     <p data-form-part="error"><%= @model.errors[:field_name].first %></p>

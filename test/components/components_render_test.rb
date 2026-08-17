@@ -547,4 +547,43 @@ class ComponentsRenderTest < ActiveSupport::TestCase
     assert_includes link, %(href="/projects/new")
     assert_includes link, %(data-sidebar-part="group-action")
   end
+
+  # Every leaf partial takes content three ways: text:, content:, or a block.
+  # The engine shipped a 9/9 split on this through 0.7.0 -- half of them
+  # dropped the block silently, rendering correct markup with no content -- so
+  # the list is asserted wholesale rather than per component.
+  LEAF_PARTIALS = %w[
+    components/label
+    components/alert/title components/alert/description
+    components/card/title components/card/description
+    components/drawer/title components/drawer/description
+    components/toast/title components/toast/description
+    components/combobox/label
+    components/empty/title components/empty/description
+    components/dropdown_menu/label components/dropdown_menu/shortcut
+    components/sidebar/menu_badge
+    components/table/caption components/table/cell components/table/head
+  ].freeze
+
+  test "every leaf partial accepts text:, content: and a block alike" do
+    LEAF_PARTIALS.each do |partial|
+      from_text = view.render(partial, text: "Hello")
+      from_content = view.render(partial, content: "Hello")
+      from_block = view.render(partial) { "Hello" }
+
+      assert_includes from_text, "Hello", "#{partial} dropped text:"
+      assert_includes from_content, "Hello", "#{partial} dropped content:"
+      assert_includes from_block, "Hello", "#{partial} dropped its block"
+    end
+  end
+
+  # text: "" used to mean "render empty" in four partials and "fall through to
+  # the block" in five. It now consistently falls through.
+  test "blank text falls through to the block in every leaf partial" do
+    LEAF_PARTIALS.each do |partial|
+      html = view.render(partial, text: "") { "Fallback" }
+
+      assert_includes html, "Fallback", "#{partial} swallowed the block for text: \"\""
+    end
+  end
 end

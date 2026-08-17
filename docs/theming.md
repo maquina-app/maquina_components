@@ -73,6 +73,37 @@ Name the properties instead:
 transition-property: color, background-color, border-color, text-decoration-color;
 ```
 | --control-fill | transparent | Field background; re-set under .dark |
+| --destructive-text | --destructive-foreground | Field error text (`[data-form-part="error"]`) |
+| --destructive-border | --destructive | The border on an invalid field |
+
+### `--x` is a fill; `--x-foreground` is the text on that fill
+
+Every `-foreground` token names the colour that sits **on** its pair, never text
+on the page. `[data-form-part="error"]` is the one place that distinction bites:
+a field error is body text on a card, so painting it with
+`--destructive-foreground` is only correct if your palette happens to define that
+token as a readable-on-page red.
+
+Both conventions are in the wild, and they are inverses of each other:
+
+| Convention | `--destructive` | `--destructive-foreground` |
+|---|---|---|
+| Tinted (what `bin/rails g maquina_components:install` writes, matching `--success` / `--warning`) | pale tint | dark readable red |
+| Saturated (shadcn-style) | saturated red | near-white |
+
+So error text routes through `--destructive-text`, which defaults to
+`--destructive-foreground` — correct under the tinted palette, and one line to
+fix under a saturated one:
+
+```css
+:root {
+  --destructive-text: var(--destructive);
+  --destructive-border: var(--destructive);
+}
+```
+
+`rake maquina:doctor` measures your own tokens and reports
+`destructive-error-invisible` if the error text cannot be read against your card.
 
 <!-- preview:shape height:520 -->
 
@@ -243,5 +274,6 @@ breaks outright. It never edits anything.
 bin/rails maquina:doctor
 ```
 
-See [upgrading](upgrading.md) for what changed in 0.6.0 and how to keep the
-0.5.1 look.
+Each finding names the release it came from, so the report stays useful across
+upgrades rather than describing one migration. See [upgrading](upgrading.md) for
+what changed in each release.

@@ -196,4 +196,158 @@ class DoctorTest < ActiveSupport::TestCase
     assert_match(%r{app/assets/tailwind/application\.css:1}, report)
     assert_match(/Summary: 1 breaking, 1 review, 1 cleanup/, report)
   end
+
+  # ----- 0.7.1 checks -------------------------------------------------
+
+  # Palettes in the two conventions the engine has shipped. The installer's
+  # theme.css.tt uses --destructive as a pale tint with a dark readable
+  # foreground; docs/getting-started.md used to ship the inverse.
+  TINT_PALETTE = <<~CSS
+    :root {
+      --card: oklch(1 0 0);
+      --destructive: oklch(0.92 0.05 8);
+      --destructive-foreground: oklch(0.4 0.12 8);
+    }
+    .dark {
+      --card: oklch(0.205 0 0);
+      --destructive: oklch(0.34 0.07 8);
+      --destructive-foreground: oklch(0.88 0.06 8);
+    }
+  CSS
+
+  SHADCN_PALETTE = <<~CSS
+    :root {
+      --card: oklch(1 0 0);
+      --destructive: oklch(0.577 0.245 27.325);
+      --destructive-foreground: oklch(0.985 0 0);
+    }
+  CSS
+
+  test "flags a palette whose error text disappears into the card" do
+    write "app/assets/tailwind/application.css", SHADCN_PALETTE
+
+    finding = doctor.findings.find { |f| f.rule == "destructive-error-invisible" }
+
+    assert_equal :breaking, finding.severity
+    assert_equal "0.7.1", finding.version
+    assert_equal 4, finding.line
+    assert_match(/--destructive-text: var\(--destructive\)/, finding.suggestion)
+  end
+
+  # The check that matters most: the installer's own palette is correct as
+  # shipped, in BOTH themes. Its dark block has the same numeric shape as an
+  # inverted light block -- pale foreground, dark base -- so a rule keyed on
+  # lightness alone would fire on every app that ran our generator.
+  test "does not flag the installer's tint palette in either theme" do
+    write "app/assets/tailwind/application.css", TINT_PALETTE
+
+    assert_empty doctor.findings.select { |f| f.rule == "destructive-error-invisible" }
+  end
+
+  # Without a surface token there is nothing to measure against, and guessing
+  # would make a BREAKING finding out of an assumption.
+  test "abstains when the theme declares no card or background" do
+    write "app/assets/tailwind/application.css", <<~CSS
+      :root {
+        --destructive: oklch(0.577 0.245 27.325);
+        --destructive-foreground: oklch(0.985 0 0);
+      }
+    CSS
+
+    assert_empty doctor.findings.select { |f| f.rule == "destructive-error-invisible" }
+  end
+
+  # Rails form helpers span several lines, so this cannot be a per-line match.
+  test "flags a required field with no placeholder across a multi-line helper" do
+    write "app/views/users/_form.html.erb", <<~ERB
+      <%= form_with model: @user do |f| %>
+        <%= f.text_field :workspace_id,
+            data: { component: "input" },
+            required: true %>
+      <% end %>
+    ERB
+
+    finding = doctor.findings.find { |f| f.rule == "required-without-placeholder" }
+
+    assert_equal :review, finding.severity
+    assert_equal 2, finding.line
+    assert_match(/:user-invalid/, finding.suggestion)
+  end
+
+  test "does not flag a required field that has a placeholder" do
+    write "app/views/users/_form.html.erb", <<~ERB
+      <%= f.text_field :name,
+          data: { component: "input" },
+          placeholder: "Full name",
+          required: true %>
+    ERB
+
+    assert_empty doctor.findings.select { |f| f.rule == "required-without-placeholder" }
+  end
+
+  test "flags an app that renders errors but never sets aria-invalid" do
+    write "app/views/users/_form.html.erb", <<~ERB
+      <p data-form-part="error">Email is required</p>
+    ERB
+
+    finding = doctor.findings.find { |f| f.rule == "invalid-styling-without-aria" }
+
+    assert_equal :breaking, finding.severity
+    assert_match(/aria: \{ invalid:/, finding.suggestion)
+  end
+
+  test "does not flag an app that already sets aria-invalid" do
+    write "app/views/users/_form.html.erb", <<~ERB
+      <%= f.email_field :email, aria: { invalid: @user.errors[:email].any? } %>
+      <p data-form-part="error">Email is required</p>
+    ERB
+
+    assert_empty doctor.findings.select { |f| f.rule == "invalid-styling-without-aria" }
+  end
+
+  test "flags a hand-rolled error color on the engine's error part" do
+    write "app/views/users/_form.html.erb", <<~ERB
+      <p data-form-part="error" class="text-xs text-destructive">Bad</p>
+    ERB
+
+    finding = doctor.findings.find { |f| f.rule == "destructive-error-workaround" }
+
+    assert_equal :cleanup, finding.severity
+    assert_match(/--destructive-text/, finding.suggestion)
+  end
+
+  test "flags an app-level dropdown flip controller" do
+    write "app/javascript/controllers/dropdown_flip_controller.js", <<~JS
+      export default class extends Controller {
+        reposition() {
+          const rect = this.element.getBoundingClientRect()
+          this.contentTarget.dataset.side = rect.bottom > window.innerHeight ? "top" : "bottom"
+        }
+      }
+    JS
+
+    finding = doctor.findings.find { |f| f.rule == "app-level-dropdown-flip" }
+
+    assert_equal :cleanup, finding.severity
+    assert_equal "0.7.1", finding.version
+  end
+
+  # getBoundingClientRect on its own is not a dropdown flip.
+  test "does not flag unrelated geometry code" do
+    write "app/javascript/controllers/ruler_controller.js", <<~JS
+      export default class extends Controller {
+        measure() { return this.element.getBoundingClientRect().width }
+      }
+    JS
+
+    assert_empty doctor.findings.select { |f| f.rule == "app-level-dropdown-flip" }
+  end
+
+  test "report names the release each finding came from" do
+    write "app/views/users/_form.html.erb", <<~ERB
+      <p data-form-part="error" class="text-destructive">Bad</p>
+    ERB
+
+    assert_match(/\[destructive-error-workaround\] \(0\.7\.1\)/, doctor.report)
+  end
 end

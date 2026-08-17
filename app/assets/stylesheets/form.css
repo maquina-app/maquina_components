@@ -154,9 +154,15 @@
 
   /* Invalid/error state — the destructive halo is themeable through
      --focus-ring-color, which the :focus-visible rule above also reads. */
-  [data-component="input"]:where([aria-invalid="true"], :invalid:not(:placeholder-shown)) {
+  [data-component="input"]:where([aria-invalid="true"], :user-invalid) {
     --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
-    border-color: var(--destructive);
+    border-color: var(--destructive-border, var(--destructive));
+  }
+
+  /* The destructive halo is a focus affordance, not a resting one: painting an
+     outline on an unfocused field doubles the border and reads as a second
+     error. Gated to match the :focus-visible rule above. */
+  [data-component="input"]:where([aria-invalid="true"], :user-invalid):where(:focus-visible) {
     outline-width: var(--focus-ring-width, 3px);
     outline-style: var(--focus-ring-style, solid);
     outline-color: var(--focus-ring-color, color-mix(in oklch, var(--destructive) 20%, transparent));
@@ -206,9 +212,15 @@
     @apply cursor-not-allowed opacity-50;
   }
 
-  [data-component="textarea"]:where([aria-invalid="true"], :invalid:not(:placeholder-shown)) {
+  [data-component="textarea"]:where([aria-invalid="true"], :user-invalid) {
     --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
-    border-color: var(--destructive);
+    border-color: var(--destructive-border, var(--destructive));
+  }
+
+  /* The destructive halo is a focus affordance, not a resting one: painting an
+     outline on an unfocused field doubles the border and reads as a second
+     error. Gated to match the :focus-visible rule above. */
+  [data-component="textarea"]:where([aria-invalid="true"], :user-invalid):where(:focus-visible) {
     outline-width: var(--focus-ring-width, 3px);
     outline-style: var(--focus-ring-style, solid);
     outline-color: var(--focus-ring-color, color-mix(in oklch, var(--destructive) 20%, transparent));
@@ -273,7 +285,7 @@
 
   [data-component="select"]:where([aria-invalid="true"]) {
     --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
-    border-color: var(--destructive);
+    border-color: var(--destructive-border, var(--destructive));
   }
 
   /* ===================================================================
@@ -355,7 +367,7 @@
 
   [data-component="checkbox"]:where([aria-invalid="true"]) {
     --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
-    border-color: var(--destructive);
+    border-color: var(--destructive-border, var(--destructive));
     outline-width: var(--focus-ring-width, 3px);
     outline-style: var(--focus-ring-style, solid);
     outline-color: var(--focus-ring-color, color-mix(in oklch, var(--destructive) 20%, transparent));
@@ -653,7 +665,11 @@
   [data-form-part="error"] {
     @apply text-sm;
     font-weight: var(--label-weight, 500);
-    color: var(--destructive-foreground);
+    /* Error text sits on the page, not on a destructive fill, so it is the one
+       place --destructive-foreground is the wrong role. Which of the pair is
+       readable as text depends on the host palette's convention, so it routes
+       through its own token: see docs/theming.md. */
+    color: var(--destructive-text, var(--destructive-foreground));
   }
 
   /* Rails error wrapper compatibility */
@@ -665,7 +681,12 @@
   :where(.field_with_errors) [data-component="textarea"],
   :where(.field_with_errors) [data-component="select"] {
     --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
-    border-color: var(--destructive);
+    border-color: var(--destructive-border, var(--destructive));
+  }
+
+  :where(.field_with_errors) [data-component="input"]:where(:focus-visible),
+  :where(.field_with_errors) [data-component="textarea"]:where(:focus-visible),
+  :where(.field_with_errors) [data-component="select"]:where(:focus-visible) {
     outline-width: var(--focus-ring-width, 3px);
     outline-style: var(--focus-ring-style, solid);
     outline-color: var(--focus-ring-color, color-mix(in oklch, var(--destructive) 20%, transparent));
