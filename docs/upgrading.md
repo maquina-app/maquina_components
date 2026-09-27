@@ -2,6 +2,18 @@
 
 > What breaks between releases, and what to do about it.
 
+## 0.7.2 → 0.7.3
+
+No changes to the engine. `maquina:doctor` stops reporting Rails' own Action Text
+styles: `restated-svg-uri` now only looks at SVGs under a maquina component
+selector, so a fresh app with Action Text no longer shows fifteen BREAKING
+findings for `actiontext.css`. If you silenced those by hand, you can stop.
+
+```bash
+bundle update maquina-components
+bin/rails maquina:doctor
+```
+
 ## 0.7.1 → 0.7.2
 
 No API changes. One fix, to the theme the installer writes, which an existing

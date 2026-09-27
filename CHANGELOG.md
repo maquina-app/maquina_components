@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-09-26
+
+One fix to `maquina:doctor`. No engine changes.
+
+### Fixed
+
+- **`restated-svg-uri` reported Rails' own Action Text styles.** The rule
+  matched any SVG data URI on any line of app CSS or markup, so the fifteen
+  SVGs `actiontext.css` draws the Trix editor with read as fifteen BREAKING
+  findings in every app with Action Text, and an inline SVG `<img>` in a view
+  was reported too. The rule is about app CSS restating the engine's checkbox,
+  radio, switch and select marks, so it now runs only on declarations under a
+  `data-component` or `data-*-part` selector, and in markup only on a line with
+  a component hook. Assigning a mark token (`--checkbox-mark-image: url(...)`)
+  is still never reported.
+
 ## [0.7.2] - 2026-09-26
 
 One fix: dark mode in apps set up by the installer. No API changes; an app
@@ -666,7 +682,8 @@ Thanks to the contributors who made this release possible:
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.7.2...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.7.3...HEAD
+[0.7.3]: https://github.com/maquina-app/maquina_components/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/maquina-app/maquina_components/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/maquina-app/maquina_components/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/maquina-app/maquina_components/compare/v0.6.1...v0.7.0
