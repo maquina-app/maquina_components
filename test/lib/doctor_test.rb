@@ -88,6 +88,30 @@ class DoctorTest < ActiveSupport::TestCase
     assert_empty doctor.findings.select { |finding| finding.rule == "restated-svg-uri" }
   end
 
+  # Rails' actiontext.css draws the Trix toolbar with SVG data URIs. They are the
+  # app's own artwork, not a restated engine mark, and every app with Action
+  # Text has them.
+  test "does not flag SVG data URIs outside a component selector" do
+    write "app/assets/stylesheets/actiontext.css", <<~CSS
+      trix-toolbar .trix-button--icon-bold::before {
+        background-image: url("data:image/svg+xml,%3Csvg height='24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E");
+      }
+    CSS
+    write "app/views/shared/_logo.html.erb", <<~ERB
+      <img src="data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=" alt="Logo">
+    ERB
+
+    assert_empty doctor.findings.select { |finding| finding.rule == "restated-svg-uri" }
+  end
+
+  test "flags an SVG data URI inline on a component element" do
+    write "app/views/shared/_terms.html.erb", <<~ERB
+      <input type="checkbox" data-component="checkbox" style="background-image: url('data:image/svg+xml,%3csvg%3e%3c/svg%3e')">
+    ERB
+
+    assert_includes rules(doctor.findings_for(:breaking)), "restated-svg-uri"
+  end
+
   test "flags hardcoded radius and focus-ring shadows on component selectors" do
     write "app/assets/stylesheets/overrides.css", <<~CSS
       [data-component="button"] {
