@@ -2,6 +2,60 @@
 
 > What breaks between releases, and what to do about it.
 
+## 0.7.1 → 0.7.2
+
+No API changes. One fix, to the theme the installer writes, which an existing
+app applies by hand.
+
+```bash
+bundle update maquina-components
+bin/rails maquina:doctor
+```
+
+### Dark mode applies
+
+The installer appended its dark palette nested inside `:root`:
+
+```css
+:root {
+  --background: oklch(1 0 0);
+  /* ... */
+
+  .dark {
+    --background: oklch(0.145 0 0);
+    /* ... */
+  }
+}
+```
+
+Nested, that compiles to `:root .dark` — an element *inside* `<html>` — so
+`<html class="dark">` never matched it. Putting the class on `<body>` did not help
+either: the `@theme` bindings (`--color-background: var(--background)`) resolve
+on `<html>`, and every utility inherits the light value from there. Dark mode
+never applied. The shape/state token block had the same shape for its `--info`
+pair.
+
+New installs get top-level `.dark` blocks. Re-running the installer never touches
+an existing palette, so in an app installed from 0.7.1 or earlier, cut each
+nested `.dark { ... }` out of its `:root` block and paste it after the closing
+brace:
+
+```css
+:root {
+  --background: oklch(1 0 0);
+  /* ... */
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  /* ... */
+}
+```
+
+The doctor reports each one as `breaking` / `nested-dark-block`, with its line.
+A default install has two: the palette and the `--info` pair. `&.dark` inside
+`:root` compiles to `:root.dark`, which is correct, and is not reported.
+
 ## 0.7.0 → 0.7.1
 
 No API changes. Four fixes reported by a consuming app, all of which either

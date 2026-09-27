@@ -99,8 +99,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_match %r{--destructive:}, content
       assert_match %r{--sidebar:}, content
 
-      # Check for dark mode
-      assert_match %r{\.dark \{}, content
+      # Check for dark mode: a top-level block, never nested in :root, where it
+      # would compile to `:root .dark` and never match <html class="dark">
+      assert_match %r{^\.dark \{}, content
+      refute_match %r{^[ \t]+\.dark \{}, content
 
       # Check for @theme block
       assert_match %r{@theme \{}, content
@@ -225,6 +227,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       # Real defaults for new installs
       assert_match %r{^\s+--info: }, content
       assert_match %r{^\s+--info-foreground: }, content
+      assert_equal 2, content.scan(/^\.dark \{/).count, "theme and token block each add a top-level .dark"
       assert_match %r{^\s+--primary-hover: }, content
       assert_match %r{^\s+--secondary-hover: }, content
       assert_match %r{^\s+--destructive-hover: }, content

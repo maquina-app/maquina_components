@@ -350,4 +350,62 @@ class DoctorTest < ActiveSupport::TestCase
 
     assert_match(/\[destructive-error-workaround\] \(0\.7\.1\)/, doctor.report)
   end
+
+  # ----- 0.7.2 checks -------------------------------------------------
+
+  test "flags a .dark block nested inside :root" do
+    write "app/assets/tailwind/application.css", <<~CSS
+      :root {
+        --background: oklch(1 0 0);
+
+        .dark {
+          --background: oklch(0.145 0 0);
+        }
+      }
+    CSS
+
+    finding = doctor.findings.find { |f| f.rule == "nested-dark-block" }
+
+    assert finding, "expected the nested .dark block to be flagged"
+    assert_equal :breaking, finding.severity
+    assert_equal 4, finding.line
+    assert_equal "0.7.2", finding.version
+  end
+
+  test "flags a .dark block nested inside html" do
+    write "app/assets/tailwind/application.css", <<~CSS
+      html {
+        .dark { --info: oklch(0.34 0.07 250); }
+      }
+    CSS
+
+    assert_includes rules(doctor.findings), "nested-dark-block"
+  end
+
+  test "does not flag a top-level .dark block or &.dark" do
+    write "app/assets/tailwind/application.css", <<~CSS
+      :root {
+        --background: oklch(1 0 0);
+
+        &.dark { --background: oklch(0.145 0 0); }
+      }
+
+      .dark {
+        --background: oklch(0.145 0 0);
+      }
+    CSS
+
+    refute_includes rules(doctor.findings), "nested-dark-block"
+  end
+
+  test "flags the palette the 0.7.1 installer shipped" do
+    installed = File.read(File.expand_path(
+      "../../lib/generators/maquina_components/install/templates/theme.css.tt", __dir__
+    )).sub(/^\}\n\n(\/\* Dark Mode.*?\*\/\n)?(\.dark \{.*?^\})\n/m) do
+      "\n  #{$2.gsub("\n", "\n  ")}\n}\n"
+    end
+    write "app/assets/tailwind/application.css", installed
+
+    assert_includes rules(doctor.findings), "nested-dark-block"
+  end
 end

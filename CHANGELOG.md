@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-09-26
+
+One fix: dark mode in apps set up by the installer. No API changes; an app
+installed from 0.7.1 or earlier moves one block by hand, and `maquina:doctor`
+points at it.
+
+### Fixed
+
+- **Dark mode never applied in an app set up by the installer.** The theme
+  `rails g maquina_components:install` appends nested its `.dark` block inside
+  `:root`, and so did the `--info` pair in the shape/state token block and the
+  theme in `docs/getting-started.md`. Nested, it compiles to `:root .dark` — a
+  descendant of `<html>` — so `<html class="dark">` never matched it. Moving the
+  class to `<body>` did not help either: the `@theme` bindings
+  (`--color-background: var(--background)`) resolve on `<html>`, so every
+  utility had already inherited the light value. Both blocks are now top-level
+  `.dark` rules.
+
+  Re-running the installer never touches an existing palette, so an app
+  installed from 0.7.1 or earlier keeps the nested block. `bin/rails
+  maquina:doctor` now reports it as `nested-dark-block` (BREAKING) with the
+  line to move; the fix is to cut the `.dark { ... }` block out of `:root` and
+  paste it after the closing brace.
+
 ## [0.7.1] - 2026-08-17
 
 Four follow-ups from the same consumer app whose reports drove 0.7.0. No API
@@ -642,7 +666,8 @@ Thanks to the contributors who made this release possible:
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.7.2...HEAD
+[0.7.2]: https://github.com/maquina-app/maquina_components/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/maquina-app/maquina_components/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/maquina-app/maquina_components/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/maquina-app/maquina_components/compare/v0.6.0...v0.6.1

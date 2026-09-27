@@ -76,58 +76,61 @@
   --sidebar-accent-foreground: oklch(0.145 0 0);
   --sidebar-border: oklch(0.88 0 0);
   --sidebar-ring: oklch(0.645 0.246 16);
+}
 
-  /* Dark Mode */
-  .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
+/* Dark Mode
+   Put the `dark` class on <html>. This block must stay at the top level: nested
+   inside :root it compiles to `:root .dark`, which never matches <html> itself,
+   and the @theme bindings below resolve against <html>. */
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
 
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
 
-    --popover: oklch(0.269 0 0);
-    --popover-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.269 0 0);
+  --popover-foreground: oklch(0.985 0 0);
 
-    --primary: oklch(0.712 0.194 13);
-    --primary-foreground: oklch(0.15 0.052 13);
+  --primary: oklch(0.712 0.194 13);
+  --primary-foreground: oklch(0.15 0.052 13);
 
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
 
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
 
-    --accent: oklch(0.371 0 0);
-    --accent-foreground: oklch(0.985 0 0);
+  --accent: oklch(0.371 0 0);
+  --accent-foreground: oklch(0.985 0 0);
 
-    --success: oklch(0.32 0.06 168);
-    --success-foreground: oklch(0.82 0.06 168);
+  --success: oklch(0.32 0.06 168);
+  --success-foreground: oklch(0.82 0.06 168);
 
-    --warning: oklch(0.36 0.06 55);
-    --warning-foreground: oklch(0.86 0.06 55);
+  --warning: oklch(0.36 0.06 55);
+  --warning-foreground: oklch(0.86 0.06 55);
 
-    --destructive: oklch(0.34 0.07 8);
-    --destructive-foreground: oklch(0.88 0.06 8);
+  --destructive: oklch(0.34 0.07 8);
+  --destructive-foreground: oklch(0.88 0.06 8);
 
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.455 0.188 13);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.455 0.188 13);
 
-    --chart-1: oklch(0.712 0.194 13);
-    --chart-2: oklch(0.72 0.09 168);
-    --chart-3: oklch(0.78 0.09 55);
-    --chart-4: oklch(0.645 0.246 16);
-    --chart-5: oklch(0.58 0.13 8);
+  --chart-1: oklch(0.712 0.194 13);
+  --chart-2: oklch(0.72 0.09 168);
+  --chart-3: oklch(0.78 0.09 55);
+  --chart-4: oklch(0.645 0.246 16);
+  --chart-5: oklch(0.58 0.13 8);
 
-    --sidebar: oklch(0.14 0 0);
-    --sidebar-foreground: oklch(0.9 0 0);
-    --sidebar-primary: oklch(0.712 0.194 13);
-    --sidebar-primary-foreground: oklch(0.15 0.052 13);
-    --sidebar-accent: oklch(0.22 0 0);
-    --sidebar-accent-foreground: oklch(0.95 0 0);
-    --sidebar-border: oklch(1 0 0 / 12%);
-    --sidebar-ring: oklch(0.455 0.188 13);
-  }
+  --sidebar: oklch(0.14 0 0);
+  --sidebar-foreground: oklch(0.9 0 0);
+  --sidebar-primary: oklch(0.712 0.194 13);
+  --sidebar-primary-foreground: oklch(0.15 0.052 13);
+  --sidebar-accent: oklch(0.22 0 0);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.455 0.188 13);
 }
 
 /* Tailwind Theme Bindings
