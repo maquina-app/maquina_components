@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-09-26
+
+One fix: dark mode in apps set up by the installer. No API changes; an app
+installed from 0.7.1 or earlier moves one block by hand, and `maquina:doctor`
+points at it.
+
 ### Fixed
 
 - **Dark mode never applied in an app set up by the installer.** The theme
@@ -660,7 +666,8 @@ Thanks to the contributors who made this release possible:
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.7.1...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.7.2...HEAD
+[0.7.2]: https://github.com/maquina-app/maquina_components/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/maquina-app/maquina_components/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/maquina-app/maquina_components/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/maquina-app/maquina_components/compare/v0.6.0...v0.6.1
