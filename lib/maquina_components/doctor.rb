@@ -54,6 +54,13 @@ module MaquinaComponents
     # Assigning a data URI to one of the five mark properties IS the 0.6.0
     # pattern, so it must not be reported as a restated rule.
     MARK_TOKEN_ASSIGNMENT = /--(?:checkbox-mark|checkbox-indeterminate|radio-mark|switch-thumb|select-chevron)-image\s*:/
+    RESTATED_SVG_SUGGESTION =
+      "0.6.0 exposes these marks as overridable custom properties:\n" \
+      "--checkbox-mark-image, --checkbox-indeterminate-image, --radio-mark-image,\n" \
+      "--switch-thumb-image, --select-chevron-image. Assign your SVG to the token\n" \
+      "instead of restating the engine's rule."
+    # A component hook in markup: data-component="..." or a helper's component: key.
+    MARKUP_COMPONENT_HOOK = /data-component=|\bcomponent:\s*[:"']/
     RADIUS_DECL = /(?:border-radius\s*:|@apply[^;{}]*\brounded(?:-[a-z0-9\[\].\/-]+)?\b)/
     SHADOW_DECL = /(?:box-shadow\s*:|@apply[^;{}]*\b(?:shadow|ring)(?:-[a-z0-9\[\].\/-]+)?\b)/
     FOCUS_SELECTOR = /:focus(-visible|-within)?\b/
@@ -238,6 +245,13 @@ module MaquinaComponents
 
       return unless component_selector?(chain)
 
+      # Only here, under a component selector, does an SVG restate an engine
+      # mark. Anywhere else it is the app's own artwork -- Rails' actiontext.css
+      # carries fifteen for the Trix editor.
+      if SVG_DATA_URI.match?(declaration) && !MARK_TOKEN_ASSIGNMENT.match?(declaration)
+        add(path, index, declaration, :breaking, "restated-svg-uri", RESTATED_SVG_SUGGESTION)
+      end
+
       if RADIUS_DECL.match?(declaration)
         add(path, index, declaration, :review, "hardcoded-radius",
           "0.6.0 reads --control-radius / --surface-radius / --mark-radius / --pill-radius.\n" \
@@ -319,19 +333,15 @@ module MaquinaComponents
           "Use the value form of the variant: data-[active=true]:... - the bare\n" \
           "data-[active] variant relies on an attribute 0.6.0 no longer emits when false.")
       end
-
-      if SVG_DATA_URI.match?(line) && !MARK_TOKEN_ASSIGNMENT.match?(line)
-        add(path, index, line, :breaking, "restated-svg-uri",
-          "0.6.0 exposes these marks as overridable custom properties:\n" \
-          "--checkbox-mark-image, --checkbox-indeterminate-image, --radio-mark-image,\n" \
-          "--switch-thumb-image, --select-chevron-image. Assign your SVG to the token\n" \
-          "instead of restating the engine's rule.")
-      end
     end
 
     def scan_markup(path)
       read(path).each_with_index do |line, index|
         scan_shared(path, index, line)
+
+        if SVG_DATA_URI.match?(line) && MARKUP_COMPONENT_HOOK.match?(line)
+          add(path, index, line, :breaking, "restated-svg-uri", RESTATED_SVG_SUGGESTION)
+        end
 
         # Cross-file signals for check_invalid_without_aria.
         @aria_invalid_seen ||= ARIA_INVALID.match?(line)
