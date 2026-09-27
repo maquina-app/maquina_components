@@ -57,6 +57,10 @@ module MaquinaComponents
     RADIUS_DECL = /(?:border-radius\s*:|@apply[^;{}]*\brounded(?:-[a-z0-9\[\].\/-]+)?\b)/
     SHADOW_DECL = /(?:box-shadow\s*:|@apply[^;{}]*\b(?:shadow|ring)(?:-[a-z0-9\[\].\/-]+)?\b)/
     FOCUS_SELECTOR = /:focus(-visible|-within)?\b/
+    # A bare `.dark` in a selector list; `&.dark` (which compiles to :root.dark)
+    # is fine and does not match.
+    BARE_DARK_SELECTOR = /(?:\A|,)\s*\.dark\s*(?:,|\z)/
+    ROOT_SELECTOR = /\A(?::root|html)\z/
 
     # 0.7.1 -----------------------------------------------------------------
     # The destructive pair plus the surface it lands on, read out of a host
@@ -196,7 +200,10 @@ module MaquinaComponents
           selector = buffer.strip
           buffer = +""
           at_rule = selector.start_with?("@")
-          check_selector(path, index, selector, in_layer?(stack)) unless at_rule
+          unless at_rule
+            check_selector(path, index, selector, in_layer?(stack))
+            check_nested_dark(path, index, selector, stack)
+          end
           stack.push(selector)
         when "}"
           check_declaration(path, index, buffer.strip, stack)
@@ -279,6 +286,24 @@ module MaquinaComponents
             "  @layer components { #{squash(selector)} { ... } }")
         end
       end
+    end
+
+    # `.dark` nested in `:root` compiles to `:root .dark`, a descendant of
+    # <html>, so `<html class="dark">` never matches it. And the @theme
+    # bindings resolve against <html>, so moving the class to <body> does not
+    # help either: dark mode silently never applies. The 0.7.1 installer
+    # shipped its palette this way.
+    def check_nested_dark(path, index, selector, stack)
+      return unless BARE_DARK_SELECTOR.match?(selector)
+      return unless stack.any? { |ancestor| ROOT_SELECTOR.match?(ancestor) }
+
+      add(path, index, selector, :breaking, "nested-dark-block",
+        "This .dark block is nested inside :root, so it compiles to `:root .dark` and\n" \
+        "never matches <html class=\"dark\">: dark mode does not apply. Move it out to\n" \
+        "the top level, after the closing brace of :root:\n" \
+        "  :root { ... }\n" \
+        "  .dark { ... }",
+        "0.7.2")
     end
 
     # Checks that read the same in CSS, ERB and JS.

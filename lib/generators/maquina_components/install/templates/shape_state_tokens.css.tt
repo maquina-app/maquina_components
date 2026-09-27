@@ -20,11 +20,11 @@
      accent. Set them to your own blue (or to var(--primary)) if you prefer. */
   --info: oklch(0.93 0.04 240);
   --info-foreground: oklch(0.4 0.12 250);
+}
 
-  .dark {
-    --info: oklch(0.34 0.07 250);
-    --info-foreground: oklch(0.88 0.06 240);
-  }
+.dark {
+  --info: oklch(0.34 0.07 250);
+  --info-foreground: oklch(0.88 0.06 240);
 }
 
 /* -------------------------------------------------------------------------
