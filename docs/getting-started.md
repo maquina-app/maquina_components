@@ -415,8 +415,8 @@ value, and in `@theme` so it also becomes a utility (`bg-primary`,
 }
 ```
 
-Edit the values in `:root` to match your brand — the generator installs neutral
-grays. Adding a semantic color works the same way: declare it in `:root`, then
+Edit the values in `:root` to match your brand — the generator installs a rose
+primary (and ring) over neutral grays. Adding a semantic color works the same way: declare it in `:root`, then
 mirror it in `@theme` if you want the utility.
 
 Everything that is not a color — shape, focus rings, elevation, weights, control
