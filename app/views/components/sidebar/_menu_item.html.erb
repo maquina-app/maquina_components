@@ -2,6 +2,6 @@
 <% merged_data =
   merge_component_data(html_options, sidebar_part: "menu-item") %>
 
-<%= content_tag :li, class: "group/menu-item #{css_classes}", data: merged_data, **html_options do %>
+<%= content_tag :li, class: class_names("group/menu-item", css_classes), data: merged_data, **html_options do %>
   <%= yield %>
 <% end %>

@@ -25,6 +25,12 @@ class IconsHelperTest < ActionView::TestCase
     assert_includes icons.icon_for(:alert_triangle), "<svg"
   end
 
+  # docs/drawer.md and the drawer previews on maquina.app use :panel_left
+  test "left_panel answers to the panel_left alias" do
+    assert_equal icons.icon_for(:left_panel), icons.icon_for(:panel_left)
+    assert_includes icons.icon_for(:panel_left), "<svg"
+  end
+
   test "briefcase is part of the built-in set" do
     svg = icons.icon_for(:briefcase)
 
@@ -163,5 +169,11 @@ class IconsHelperTest < ActionView::TestCase
     svg_double = '<svg class="a" xmlns="http://www.w3.org/2000/svg"></svg>'
     out2 = apply_icon_options(svg_double.dup, class: "b c")
     assert_match(/class="b c"/, out2)
+  end
+
+  test "an icon rendered without classes drops the empty class placeholder" do
+    refute_includes icons.builtin_icon_for(:check), 'class=""'
+    refute_includes icons.builtin_icon_for(:check, class: ""), 'class=""'
+    assert_includes icons.builtin_icon_for(:check, class: "size-4"), 'class="size-4"'
   end
 end

@@ -1,7 +1,7 @@
 <%# locals: (layout: :column, css_classes: "", **html_options) %>
 <% merged_data = merge_component_data(html_options,
     card_part: :header,
-    layout: (layout == :row ? :row : nil)
+    layout: (layout.to_sym == :row ? :row : nil)
   ).compact %>
 
 <%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>

@@ -53,4 +53,28 @@ class DropdownMenuHelperTest < ActiveSupport::TestCase
     assert_includes html, %(href="/logout")
     assert_includes html, %(data-dropdown-menu-part="separator")
   end
+
+  test "dropdown_menu_simple renders an item with an action and no href as a button" do
+    html = view.dropdown_menu_simple("Menu", items: [
+      {label: "Copy link", action: "click->clipboard#copy"}
+    ])
+
+    button = html[/<button[^>]*data-dropdown-menu-part="item"[^>]*>/]
+    assert button, "expected a button item"
+    assert_includes button, %(data-action="click-&gt;clipboard#copy")
+    refute_includes html, %(data-dropdown-menu-part="label")
+  end
+
+  test "dropdown_menu_simple type: picks item or label explicitly" do
+    html = view.dropdown_menu_simple("Menu", items: [
+      {label: "Archive", type: :item, data: {testid: "archive"}},
+      {label: "Account", type: :label, href: "/ignored"},
+      {type: :separator}
+    ])
+
+    assert_match(/<button[^>]*data-testid="archive"/, html)
+    assert_match(/data-dropdown-menu-part="label"[^>]*>\s*Account/, html)
+    refute_includes html, %(href="/ignored")
+    assert_includes html, %(data-dropdown-menu-part="separator")
+  end
 end

@@ -8,7 +8,7 @@
    ) %>
 <aside
   id="<%= stable_id %>"
-  class="group peer drawer-loading <%= css_classes %>"
+  class="<%= class_names("group peer drawer-loading", css_classes) %>"
   <%= tag.attributes(data: merged_data, **html_options) %>
 >
   <%# Backdrop overlay %>

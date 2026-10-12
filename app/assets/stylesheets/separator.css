@@ -16,16 +16,21 @@
 
 @layer components {
   [data-component="separator"] {
-    @apply mx-2 shrink-0;
+    @apply shrink-0;
     background-color: var(--border);
   }
 
+  /* Full width and no horizontal margin: a margin on top of width: 100%
+     overflows the container. Parents that want an inset (sidebar, drawer)
+     set their own margin with width: auto. */
   [data-component="separator"]:where([data-orientation="horizontal"]) {
     height: 1px;
     width: 100%;
   }
 
+  /* The inline gap between the items a vertical separator divides. */
   [data-component="separator"]:where([data-orientation="vertical"]) {
+    @apply mx-2;
     width: 1px;
     height: 1rem;
   }

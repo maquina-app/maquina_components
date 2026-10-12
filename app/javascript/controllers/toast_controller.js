@@ -101,9 +101,8 @@ export default class extends Controller {
   }
 
   handleAction(event) {
-    // If this toast was created via JS API with an action callback,
-    // the callback is stored on the toaster controller or needs to be
-    // dispatched as an event for the parent to handle
+    // Bubbles to the toaster, which runs the action.onClick given to the
+    // JS API, and on to any document-level `toast:action` listeners
     this.dispatch("action", {
       detail: { toastId: this.element.id },
       bubbles: true

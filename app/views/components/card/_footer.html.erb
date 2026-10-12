@@ -1,15 +1,8 @@
 <%# locals: (align: :start, spacing: :default, css_classes: "", **html_options) %>
-<% align_value = case align.to_sym
-    when :between then :between
-    when :end then :end
-    when :center then :center
-    else nil
-  end
-  
-  merged_data = merge_component_data(html_options,
+<% merged_data = merge_component_data(html_options,
     card_part: :footer,
-    align: align_value,
-    spacing: (spacing == :full ? :full : nil)
+    align: align.to_sym.presence_in(%i[between end center]),
+    spacing: (spacing.to_sym == :full ? :full : nil)
   ).compact %>
 
 <%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>

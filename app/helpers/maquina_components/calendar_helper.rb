@@ -12,6 +12,19 @@ module MaquinaComponents
   #   calendar_date_in_range?(date, start_date, end_date)
   #
   module CalendarHelper
+    # Coerce a Date, Time, DateTime or ISO string to a Date
+    #
+    # @param value [Date, Time, DateTime, String, nil]
+    # @return [Date, nil] nil for blank or unparseable input
+    def calendar_to_date(value)
+      case value
+      when Date, Time, DateTime then value.to_date
+      when String then Date.parse(value)
+      end
+    rescue ArgumentError
+      nil
+    end
+
     # Generate calendar month data
     #
     # @param date [Date] Any date within the target month
@@ -172,6 +185,25 @@ module MaquinaComponents
       end
     rescue ArgumentError
       nil
+    end
+
+    # The I18n date data date_picker_format reads, for the date picker
+    # controller to format client-side exactly as the server does. Formats a
+    # locale defines as a Proc are left out; the controller then falls back
+    # to Intl.DateTimeFormat for them.
+    #
+    # @return [Hash] strftime patterns and localized month/day names
+    def date_picker_locale_data
+      {
+        formats: {
+          long: I18n.t("date.formats.long", default: nil),
+          short: I18n.t("date.formats.short", default: nil)
+        }.select { |_, pattern| pattern.is_a?(String) },
+        month_names: I18n.t("date.month_names"),
+        abbr_month_names: I18n.t("date.abbr_month_names"),
+        day_names: I18n.t("date.day_names"),
+        abbr_day_names: I18n.t("date.abbr_day_names")
+      }
     end
 
     # Format date range for display

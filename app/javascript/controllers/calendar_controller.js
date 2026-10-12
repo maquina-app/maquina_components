@@ -11,7 +11,9 @@ export default class extends Controller {
     minDate: String,
     maxDate: String,
     mode: { type: String, default: "single" },
-    weekStartsOn: { type: String, default: "sunday" }
+    weekStartsOn: { type: String, default: "sunday" },
+    disabledDates: Array,
+    showOutsideDays: { type: Boolean, default: true }
   }
 
   connect() {
@@ -98,30 +100,35 @@ export default class extends Controller {
       weeks.push(week)
     }
 
-    // Parse dates for comparison
-    const selectedDate = this.selectedValue ? new Date(this.selectedValue) : null
-    const selectedEndDate = this.selectedEndValue ? new Date(this.selectedEndValue) : null
-    const minDate = this.minDateValue ? new Date(this.minDateValue) : null
-    const maxDate = this.maxDateValue ? new Date(this.maxDateValue) : null
-
     // Rebuild grid HTML
-    grid.innerHTML = weeks.map(week => this.buildWeekHTML(week, month, selectedDate, selectedEndDate, minDate, maxDate)).join('')
+    grid.innerHTML = weeks.map(week => this.buildWeekHTML(week, month)).join('')
   }
 
-  buildWeekHTML(days, displayMonth, selectedDate, selectedEndDate, minDate, maxDate) {
-    // Use string comparisons for range to avoid timezone issues
+  // Mirrors calendar/_week.html.erb. Dates compare as ISO strings, which sort
+  // lexicographically and avoid the UTC shift of new Date("YYYY-MM-DD").
+  buildWeekHTML(days, displayMonth) {
     const selectedStr = this.selectedValue || ""
     const selectedEndStr = this.selectedEndValue || ""
+    const minStr = this.minDateValue || ""
+    const maxStr = this.maxDateValue || ""
+    const disabledDates = new Set(this.disabledDatesValue)
 
     const daysHTML = days.map(day => {
       const dateStr = this.formatDate(day)
       const isOutside = day.getMonth() + 1 !== displayMonth
+
+      // A hidden outside day keeps its grid column
+      if (isOutside && !this.showOutsideDaysValue) {
+        return '<span aria-hidden="true" data-calendar-part="outside-day"></span>'
+      }
       const isToday = this.isSameDate(day, new Date())
       const isSelected = selectedStr && dateStr === selectedStr
       const isRangeEnd = selectedEndStr && dateStr === selectedEndStr
       // ISO date strings are lexicographically sortable
       const isRangeMiddle = selectedStr && selectedEndStr && dateStr > selectedStr && dateStr < selectedEndStr
-      const isDisabled = (minDate && day < minDate) || (maxDate && day > maxDate)
+      const isDisabled = (minStr && dateStr < minStr) ||
+                         (maxStr && dateStr > maxStr) ||
+                         disabledDates.has(dateStr)
 
       let dayState = null
       if (isSelected && this.modeValue === "range" && selectedEndStr) {
@@ -221,7 +228,8 @@ export default class extends Controller {
 
   handleKeydown(event) {
     const currentButton = event.currentTarget
-    const currentDate = new Date(currentButton.dataset.date)
+    // Local midnight: a bare "YYYY-MM-DD" parses as UTC and shifts a day west of it
+    const currentDate = new Date(currentButton.dataset.date + "T00:00:00")
     let targetDate = null
 
     switch (event.key) {
@@ -269,8 +277,9 @@ export default class extends Controller {
     const dateStr = this.formatDate(date)
     const targetButton = this.dayTargets.find(btn => btn.dataset.date === dateStr)
 
-    if (targetButton && !targetButton.disabled) {
-      targetButton.focus()
+    if (targetButton) {
+      // A disabled day in the visible month is not focusable; stay put
+      if (!targetButton.disabled) targetButton.focus()
     } else {
       this.navigateToMonth(date.getMonth() + 1, date.getFullYear())
       requestAnimationFrame(() => {
@@ -329,15 +338,13 @@ export default class extends Controller {
 
   updateNavigationState() {
     if (this.minDateValue && this.hasPrevButtonTarget) {
-      const minDate = new Date(this.minDateValue)
-      const firstOfMonth = new Date(this.yearValue, this.monthValue - 1, 1)
-      this.prevButtonTarget.disabled = firstOfMonth <= minDate
+      const firstOfMonth = this.formatDate(new Date(this.yearValue, this.monthValue - 1, 1))
+      this.prevButtonTarget.disabled = firstOfMonth <= this.minDateValue
     }
 
     if (this.maxDateValue && this.hasNextButtonTarget) {
-      const maxDate = new Date(this.maxDateValue)
-      const lastOfMonth = new Date(this.yearValue, this.monthValue, 0)
-      this.nextButtonTarget.disabled = lastOfMonth >= maxDate
+      const lastOfMonth = this.formatDate(new Date(this.yearValue, this.monthValue, 0))
+      this.nextButtonTarget.disabled = lastOfMonth >= this.maxDateValue
     }
   }
 
@@ -348,12 +355,8 @@ export default class extends Controller {
       selectedEnd: this.selectedEndValue || null
     }
 
+    // Stimulus dispatches a bubbling "calendar:change" — once
     this.dispatch("change", { detail })
-
-    this.element.dispatchEvent(new CustomEvent("calendar:change", {
-      bubbles: true,
-      detail
-    }))
   }
 
   formatDate(date) {

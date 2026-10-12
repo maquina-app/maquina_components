@@ -3,7 +3,7 @@
     breadcrumb_part: :ellipsis
   ) %>
 
-<%= content_tag :span, role: "presentation", class: css_classes, data: merged_data, **html_options do %>
+<%= content_tag :span, role: "presentation", class: css_classes.presence, data: merged_data, **html_options do %>
   <%= builtin_icon_for(:ellipsis) %>
   <span class="sr-only">More</span>
 <% end %>

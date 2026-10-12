@@ -1,7 +1,7 @@
 <%# locals: (href:, active: false, disabled: false, css_classes: "", **html_options) %>
 <% merged_data = merge_component_data(html_options,
     "pagination-part": "link",
-    active: active
+    active: (active ? true : nil)
   ) %>
 
 <% if disabled %>

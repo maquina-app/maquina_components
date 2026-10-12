@@ -4,12 +4,11 @@
   merged_data = merge_component_data(html_options, "pagination-part": "previous") %>
 
 <% if is_disabled %>
-  <span
-    class="<%= css_classes.presence %>"
-    data-pagination-part="previous"
-    aria-disabled="true"
-    <%= tag.attributes(html_options.except(:data)) %>
-  >
+  <%= content_tag :span,
+        class: css_classes.presence,
+        data: merged_data,
+        "aria-disabled": "true",
+        **html_options do %>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -28,7 +27,7 @@
     <% if show_label %>
       <span><%= display_label %></span>
     <% end %>
-  </span>
+  <% end %>
 <% else %>
   <%= link_to href,
         class: css_classes.presence,

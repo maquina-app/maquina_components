@@ -12,6 +12,7 @@ import { Controller } from "@hotwired/stimulus"
  *   Toast.info("New update available", { duration: 10000 })
  *   Toast.warning("Session expiring soon")
  *   Toast.show("Custom message", { variant: "default" })
+ *   Toast.show("Event created", { action: { label: "Undo", onClick: (event) => undo() } })
  *   Toast.dismiss(toastId)
  *   Toast.dismissAll()
  */
@@ -23,11 +24,18 @@ export default class extends Controller {
   }
 
   connect() {
+    // action.onClick callbacks, keyed by toast element
+    this.actionCallbacks = new WeakMap()
+    this.runActionCallback = this.runActionCallback.bind(this)
+    this.element.addEventListener("toast:action", this.runActionCallback)
+
     // Expose global Toast API
     this.setupGlobalApi()
   }
 
   disconnect() {
+    this.element.removeEventListener("toast:action", this.runActionCallback)
+
     // Clean up global API
     if (window.Toast && window.Toast._controller === this) {
       delete window.Toast
@@ -112,6 +120,10 @@ export default class extends Controller {
     // Insert into container
     this.element.insertAdjacentHTML("beforeend", toastHtml)
 
+    if (typeof action?.onClick === "function") {
+      this.actionCallbacks.set(document.getElementById(toastId), action.onClick)
+    }
+
     // Enforce max visible
     this.enforceMaxVisible()
 
@@ -163,7 +175,7 @@ export default class extends Controller {
            data-variant="${variant}"
            data-toast-duration-value="${duration}"
            data-toast-dismissible-value="${dismissible}"
-           data-toast-action-callback="${action ? "true" : "false"}"
+           data-toast-action-callback-value="${action ? "true" : "false"}"
            data-state="entering">
         ${iconHtml}
         <div data-toast-part="content">
@@ -174,6 +186,16 @@ export default class extends Controller {
         ${closeHtml}
       </div>
     `.trim()
+  }
+
+  /**
+   * Runs the action.onClick passed to the JS API when the toast's action
+   * button is clicked. The toast controller dispatches `toast:action`
+   * (bubbling) from the toast element; it still reaches document listeners.
+   */
+  runActionCallback(event) {
+    const callback = this.actionCallbacks.get(event.target)
+    if (callback) callback(event)
   }
 
   getIconSvg(name) {

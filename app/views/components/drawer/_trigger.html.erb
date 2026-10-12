@@ -23,9 +23,11 @@
     action: "click->drawer-trigger#triggerClick",
     drawer_trigger_drawer_outlet: drawer_selector
   )
-  button_data = merged_data.merge(component: "button")
+  # The variant:/size: locals style the button. A caller's data: { variant: }
+  # (the pre-0.7.4 workaround) still wins so existing markup keeps its look.
+  button_data = {variant: variant, size: size}.merge(merged_data, component: "button")
 %>
-<%= content_tag :button, type: :button, class: css_classes, data: button_data, **html_options do %>
+<%= content_tag :button, type: :button, class: css_classes.presence, data: button_data, **html_options do %>
   <%= icon_for(icon_name) if icon_name %>
   <%= yield %>
 <% end %>

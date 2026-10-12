@@ -62,16 +62,20 @@ module MaquinaComponents
     end
 
     def apply_icon_options(svg, options)
-      return svg.html_safe unless options&.any?
-
+      options ||= {}
       css_classes = options[:class]
-      if css_classes&.is_a?(String)
+
+      svg = if css_classes.is_a?(String) && css_classes.present?
         escaped_css_classes = ERB::Util.html_escape(css_classes)
-        svg = if /\bclass\s*=\s*(['"])(.*?)\1/.match?(svg)
+        if /\bclass\s*=\s*(['"])(.*?)\1/.match?(svg)
           svg.sub(/\bclass\s*=\s*(['"])(.*?)\1/, "class=\\1#{escaped_css_classes}\\1")
         else
           svg.sub(/<svg(?=(\s|>))/, "<svg class=\"#{escaped_css_classes}\"")
         end
+      else
+        # The SVG sources carry a class="" placeholder; with no classes to
+        # fill it, drop it rather than render an empty attribute.
+        svg.sub(/\s+class\s*=\s*(['"])\1/, "")
       end
 
       if options[:stroke_width]
@@ -221,7 +225,7 @@ module MaquinaComponents
             <path d="m15 18-6-6 6-6"/>
           </svg>
         SVG
-      when :left_panel
+      when :left_panel, :panel_left # :panel_left is lucide's name (PanelLeft)
         <<~SVG.freeze
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="">
             <rect width="18" height="18" x="3" y="3" rx="2"></rect>

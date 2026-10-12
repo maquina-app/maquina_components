@@ -12,7 +12,7 @@
 
 <aside
   id="<%= stable_id %>"
-  class="group peer sidebar-loading <%= css_classes %>"
+  class="<%= class_names("group peer sidebar-loading", css_classes) %>"
   <%= tag.attributes(data: merged_data, **html_options) %>
 >
   <%# Sidebar gap (creates space for sidebar on desktop) %>

@@ -33,12 +33,25 @@ export default class extends Controller {
   }
 
   /**
+   * A group rendered with disabled: true (aria-disabled="true") disables
+   * every item, including items rendered directly from partials and items
+   * added later, so they leave the tab order and ignore keyboard input.
+   */
+  itemTargetConnected(item) {
+    if (this.disabled) item.disabled = true
+  }
+
+  get disabled() {
+    return this.element.getAttribute("aria-disabled") === "true"
+  }
+
+  /**
    * Toggle an item's state
    * @param {Event} event - Click event from toggle item
    */
   toggle(event) {
     const item = event.currentTarget
-    if (item.disabled) return
+    if (item.disabled || this.disabled) return
 
     const value = item.dataset.value
     const isPressed = item.dataset.state === "on"
@@ -66,6 +79,8 @@ export default class extends Controller {
    * @param {KeyboardEvent} event
    */
   handleKeydown(event) {
+    if (this.disabled) return
+
     const item = event.currentTarget
     const items = this.itemTargets.filter(i => !i.disabled)
     const currentIndex = items.indexOf(item)
@@ -125,12 +140,8 @@ export default class extends Controller {
         : this.selectedValue
     }
 
+    // Emits a single bubbling `toggle-group:change` from the group element
     this.dispatch("change", { detail })
-
-    this.element.dispatchEvent(new CustomEvent("toggle-group:change", {
-      bubbles: true,
-      detail
-    }))
   }
 
   /**

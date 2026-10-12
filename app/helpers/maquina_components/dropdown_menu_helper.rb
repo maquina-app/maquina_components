@@ -53,6 +53,13 @@ module MaquinaComponents
 
     # Renders a simple dropdown menu from data
     #
+    # Each item hash renders as one of:
+    # - a separator: `separator: true` or `type: :separator`
+    # - a label (heading): `type: :label`, or — for backwards compatibility — a
+    #   hash with neither `href` nor `action` and no `type`
+    # - an item: `type: :item`, or any hash with `href` or `action`. Without an
+    #   `href` it renders as a `<button>`; `action` is its Stimulus data-action
+    #
     # @param trigger_text [String] Text for the trigger button
     # @param items [Array<Hash>] Array of item configurations
     # @param trigger_options [Hash] Options for the trigger button
@@ -64,24 +71,34 @@ module MaquinaComponents
 
         menu.content(**content_options) do |content|
           items.each do |item|
-            if item[:separator]
+            case dropdown_menu_simple_entry_type(item)
+            when :separator
               content.separator
-            elsif item[:label] && item[:href].nil? && item[:action].nil?
+            when :label
               content.label item[:label]
             else
-              variant = item[:destructive] ? :destructive : :default
               content.item(
                 item[:label],
                 href: item[:href],
                 method: item[:method],
                 icon: item[:icon],
-                variant: variant,
-                disabled: item[:disabled]
+                variant: item[:destructive] ? :destructive : :default,
+                disabled: item[:disabled],
+                data: {action: item[:action], **item.fetch(:data, {})}.compact
               )
             end
           end
         end
       end
+    end
+
+    private
+
+    def dropdown_menu_simple_entry_type(item)
+      return :separator if item[:separator]
+      return item[:type].to_sym if item[:type]
+
+      (item[:href].nil? && item[:action].nil?) ? :label : :item
     end
 
     # Builder class for constructing dropdown menus

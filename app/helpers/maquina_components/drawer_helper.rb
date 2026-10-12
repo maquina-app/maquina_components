@@ -1,11 +1,9 @@
 module MaquinaComponents
   module DrawerHelper
+    # The drawer's persisted state. A missing cookie means :closed, matching the
+    # provider's default_open: false and the controller's default.
     def drawer_state(cookie_name = "drawer_state")
-      cookie_value = cookies[cookie_name]
-
-      return :open if cookie_value.nil?
-
-      (cookie_value == "true") ? :open : :closed
+      (cookies[cookie_name] == "true") ? :open : :closed
     end
 
     def drawer_open?(cookie_name = "drawer_state")
