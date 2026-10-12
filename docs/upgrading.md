@@ -2,7 +2,7 @@
 
 > What breaks between releases, and what to do about it.
 
-## 0.7.3 → 0.7.4 (unreleased)
+## 0.7.3 → 0.7.4
 
 ### Page refreshes no longer close an open sidebar or drawer
 
