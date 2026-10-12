@@ -88,7 +88,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| layout | Symbol | :column | :column or :row |
+| layout | Symbol | :column | :column or :row (strings such as "row" also work) |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -98,7 +98,7 @@
 |-----------|------|---------|-------------|
 | text | String | nil | Title text |
 | content | String | nil | HTML content via `capture`, or use block |
-| size | Symbol | :default | :default or :sm |
+| size | Symbol | :default | :default or :sm (strings also work) |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -122,7 +122,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| spacing | Symbol | :default | :default or :full (when no header) |
+| spacing | Symbol | :default | :default or :full (when no header); strings also work |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -130,7 +130,7 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| align | Symbol | :start | :start, :center, :end, :between |
-| spacing | Symbol | :default | :default or :full (when no content) |
+| align | Symbol | :start | :start, :center, :end, :between (strings also work) |
+| spacing | Symbol | :default | :default or :full (when no content); strings also work |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |

@@ -2,6 +2,56 @@
 
 > What breaks between releases, and what to do about it.
 
+## 0.7.3 → 0.7.4 (unreleased)
+
+### Page refreshes no longer close an open sidebar or drawer
+
+A same-URL morph closed an open sidebar on mobile. Refresh broadcasts, `Turbo.visit(location.href, { action: "replace" })` and same-URL form redirects all caused it. Every morph also stripped `aria-expanded` from the trigger. The drawer closed the same way on any viewport. Both controllers now keep their live state through a page refresh: the morph leaves the attributes they own alone, the scroll lock is re-applied, and the trigger stays in sync. Real navigation still closes them, as before.
+
+The sidebar also closes when you resize from desktop into the mobile range while it's open (before, an open sidebar stayed open).
+
+If your app worked around either issue, delete the workaround after upgrading. That means re-opening the sidebar on `turbo:morph`, or a viewport controller that closes it when crossing into mobile.
+
+### `drawer_state` treats a missing cookie as closed
+
+`drawer_state` returned `:open` when the `drawer_state` cookie did not exist, so
+`state: drawer_state` opened the drawer on a first visit, while the provider
+(`default_open: false`) and the controller started closed. It now returns
+`:closed` without a cookie, and `drawer_open?` / `drawer_closed?` follow it.
+`sidebar_state` is unchanged and still defaults to `:expanded`.
+
+If you relied on the old default to show a drawer on a first visit, say so
+explicitly:
+
+```erb
+<%%= render "components/drawer", state: (cookies[:drawer_state].nil? ? :open : drawer_state) do %>
+```
+
+### Drawer trigger applies `variant:` and `size:`
+
+`drawer/trigger` accepted `variant:` and `size:` but always rendered the default
+button. They now apply, so a trigger that passed them gets that look. The old
+workaround, `data: { variant: :outline }`, keeps working; you can switch to
+`variant: :outline`. `drawer/close` gains the same two locals: without
+`variant:` it is still the icon button, with one it is a regular button (a
+footer "Cancel"). The drawer trigger also loses its accent hover, so it hovers
+like any button of its variant.
+
+### Smaller changes
+
+- `pagination/link` emits `data-active="true"` only on the current page; inactive
+  links no longer carry `data-active="false"`. Update any CSS or JS that matched
+  `[data-active="false"]` to `:not([data-active])`.
+- `pagination/ellipsis` no longer hides itself from screen readers: only the
+  glyph is `aria-hidden`, so "More pages" is announced. It and the disabled
+  `pagination/previous` / `pagination/next` now merge a caller's `data:`.
+- The pagination helpers work with Pagy 43 (`options[:page_key]`, `previous`,
+  protected `series`) as well as Pagy 9 and earlier.
+- `dropdown_menu_simple` takes `type: :item`, `:label` or `:separator`, and a
+  hash with `action:` renders a `<button>` item with that Stimulus action
+  (`action:` used to be ignored). A hash with only `label:` is still a label.
+- `components/breadcrumbs` uses a caller's `aria-label` instead of rendering two.
+
 ## 0.7.2 → 0.7.3
 
 No changes to the engine. `maquina:doctor` stops reporting Rails' own Action Text

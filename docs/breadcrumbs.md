@@ -30,6 +30,9 @@
 <%%= breadcrumbs({"Home" => root_path, "Users" => users_path}, "John Doe") %>
 ```
 
+The hash maps link text to path, in order. The second argument is the current
+page (rendered with `breadcrumbs/page`); omit it and the last link ends the trail.
+
 ## Examples
 
 ### With Icons
@@ -51,6 +54,24 @@
 <%%= render "components/breadcrumbs/separator", icon: :slash %>
 <%%= render "components/breadcrumbs/separator", icon: :arrow_right %>
 ```
+
+### Compact Size and Text Separators
+
+The root picks up two styling hooks through `data:`. `size: :sm` tightens the gap
+and drops the text to `text-xs`; `separator:` replaces every separator's icon with
+a text glyph.
+
+```erb
+<%%= render "components/breadcrumbs", data: { size: :sm, separator: :slash } do %>
+  <%# list, items and separators as usual %>
+<%% end %>
+```
+
+| `data-separator` | Glyph |
+|------------------|-------|
+| slash | / |
+| dot | • |
+| arrow | → |
 
 ### With Ellipsis
 
@@ -109,6 +130,17 @@ reported being too wide. The threshold faked collapsing by counting items, which
 meant it also collapsed a trail with plenty of room. Measurement works now, so
 the parameter is accepted and ignored; delete it from your calls.
 
+The root renders `<nav aria-label="Breadcrumb">`. Pass `"aria-label":` (or
+`aria: { label: }`) to replace the label, e.g. for a translated page. With
+`responsive: true` it also attaches the `breadcrumb` Stimulus controller (see
+below).
+
+```erb
+<%%= render "components/breadcrumbs", "aria-label": t(".breadcrumb") do %>
+  <!-- list -->
+<%% end %>
+```
+
 ### Breadcrumbs List
 
 | Parameter | Type | Default | Description |
@@ -123,6 +155,8 @@ the parameter is accepted and ignored; delete it from your calls.
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
+Renders an `<li>`.
+
 ### Breadcrumbs Link
 
 | Parameter | Type | Default | Description |
@@ -133,6 +167,8 @@ the parameter is accepted and ignored; delete it from your calls.
 
 ### Breadcrumbs Page
 
+Renders `<span role="link" aria-current="page" aria-disabled="true">` around the block.
+
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | css_classes | String | "" | Additional CSS classes |
@@ -142,7 +178,7 @@ the parameter is accepted and ignored; delete it from your calls.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| icon | Symbol | :chevron_right | Icon name, or :custom to use block |
+| icon | Symbol | :chevron_right | Icon name passed to `icon_for`, or `:custom` to render the block instead |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -152,3 +188,32 @@ the parameter is accepted and ignored; delete it from your calls.
 |-----------|------|---------|-------------|
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
+
+`breadcrumbs/separator` renders its own `<li role="presentation" aria-hidden="true">`,
+so place it directly in the list — not inside an item. `breadcrumbs/ellipsis`
+renders a `<span>` with an ellipsis icon and an sr-only "More" label; wrap it in
+an item.
+
+### Helper Methods
+
+| Method | Description |
+|--------|-------------|
+| `breadcrumbs(links = {}, current_page = nil, css_classes: "")` | Renders a static trail from a `{ text => path }` hash |
+| `responsive_breadcrumbs(links = {}, current_page = nil, css_classes: "", collapse_after: nil)` | Same, with `responsive: true`, the ellipsis item and the Stimulus targets wired in. `collapse_after` is deprecated and ignored |
+
+## Stimulus Controller
+
+`responsive: true` adds `data-controller="breadcrumb"` to the root.
+`responsive_breadcrumbs` renders all of the targets for you; when you compose the
+partials by hand you must add them yourself.
+
+| Target | Element |
+|--------|---------|
+| item | A collapsible middle `breadcrumbs/item` (`data: { breadcrumb_target: "item" }`) |
+| ellipsis | The `breadcrumbs/item` wrapping `breadcrumbs/ellipsis`, rendered with `css_classes: "hidden"` |
+| ellipsisSeparator | The separator after the ellipsis item, also starting hidden |
+
+The controller has no values and no public actions. It re-fits on container
+resize (`ResizeObserver`), on font load and on `turbo:morph`, and removes the
+overflow popover on `turbo:before-cache`. The separator directly after each
+`item` target is hidden along with it.

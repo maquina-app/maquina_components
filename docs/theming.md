@@ -30,6 +30,9 @@ surfaces can be shaped independently.
 | --elevation-none | none | Ghost and link buttons, the inset sidebar |
 | --label-weight | 500 | Labels, buttons |
 | --value-weight | 700 | Stat values |
+| --control-fill | transparent (light), `color-mix(in oklch, var(--input) 30%, transparent)` (dark) | Field background: input, textarea, select, checkbox, radio, the date-picker trigger (select and date picker default to `--background` in light mode) |
+| --destructive-text | --destructive-foreground | Field error text (`[data-form-part="error"]`) |
+| --destructive-border | --destructive | The border on an invalid field |
 
 ### `--focus-ring-color` has no single default
 
@@ -52,8 +55,10 @@ Two states deliberately outrank a `:root` override, because a state must win: an
 `aria-invalid` field (and anything inside `.field_with_errors`) and a
 `data-variant="destructive"` button declare `--focus-ring-color` on the element
 itself. An element's own custom property beats an inherited one, so those rings
-stay on the destructive tint whatever `:root` says. This is the same rule
-`--control-fill` follows.
+stay on the destructive tint whatever `:root` says. `--control-fill` is the
+opposite case: its scheme-dependent default lives on an inherited scope, not on
+the field, so your `:root` value wins in light and dark alike (see
+[Dark mode](#dark-mode)).
 
 ### Never transition `outline-color`
 
@@ -72,9 +77,6 @@ Name the properties instead:
 ```css
 transition-property: color, background-color, border-color, text-decoration-color;
 ```
-| --control-fill | transparent | Field background; re-set under .dark |
-| --destructive-text | --destructive-foreground | Field error text (`[data-form-part="error"]`) |
-| --destructive-border | --destructive | The border on an invalid field |
 
 ### `--x` is a fill; `--x-foreground` is the text on that fill
 
@@ -230,14 +232,18 @@ a component rule. Set the token inside your own `.dark` block:
 }
 ```
 
-`--control-fill` is the one to know about: the engine re-declares it under
-`.dark` on the fields themselves, so overriding the dark field background needs a
-selector that reaches the control.
+`--control-fill` follows the same rule. Its light and dark defaults differ, but
+the engine keeps them on an internal variable declared on `:root` and `.dark`,
+never on the fields, so the public token always comes first. A `--control-fill`
+set at `:root` therefore applies in both schemes; to give dark mode its own field
+background, set it again in your `.dark` block — no component selector needed:
 
 ```css
-.dark [data-component="input"],
-.dark [data-component="textarea"],
-.dark [data-component="select"] {
+:root {
+  --control-fill: oklch(0.99 0.005 260);
+}
+
+.dark {
   --control-fill: oklch(0.2 0.03 260);
 }
 ```

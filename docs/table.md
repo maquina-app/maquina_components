@@ -112,7 +112,7 @@ itself.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| container | Boolean | true | Wrap in scrollable container |
+| container | Boolean | true | Wrap in scrollable container; with false, variant has no element to style and is ignored |
 | variant | Symbol | nil | Container variant, :bordered draws a border around the scroll container |
 | table_variant | Symbol | nil | Table variant, :striped alternates row backgrounds |
 | css_classes | String | "" | Additional CSS classes |
@@ -140,7 +140,7 @@ itself.
 |-----------|------|---------|-------------|
 | text | String | nil | Heading text |
 | content | String | nil | Captured HTML via capture, or use block |
-| scope | String | "col" | Scope attribute for accessibility |
+| scope | String | "col" | Scope attribute for accessibility; pass nil to omit it |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -180,4 +180,23 @@ itself.
 | table_variant | Symbol | nil | Table variant, :striped |
 | empty_message | String | "No data available" | Shown when the collection is empty |
 | row_id | Symbol | nil | Method used to build each row id, row-{value} |
-| html_options | Hash | {} | Additional HTML attributes for the table |
+| html_options | Hash | {} | Additional HTML attributes for the table element, passed as bare keywords |
+
+The helper renders the `components/simple_table` partial, which accepts
+the same locals (with `collection:` as a keyword) if you prefer `render`.
+
+### Helper Methods
+
+| Method | Description |
+|--------|-------------|
+| simple_table(collection, columns:, caption: nil, variant: nil, table_variant: nil, empty_message: "No data available", row_id: nil, **html_options) | Renders a full table from a collection |
+| table_alignment_class(align) | Returns "text-right" for :right, "text-center" for :center, nil otherwise |
+| table_data_attrs(variant: nil) | `{ data: { component: "table", variant: } }` for a hand-built table element |
+| table_container_data_attrs(variant: nil) | `{ data: { table_part: "container", variant: } }` |
+| table_header_data_attrs(sticky: false) | `{ data: { table_part: "header", sticky: "true" } }` |
+| table_row_data_attrs(selected: false) | `{ data: { table_part: "row", state: "selected" } }` |
+| table_cell_data_attrs(empty: false) | `{ data: { table_part: "cell", empty: "true" } }` |
+| table_head_data_attrs, table_body_data_attrs, table_footer_data_attrs, table_caption_data_attrs | `{ data: { table_part: "head" \| "body" \| "footer" \| "caption" } }` |
+
+The optional keys (variant, sticky, state, empty) are only included when
+the argument is set.

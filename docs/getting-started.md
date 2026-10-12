@@ -113,9 +113,18 @@ If you prefer manual setup or need to understand what the generator does:
 
 ### 2. Add Theme Variables
 
-Add these to your `app/assets/tailwind/application.css`:
+Add the same palette the generator writes (`lib/generators/maquina_components/install/templates/theme.css.tt`) to your `app/assets/tailwind/application.css`:
 
 ```css
+/* ==========================================================================
+   maquina_components Theme Variables
+   
+   These CSS variables follow the shadcn/ui theming convention.
+   Customize these values to match your design system.
+   
+   Documentation: https://github.com/maquina-app/maquina_components
+   ========================================================================== */
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -136,102 +145,156 @@ Add these to your `app/assets/tailwind/application.css`:
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
 
-  /* Primary */
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  /* Primary - Main brand color */
+  --primary: oklch(0.645 0.246 16);
+  --primary-foreground: oklch(0.969 0.015 12);
 
   /* Secondary */
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
 
-  /* Muted */
+  /* Muted - Subtle backgrounds */
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
 
-  /* Accent */
+  /* Accent - Hover states */
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
 
-  /* Destructive.
-     --destructive is the fill and --destructive-foreground is the text that
-     sits ON it. Field error text is on the page, not on a fill, so it reads
-     --destructive-text instead -- without it this palette would paint error
-     messages near-white on a white card. Same for the invalid field border. */
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --destructive-text: var(--destructive);
-  --destructive-border: var(--destructive);
+  /* Success - Success states */
+  --success: oklch(0.92 0.04 168);
+  --success-foreground: oklch(0.35 0.08 168);
+
+  /* Warning - Warning states */
+  --warning: oklch(0.93 0.04 55);
+  --warning-foreground: oklch(0.4 0.08 50);
+
+  /* Destructive - Error/danger states */
+  --destructive: oklch(0.92 0.05 8);
+  --destructive-foreground: oklch(0.4 0.12 8);
 
   /* Borders & Inputs */
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.645 0.246 16);
+
+  /* Charts (optional) */
+  --chart-1: oklch(0.645 0.246 16);
+  --chart-2: oklch(0.65 0.09 168);
+  --chart-3: oklch(0.72 0.09 55);
+  --chart-4: oklch(0.58 0.18 17);
+  --chart-5: oklch(0.5 0.13 8);
 
   /* Sidebar */
   --sidebar: oklch(0.96 0 0);
   --sidebar-foreground: oklch(0.2 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.645 0.246 16);
+  --sidebar-primary-foreground: oklch(0.969 0.015 12);
   --sidebar-accent: oklch(0.9 0 0);
   --sidebar-accent-foreground: oklch(0.145 0 0);
   --sidebar-border: oklch(0.88 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-ring: oklch(0.645 0.246 16);
 }
 
-/* Dark Mode - top level, not nested in :root, so it matches <html class="dark"> */
+/* Dark Mode
+   Put the `dark` class on <html>. This block must stay at the top level: nested
+   inside :root it compiles to `:root .dark`, which never matches <html> itself,
+   and the @theme bindings below resolve against <html>. */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
+
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
+
   --popover: oklch(0.269 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+
+  --primary: oklch(0.712 0.194 13);
+  --primary-foreground: oklch(0.15 0.052 13);
+
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
+
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
+
   --accent: oklch(0.371 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.985 0 0);
-  --destructive-text: var(--destructive);
-  --destructive-border: var(--destructive);
+
+  --success: oklch(0.32 0.06 168);
+  --success-foreground: oklch(0.82 0.06 168);
+
+  --warning: oklch(0.36 0.06 55);
+  --warning-foreground: oklch(0.86 0.06 55);
+
+  --destructive: oklch(0.34 0.07 8);
+  --destructive-foreground: oklch(0.88 0.06 8);
+
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.455 0.188 13);
+
+  --chart-1: oklch(0.712 0.194 13);
+  --chart-2: oklch(0.72 0.09 168);
+  --chart-3: oklch(0.78 0.09 55);
+  --chart-4: oklch(0.645 0.246 16);
+  --chart-5: oklch(0.58 0.13 8);
+
   --sidebar: oklch(0.14 0 0);
   --sidebar-foreground: oklch(0.9 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.712 0.194 13);
+  --sidebar-primary-foreground: oklch(0.15 0.052 13);
   --sidebar-accent: oklch(0.22 0 0);
   --sidebar-accent-foreground: oklch(0.95 0 0);
   --sidebar-border: oklch(1 0 0 / 12%);
-  --sidebar-ring: oklch(0.439 0 0);
+  --sidebar-ring: oklch(0.455 0.188 13);
 }
 
-/* Tailwind Theme Bindings */
+/* Tailwind Theme Bindings
+   These make the CSS variables available as Tailwind utilities:
+   bg-primary, text-muted-foreground, border-sidebar, etc. */
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  /* --info and --info-foreground are declared in the shape/state token block
+     the installer appends below this palette. */
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
   --color-input: var(--input);
   --color-border: var(--border);
   --color-ring: var(--ring);
+  --color-ring-destructive: var(--destructive);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -244,14 +307,28 @@ Add these to your `app/assets/tailwind/application.css`:
 
 /* Global border color.
  *
- * Keep this inside @layer base. Unlayered CSS outranks every layer at any
- * specificity, so an unlayered `*` would override the border-color of every
- * component in @layer components — the tinted borders on the alert and toast
- * variants would silently fall back to --border. */
+ * This must stay inside @layer base. Unlayered CSS beats every layer at any
+ * specificity, so an unlayered `*` here would override the border-color of
+ * every component in @layer components — the tinted borders on the alert and
+ * toast variants would silently fall back to --border. */
 @layer base {
   * {
     border-color: var(--color-border);
   }
+}
+```
+
+The generator then appends a shape/state token block. Everything in it is optional except the `--info` pair, which the `@theme` block above binds to `bg-info` / `text-info-foreground`:
+
+```css
+:root {
+  --info: oklch(0.93 0.04 240);
+  --info-foreground: oklch(0.4 0.12 250);
+}
+
+.dark {
+  --info: oklch(0.34 0.07 250);
+  --info-foreground: oklch(0.88 0.06 240);
 }
 ```
 

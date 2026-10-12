@@ -13,7 +13,9 @@
     <%%= f.email_field :email, data: { component: "input" }, placeholder: "you@example.com" %>
   </div>
 
-  <%%= f.submit "Sign in", data: { component: "button", variant: "primary" } %>
+  <div data-form-part="actions">
+    <%%= f.submit "Sign in", data: { component: "button", variant: "primary" } %>
+  </div>
 <%% end %>
 ```
 
@@ -50,10 +52,10 @@
 <!-- preview:checkbox height:160 -->
 
 ```erb
-<label class="flex items-center gap-2">
+<div data-form-part="group" data-layout="inline">
   <%%= f.check_box :terms, data: { component: "checkbox" } %>
-  <span class="text-sm">Accept terms</span>
-</label>
+  <%%= f.label :terms, "Accept terms", data: { component: "label" } %>
+</div>
 ```
 
 ### Radio
@@ -61,10 +63,10 @@
 <!-- preview:radio height:180 -->
 
 ```erb
-<label class="flex items-center gap-2">
+<div data-form-part="group" data-layout="inline">
   <%%= f.radio_button :plan, "pro", data: { component: "radio" } %>
-  <span class="text-sm">Pro</span>
-</label>
+  <%%= f.label :plan_pro, "Pro", data: { component: "label" } %>
+</div>
 ```
 
 ### Switch
@@ -72,10 +74,10 @@
 <!-- preview:switch height:160 -->
 
 ```erb
-<label class="flex items-center gap-3">
+<div data-form-part="group" data-layout="inline">
   <%%= f.check_box :notifications, data: { component: "switch" } %>
-  <span class="text-sm">Enable notifications</span>
-</label>
+  <%%= f.label :notifications, "Enable notifications", data: { component: "label" } %>
+</div>
 ```
 
 ### Button
@@ -89,6 +91,44 @@
 <button data-component="button" data-variant="outline">Outline</button>
 <button data-component="button" data-variant="ghost">Ghost</button>
 <button data-component="button" data-variant="link">Link</button>
+
+<button data-component="button" data-size="sm">Small</button>
+<button data-component="button" data-size="lg">Large</button>
+<button data-component="button" data-variant="outline" data-size="icon">
+  <%%= icon_for :settings, class: "size-4" %>
+  <span class="sr-only">Settings</span>
+</button>
+```
+
+### Fieldset
+
+```erb
+<fieldset data-component="fieldset">
+  <legend>Notifications</legend>
+  <div data-form-part="group">
+    <%%= f.label :email, data: { component: "label" } %>
+    <%%= f.email_field :email, data: { component: "input" } %>
+  </div>
+</fieldset>
+```
+
+### Input Group
+
+```erb
+<div data-component="input-group">
+  <span data-input-group-part="prefix">$</span>
+  <%%= f.number_field :price, data: { component: "input" } %>
+  <span data-input-group-part="suffix">USD</span>
+</div>
+```
+
+### Actions
+
+```erb
+<div data-form-part="actions" data-align="end">
+  <%%= link_to "Cancel", users_path, data: { component: "button", variant: "outline" } %>
+  <%%= f.submit "Save", data: { component: "button" } %>
+</div>
 ```
 
 ## Error States
@@ -100,15 +140,21 @@ and the border, the focus ring and the message all follow:
 
 ```erb
 <div data-form-part="group">
-  <%= f.label :email, data: { component: "label" } %>
-  <%= f.email_field :email, data: { component: "input" },
+  <%%= f.label :email, data: { component: "label" } %>
+  <%%= f.email_field :email, data: { component: "input" },
       aria: { invalid: @user.errors[:email].any?,
               describedby: ("email-error" if @user.errors[:email].any?) } %>
-  <% if @user.errors[:email].any? %>
-    <p data-form-part="error" id="email-error"><%= @user.errors[:email].first %></p>
-  <% end %>
+  <%% if @user.errors[:email].any? %>
+    <p data-form-part="error" id="email-error"><%%= @user.errors[:email].first %></p>
+  <%% end %>
 </div>
 ```
+
+Every control — input, textarea, select, checkbox, radio and switch — shows the
+same error state: a `--destructive` border at rest, and a destructive focus ring
+only while it has keyboard focus. Each reacts to `aria-invalid="true"` and to
+`:user-invalid` (a `required` checkbox left unchecked after submit, for example).
+A switch's track has no visible border at rest, so the invalid state outlines it.
 
 Rails' own `.field_with_errors` wrapper is styled too, so an app that leans on
 the default wrapper gets the same treatment without setting anything.
@@ -156,47 +202,61 @@ See [theming](theming.md) for why the two palettes differ.
 | Attribute | Description |
 |-----------|-------------|
 | data-component="form" | Grid layout with gap |
-| data-form-part="group" | Field group container |
+| data-form-part="group" | Field group container (label, control, help text) |
+| data-form-part="group" data-layout="inline" | Horizontal group for checkbox, radio and switch rows |
 | data-form-part="description" | Help text styling |
-| data-form-part="error" | Error message styling; colour from `--destructive-text` |
+| data-form-part="error" | Error message styling; colour from --destructive-text |
 | data-form-part="actions" | Submit area container |
+| data-form-part="actions" data-align="end" | Right-aligned actions |
+| data-form-part="actions" data-align="between" | Actions spread to both ends |
+| .field_with_errors | Rails error wrapper; renders as display: contents and marks every wrapped control invalid |
 
 ### Input
 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
-| data-component | input | Text input styling |
+| data-component | input | Text input styling; type="file" gets a styled file button |
 | data-size | sm, lg | Size variant |
+| aria-invalid | true | Error state; :user-invalid also applies |
 
 ### Textarea
 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
 | data-component | textarea | Textarea styling |
+| aria-invalid | true | Error state; :user-invalid also applies |
 
 ### Select
 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
-| data-component | select | Native select styling |
+| data-component | select | Native select styling with chevron |
+| data-mark | dark, light | Chevron ink override |
+| aria-invalid | true | Error state; :user-invalid also applies |
 
 ### Checkbox
 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
-| data-component | checkbox | Checkbox styling |
+| data-component | checkbox | Checkbox styling; checked and indeterminate states |
+| data-mark | dark | Dark check ink for a light --primary |
+| aria-invalid | true | Error state; :user-invalid also applies |
 
 ### Radio
 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
 | data-component | radio | Radio button styling |
+| data-mark | dark | Dark dot ink for a light --primary |
+| aria-invalid | true | Error state; :user-invalid also applies |
 
 ### Switch
 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
-| data-component | switch | Toggle switch styling |
+| data-component | switch | Toggle switch styling for a checkbox |
+| data-mark | dark | Dark thumb ink for a light --primary |
+| aria-invalid | true | Error state; :user-invalid also applies |
 
 ### Label
 
@@ -205,10 +265,27 @@ See [theming](theming.md) for why the two palettes differ.
 | data-component | label | Label styling |
 | data-required | (presence) | Shows required indicator |
 
+A label directly before or after a disabled control is dimmed.
+
 ### Button
 
 | Attribute | Values | Description |
 |-----------|--------|-------------|
-| data-component | button | Button styling |
-| data-variant | primary, secondary, destructive, outline, ghost, link | Visual style |
-| data-size | sm, lg, icon, icon-sm, icon-lg | Size variant |
+| data-component | button | Button styling; works on button, input and a |
+| data-variant | default, primary, secondary, destructive, outline, ghost, link | Visual style; omitted or default is the same as primary |
+| data-size | sm, lg, icon, icon-sm, icon-lg | Size variant; omitted is the default size |
+| aria-disabled | true | Disabled styling for links; disabled works on buttons |
+
+### Fieldset
+
+| Attribute | Values | Description |
+|-----------|--------|-------------|
+| data-component | fieldset | Bordered, padded group |
+| data-component | legend | Legend styling; a bare legend inside a fieldset gets it too |
+
+### Input Group
+
+| Attribute | Values | Description |
+|-----------|--------|-------------|
+| data-component | input-group | Wrapper for an input with prefix or suffix |
+| data-input-group-part | prefix, suffix | Muted text or icon inside the input; padding adjusts automatically |

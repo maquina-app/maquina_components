@@ -2,11 +2,13 @@ require "test_helper"
 
 # The published-documentation guard.
 #
-# maquina_site embeds these previews as live iframes: each `<!-- preview:NAME
-# height:N -->` tag in docs/*.md is rewritten into
-# https://demo.maquina.app/previews/<doc-basename>/<NAME>. The site derives the
-# component segment from the *doc filename*, which is why docs/theming.md's tags
-# resolve to previews/theming/.
+# maquina_site embeds these previews as live iframes at
+# https://demo.maquina.app/previews/<component>/<NAME>. Its scaffolding script
+# turns each `<!-- preview:NAME height:N -->` tag in docs/*.md into a demo whose
+# component segment is the *doc filename*, so this test resolves tags against
+# previews/<doc-basename>/. The site's pages are hand-maintained after that and
+# may name a different folder: its theming page uses previews/specimen/, which
+# is why previews/theming/* are shims that render the specimen templates.
 #
 # Nothing in either repo connects the two names, so renaming or deleting a
 # preview 404s a live documentation page with no local symptom at all. This test
