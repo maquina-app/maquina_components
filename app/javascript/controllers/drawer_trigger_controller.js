@@ -26,11 +26,24 @@ export default class extends Controller {
 
   connect() {
     this.handleStateChanged = this.handleStateChanged.bind(this)
+    this.preserveAttribute = this.preserveAttribute.bind(this)
     window.addEventListener("drawer:stateChanged", this.handleStateChanged)
+    this.element.addEventListener("turbo:before-morph-attribute", this.preserveAttribute)
   }
 
   disconnect() {
     window.removeEventListener("drawer:stateChanged", this.handleStateChanged)
+    this.element.removeEventListener("turbo:before-morph-attribute", this.preserveAttribute)
+  }
+
+  // The server never renders these (only the client knows the live state), so
+  // without this every page morph strips them from the trigger
+  preserveAttribute(event) {
+    if (event.target !== this.element) return
+
+    if (["aria-expanded", "aria-controls", "aria-haspopup"].includes(event.detail.attributeName)) {
+      event.preventDefault()
+    }
   }
 
   drawerOutletConnected(outlet) {

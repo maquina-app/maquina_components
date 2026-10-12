@@ -34,8 +34,8 @@ export default class extends Controller {
     // Track if we're on mobile
     this._isMobile = null
 
-    // Guard flag for morph-triggered attribute changes
-    this._morphing = false
+    // Set by a same-URL "replace" visit (a page refresh) until it renders
+    this._refreshing = false
   }
 
   connect() {
@@ -46,11 +46,15 @@ export default class extends Controller {
     this.resizeHandler = this.debounce(this.checkScreenSize.bind(this), 150)
     window.addEventListener("resize", this.resizeHandler)
 
+    this.boundTrackVisit = this.trackVisit.bind(this)
+    this.boundClearVisit = this.clearVisit.bind(this)
     this.boundTeardown = this.teardown.bind(this)
-    this.boundBeforeMorphElement = this.beforeMorphElement.bind(this)
+    this.boundPreserveAttribute = this.preserveAttribute.bind(this)
     this.boundHandleMorph = this.handleMorph.bind(this)
+    document.addEventListener("turbo:visit", this.boundTrackVisit)
+    document.addEventListener("turbo:load", this.boundClearVisit)
     document.addEventListener("turbo:before-cache", this.boundTeardown)
-    document.addEventListener("turbo:before-morph-element", this.boundBeforeMorphElement)
+    document.addEventListener("turbo:before-morph-attribute", this.boundPreserveAttribute)
     document.addEventListener("turbo:morph", this.boundHandleMorph)
 
     // Apply initial state without animation
@@ -59,16 +63,40 @@ export default class extends Controller {
 
   disconnect() {
     window.removeEventListener("resize", this.resizeHandler)
+    document.removeEventListener("turbo:visit", this.boundTrackVisit)
+    document.removeEventListener("turbo:load", this.boundClearVisit)
     document.removeEventListener("turbo:before-cache", this.boundTeardown)
-    document.removeEventListener("turbo:before-morph-element", this.boundBeforeMorphElement)
+    document.removeEventListener("turbo:before-morph-attribute", this.boundPreserveAttribute)
     document.removeEventListener("turbo:morph", this.boundHandleMorph)
   }
 
   // ============================================================================
-  // Turbo Cache Teardown
+  // Turbo Integration (cache teardown and page-refresh morphs)
   // ============================================================================
 
+  // A page refresh is a same-path "replace" visit -- Turbo's own isPageRefresh
+  // test. It covers Turbo.visit(location.href, { action: "replace" }), refresh
+  // broadcasts and same-URL form redirects. The open state must survive it.
+  trackVisit(event) {
+    const { url, action } = event.detail
+    this._refreshing = action === "replace" &&
+      new URL(url, window.location.href).pathname === window.location.pathname
+  }
+
+  clearVisit() {
+    this._refreshing = false
+  }
+
+  // Runs before Turbo snapshots the page. Real navigation parks the mobile
+  // drawer so the cached snapshot (and the next page) starts closed; a page
+  // refresh leaves it open. Either way the scroll lock is released so no
+  // snapshot is cached locked -- handleMorph() re-locks after a refresh.
   teardown() {
+    if (this._refreshing) {
+      this.unlockScroll()
+      return
+    }
+
     if (this.isMobile()) {
       this.openValue = false
     }
@@ -81,19 +109,35 @@ export default class extends Controller {
     this.unlockScroll()
   }
 
-  beforeMorphElement(event) {
-    if (event.target === this.element) {
-      this._morphing = true
+  // The server renders open state from the desktop cookie, which mobile never
+  // writes, so a morph must not overwrite the attributes this controller owns.
+  // The menu contents below them still morph normally.
+  preserveAttribute(event) {
+    const owned = this.ownedAttributes(event.target)
+    if (owned?.includes(event.detail.attributeName)) {
+      event.preventDefault()
     }
   }
 
-  handleMorph() {
-    const cookieValue = this.getCookie(this.cookieNameValue)
+  ownedAttributes(element) {
+    if (element === this.element) return ["data-sidebar-open-value"]
+    if (this.hasSidebarTarget && element === this.sidebarTarget) return ["data-state", "data-collapsible"]
+    if (this.hasBackdropTarget && element === this.backdropTarget) return ["data-state", "class"]
+    if (this.hasContainerTarget && element === this.containerTarget) return ["inert"]
+    return null
+  }
 
-    if (this.isMobile()) {
-      this.openValue = false
-    } else if (cookieValue !== null) {
-      this.openValue = cookieValue === "true"
+  // After a morph: keep the live state on mobile, re-read the cookie on
+  // desktop, then re-apply everything the morph can still reset -- the body
+  // scroll lock (<body> is morphed) and the trigger's aria-expanded.
+  handleMorph() {
+    this._refreshing = false
+
+    if (!this.isMobile()) {
+      const cookieValue = this.getCookie(this.cookieNameValue)
+      if (cookieValue !== null) {
+        this.openValue = cookieValue === "true"
+      }
     }
 
     if (this.hasSidebarTarget) {
@@ -101,7 +145,7 @@ export default class extends Controller {
     }
 
     this.updateState()
-    this._morphing = false
+    this.dispatchStateChange()
   }
 
   // ============================================================================
@@ -123,7 +167,6 @@ export default class extends Controller {
 
   openValueChanged(new_value, old_value) {
     if (new_value === old_value) return
-    if (this._morphing) return
 
     this.updateState()
     this.persistState()
@@ -278,31 +321,23 @@ export default class extends Controller {
     }
   }
 
+  // data-collapsible describes the current state ("none" just means open), so
+  // only the direction of the crossing matters: entering mobile parks the
+  // drawer closed, leaving it restores the saved desktop state.
   handleScreenSizeChange(wasMobile, isMobile) {
-    if (this.sidebarTarget.getAttribute("data-collapsible") === "offcanvas") {
-      // Mobile to desktop: restore saved state
-      if (wasMobile && !isMobile) {
-        const cookieValue = this.getCookie(this.cookieNameValue)
-        this.openValue = cookieValue !== null
-          ? cookieValue === "true"
-          : this.defaultOpenValue
-      }
-      // Desktop to mobile: close sidebar
-      else if (!wasMobile && isMobile) {
-        this.openValue = false
-      }
-    } else if (this.sidebarTarget.getAttribute("data-collapsible") === "icon") {
-      // Icon mode is always visible, just changes width
-      // Desktop to mobile: might want to close
-      if (!wasMobile && isMobile) {
-        this.openValue = false
-      }
-    } else if (this.sidebarTarget.getAttribute("data-collapsible") === "none") {
-      // Non-collapsible sidebars stay open
-      this.openValue = true
+    if (wasMobile && !isMobile) {
+      const cookieValue = this.getCookie(this.cookieNameValue)
+      this.openValue = cookieValue !== null
+        ? cookieValue === "true"
+        : this.defaultOpenValue
+    } else if (!wasMobile && isMobile) {
+      this.openValue = false
     }
 
+    // Crossing the breakpoint without an open-state change still moves the
+    // drawer between offcanvas and icon rail, and drops a desktop scroll lock
     this.updateState()
+    if (!isMobile) this.unlockScroll()
   }
 
   isMobile() {
@@ -342,19 +377,26 @@ export default class extends Controller {
   // ============================================================================
 
   // Styling lives in drawer.css (body[data-maquina-scroll-locked]); the
-  // controller only records the scroll offset and flips the attribute
+  // controller only records the scroll offset and flips the attribute.
+  //
+  // Idempotent: the offset is recorded once per lock. Re-locking after a morph
+  // reset <body> must not record the locked page's offset of 0.
   lockScroll() {
-    this.scrollPosition = window.pageYOffset
+    if (!this._scrollLocked) {
+      this.scrollPosition = window.scrollY
+      this._scrollLocked = true
+    }
     document.body.style.setProperty("--maquina-scroll-lock-top", `-${this.scrollPosition}px`)
     document.body.setAttribute("data-maquina-scroll-locked", "")
   }
 
   unlockScroll() {
+    if (!this._scrollLocked) return
+
+    this._scrollLocked = false
     document.body.removeAttribute("data-maquina-scroll-locked")
     document.body.style.removeProperty("--maquina-scroll-lock-top")
-    if (this.scrollPosition !== undefined) {
-      window.scrollTo(0, this.scrollPosition)
-    }
+    window.scrollTo(0, this.scrollPosition)
   }
 
   // ============================================================================
