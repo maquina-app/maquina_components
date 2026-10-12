@@ -66,3 +66,4 @@
 | data-header-part="inner" | div | Inner flex container |
 | data-header-part="title" | h1/span | Title text styling |
 | data-header-part="actions" | div | Right-aligned actions container |
+| data-component="separator" data-orientation="vertical" | div | A vertical separator inside the header gets 1rem height and horizontal margin |

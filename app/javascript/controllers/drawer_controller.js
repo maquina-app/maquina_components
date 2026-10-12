@@ -20,7 +20,7 @@ export default class extends Controller {
     keyboardShortcut: { type: String, default: "d" }
   }
 
-  static targets = ["drawer", "container", "backdrop", "panel"]
+  static targets = ["drawer", "backdrop", "panel"]
 
   initialize() {
     const cookieValue = this.getCookie(this.cookieNameValue)
@@ -28,35 +28,60 @@ export default class extends Controller {
       ? cookieValue === "true"
       : this.defaultOpenValue
 
-    this._morphing = false
+    // Set by a same-URL "replace" visit (a page refresh) until it renders
+    this._refreshing = false
   }
 
   connect() {
-    this.resizeHandler = this.debounce(this.checkScreenSize.bind(this), 150)
-    window.addEventListener("resize", this.resizeHandler)
-
+    this.boundTrackVisit = this.trackVisit.bind(this)
+    this.boundClearVisit = this.clearVisit.bind(this)
     this.boundTeardown = this.teardown.bind(this)
-    this.boundBeforeMorphElement = this.beforeMorphElement.bind(this)
+    this.boundPreserveAttribute = this.preserveAttribute.bind(this)
     this.boundHandleMorph = this.handleMorph.bind(this)
+    document.addEventListener("turbo:visit", this.boundTrackVisit)
+    document.addEventListener("turbo:load", this.boundClearVisit)
     document.addEventListener("turbo:before-cache", this.boundTeardown)
-    document.addEventListener("turbo:before-morph-element", this.boundBeforeMorphElement)
+    document.addEventListener("turbo:before-morph-attribute", this.boundPreserveAttribute)
     document.addEventListener("turbo:morph", this.boundHandleMorph)
 
     this.updateStateImmediate()
   }
 
   disconnect() {
-    window.removeEventListener("resize", this.resizeHandler)
+    document.removeEventListener("turbo:visit", this.boundTrackVisit)
+    document.removeEventListener("turbo:load", this.boundClearVisit)
     document.removeEventListener("turbo:before-cache", this.boundTeardown)
-    document.removeEventListener("turbo:before-morph-element", this.boundBeforeMorphElement)
+    document.removeEventListener("turbo:before-morph-attribute", this.boundPreserveAttribute)
     document.removeEventListener("turbo:morph", this.boundHandleMorph)
   }
 
   // ============================================================================
-  // Turbo Cache Teardown
+  // Turbo Integration (cache teardown and page-refresh morphs)
   // ============================================================================
 
+  // A page refresh is a same-path "replace" visit -- Turbo's own isPageRefresh
+  // test. It covers Turbo.visit(location.href, { action: "replace" }), refresh
+  // broadcasts and same-URL form redirects. An open drawer must survive it.
+  trackVisit(event) {
+    const { url, action } = event.detail
+    this._refreshing = action === "replace" &&
+      new URL(url, window.location.href).pathname === window.location.pathname
+  }
+
+  clearVisit() {
+    this._refreshing = false
+  }
+
+  // Runs before Turbo snapshots the page: real navigation closes the drawer so
+  // the cached snapshot starts closed; a page refresh leaves it open. Either
+  // way the scroll lock is released so no snapshot is cached locked --
+  // handleMorph() re-locks after a refresh.
   teardown() {
+    if (this._refreshing) {
+      this.unlockScroll()
+      return
+    }
+
     this.openValue = false
 
     if (this.hasBackdropTarget) {
@@ -67,25 +92,34 @@ export default class extends Controller {
     this.unlockScroll()
   }
 
-  beforeMorphElement(event) {
-    if (event.target === this.element) {
-      this._morphing = true
+  // The morph must not overwrite the attributes this controller owns; the
+  // drawer's contents still morph normally.
+  preserveAttribute(event) {
+    const owned = this.ownedAttributes(event.target)
+    if (owned?.includes(event.detail.attributeName)) {
+      event.preventDefault()
     }
   }
 
-  handleMorph() {
-    const cookieValue = this.getCookie(this.cookieNameValue)
+  ownedAttributes(element) {
+    if (element === this.element) return ["data-drawer-open-value"]
+    if (this.hasDrawerTarget && element === this.drawerTarget) return ["data-state"]
+    if (this.hasBackdropTarget && element === this.backdropTarget) return ["data-state", "class"]
+    if (this.hasPanelTarget && element === this.panelTarget) return ["aria-hidden", "inert"]
+    return null
+  }
 
-    if (cookieValue !== null) {
-      this.openValue = cookieValue === "true"
-    }
+  // After a morph, keep the live state and re-apply what the morph can still
+  // reset: the body scroll lock (<body> is morphed) and the trigger's aria.
+  handleMorph() {
+    this._refreshing = false
 
     if (this.hasDrawerTarget) {
       this.drawerTarget.classList.remove("drawer-loading")
     }
 
     this.updateState()
-    this._morphing = false
+    this.dispatchStateChange()
   }
 
   // ============================================================================
@@ -108,7 +142,6 @@ export default class extends Controller {
 
   openValueChanged(new_value, old_value) {
     if (new_value === old_value) return
-    if (this._morphing) return
 
     this.updateState()
     this.persistState()
@@ -238,18 +271,26 @@ export default class extends Controller {
 
   // Styling lives in drawer.css (body[data-maquina-scroll-locked]); the
   // controller only records the scroll offset and flips the attribute
+  // Idempotent and owned: the offset is recorded once per lock (re-locking
+  // after a morph reset <body> must not record the locked page's offset of 0),
+  // and a closed drawer never releases a lock it didn't take -- the sidebar
+  // shares the same body attribute.
   lockScroll() {
-    this.scrollPosition = window.pageYOffset
+    if (!this._scrollLocked) {
+      this.scrollPosition = window.scrollY
+      this._scrollLocked = true
+    }
     document.body.style.setProperty("--maquina-scroll-lock-top", `-${this.scrollPosition}px`)
     document.body.setAttribute("data-maquina-scroll-locked", "")
   }
 
   unlockScroll() {
+    if (!this._scrollLocked) return
+
+    this._scrollLocked = false
     document.body.removeAttribute("data-maquina-scroll-locked")
     document.body.style.removeProperty("--maquina-scroll-lock-top")
-    if (this.scrollPosition !== undefined) {
-      window.scrollTo(0, this.scrollPosition)
-    }
+    window.scrollTo(0, this.scrollPosition)
   }
 
   // ============================================================================
@@ -264,24 +305,5 @@ export default class extends Controller {
       },
       bubbles: true
     })
-  }
-
-  // ============================================================================
-  // Utilities
-  // ============================================================================
-
-  checkScreenSize() {
-  }
-
-  debounce(func, wait) {
-    let timeout
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout)
-        func(...args)
-      }
-      clearTimeout(timeout)
-      timeout = setTimeout(later, wait)
-    }
   }
 }

@@ -7,6 +7,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-10-12
+
+A page refresh no longer closes an open sidebar or drawer, plus fixes for
+bugs found while checking every doc against the code. One default changes:
+`drawer_state` treats a missing cookie as closed. See
+[upgrading](docs/upgrading.md#073--074).
+
+### Fixed
+
+- **A page refresh closed an open sidebar on mobile, and an open drawer on any
+  viewport.** Refresh broadcasts, `Turbo.visit(location.href, { action:
+  "replace" })` and form redirects back to the same URL all did it, and every
+  morph stripped `aria-expanded` from the trigger. Both controllers now treat a
+  same-path replace visit as a page refresh and keep their live state: the
+  morph leaves the attributes they own alone, the scroll lock is re-applied and
+  the trigger stays in sync. Real navigation still closes them. The sidebar
+  also closes when resized from desktop into the mobile range while open.
+- **A combobox inside a form submitted nothing.** With `name:`, a hidden input
+  now carries the selected value.
+- **The date picker dropped `html_options` and `data:`,** and on connect it
+  replaced a custom `placeholder` and reformatted the server-rendered date. It
+  now applies them, keeps the placeholder, and formats dates on the client with
+  the server's I18n patterns.
+- **Change events fired twice:** `calendar:change`, `date-picker:change` (also
+  on `clear()`) and `toggle-group:change`.
+- **Calendar month navigation dropped `disabled_dates` and
+  `show_outside_days`,** and a `style:` in `html_options` overrode `cell_size`.
+- **A disabled toggle group left its items pressable** from the keyboard.
+- **Toast actions did nothing:** a server-rendered action button is now wired to
+  `toast#handleAction`, and `Toast.show({ action: { onClick } })` calls
+  `onClick`.
+- **The drawer trigger ignored `variant:` and `size:`.**
+- **Pagination:** the ellipsis label was hidden from screen readers, caller
+  `data:` was dropped on the ellipsis and disabled previous/next, and the
+  helpers failed on Pagy 43.
+- **`dropdown_menu_simple` couldn't make a button item without `href`.**
+- **A caller's `aria-label` on breadcrumbs produced a duplicate attribute.**
+- **The stats card ignored app-defined icons,** and `empty_list_state`'s default
+  icon wasn't a built-in.
+- **Card's `layout:`, `size:`, `spacing:` and `align:` ignored string values.**
+- **A horizontal separator overflowed its container by 1rem.**
+- **Invalid states were inconsistent across form controls:** select, checkbox,
+  radio and switch now match input and textarea.
+- **Partials and icons rendered an empty `class=""`.**
+- **The installer's theme didn't bind `--success`, `--warning` and `--info`,** so
+  `bg-success` and friends didn't work in a fresh install.
+
+### Added
+
+- `date_picker` `size:` and `full_width:` locals.
+- `drawer/close` `variant:` and `size:` locals, for a footer "Cancel" button.
+- `dropdown_menu_simple` item `type:` and `data:` keys.
+- `:panel_left` as an alias of the built-in `:left_panel` icon.
+- `--elevation-none` is declared as a role token.
+
+### Changed
+
+- **`drawer_state` returns `:closed` when there is no cookie** (it returned
+  `:open`), matching the provider and controller default.
+- `pagination/link` only emits `data-active` when active.
+- The drawer trigger no longer has its own accent hover.
+- An invalid checkbox no longer draws an outline at rest.
+
+### Documentation
+
+- Every component doc checked against the code and corrected; new `label` and
+  `menu_button` docs; Stimulus sections for combobox, calendar and date picker.
+- `references/` rewritten for the current conventions and tracked, with
+  `CLAUDE.md`.
+
 ## [0.7.3] - 2026-09-26
 
 One fix to `maquina:doctor`. No engine changes.
@@ -682,7 +752,8 @@ Thanks to the contributors who made this release possible:
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.7.3...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.7.4...HEAD
+[0.7.4]: https://github.com/maquina-app/maquina_components/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/maquina-app/maquina_components/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/maquina-app/maquina_components/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/maquina-app/maquina_components/compare/v0.7.0...v0.7.1

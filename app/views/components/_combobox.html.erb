@@ -10,5 +10,7 @@
   ) %>
 
 <%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
+  <%# Submits the selection with the surrounding form; the controller keeps it in sync %>
+  <%= hidden_field_tag name, value, id: nil, data: {combobox_target: "hiddenInput"} if name.present? %>
   <%= yield combobox_id %>
 <% end %>

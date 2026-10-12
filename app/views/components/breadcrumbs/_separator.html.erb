@@ -6,8 +6,7 @@
 <li
   role="presentation"
   aria-hidden="true"
-  class="<%= css_classes %>"
-  <%= tag.attributes(data: merged_data, **html_options) %>
+  <%= tag.attributes(class: css_classes.presence, data: merged_data, **html_options) %>
 >
   <% if icon == :custom %>
     <%= yield %>

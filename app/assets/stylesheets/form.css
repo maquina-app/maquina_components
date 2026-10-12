@@ -283,9 +283,19 @@
     @apply pointer-events-none cursor-not-allowed opacity-50;
   }
 
-  [data-component="select"]:where([aria-invalid="true"]) {
+  [data-component="select"]:where([aria-invalid="true"], :user-invalid) {
     --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
     border-color: var(--destructive-border, var(--destructive));
+  }
+
+  /* The destructive halo is a focus affordance, not a resting one: painting an
+     outline on an unfocused field doubles the border and reads as a second
+     error. Gated to match the :focus-visible rule above. */
+  [data-component="select"]:where([aria-invalid="true"], :user-invalid):where(:focus-visible) {
+    outline-width: var(--focus-ring-width, 3px);
+    outline-style: var(--focus-ring-style, solid);
+    outline-color: var(--focus-ring-color, color-mix(in oklch, var(--destructive) 20%, transparent));
+    outline-offset: var(--focus-ring-offset, 0px);
   }
 
   /* ===================================================================
@@ -365,9 +375,15 @@
     @apply cursor-not-allowed opacity-50;
   }
 
-  [data-component="checkbox"]:where([aria-invalid="true"]) {
+  [data-component="checkbox"]:where([aria-invalid="true"], :user-invalid) {
     --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
     border-color: var(--destructive-border, var(--destructive));
+  }
+
+  /* The destructive halo is a focus affordance, not a resting one: painting an
+     outline on an unfocused field doubles the border and reads as a second
+     error. Gated to match the :focus-visible rule above. */
+  [data-component="checkbox"]:where([aria-invalid="true"], :user-invalid):where(:focus-visible) {
     outline-width: var(--focus-ring-width, 3px);
     outline-style: var(--focus-ring-style, solid);
     outline-color: var(--focus-ring-color, color-mix(in oklch, var(--destructive) 20%, transparent));
@@ -421,6 +437,21 @@
     @apply cursor-not-allowed opacity-50;
   }
 
+  [data-component="radio"]:where([aria-invalid="true"], :user-invalid) {
+    --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
+    border-color: var(--destructive-border, var(--destructive));
+  }
+
+  /* The destructive halo is a focus affordance, not a resting one: painting an
+     outline on an unfocused field doubles the border and reads as a second
+     error. Gated to match the :focus-visible rule above. */
+  [data-component="radio"]:where([aria-invalid="true"], :user-invalid):where(:focus-visible) {
+    outline-width: var(--focus-ring-width, 3px);
+    outline-style: var(--focus-ring-style, solid);
+    outline-color: var(--focus-ring-color, color-mix(in oklch, var(--destructive) 20%, transparent));
+    outline-offset: var(--focus-ring-offset, 0px);
+  }
+
   /* ===================================================================
      SWITCH (Toggle)
      Usage: <%= f.check_box :notifications, data: { component: "switch" } %>
@@ -463,6 +494,23 @@
 
   [data-component="switch"]:where(:disabled) {
     @apply cursor-not-allowed opacity-50;
+  }
+
+  /* The track's border is transparent at rest, so an invalid switch gains a
+     destructive outline of the track rather than a recolored one */
+  [data-component="switch"]:where([aria-invalid="true"], :user-invalid) {
+    --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
+    border-color: var(--destructive-border, var(--destructive));
+  }
+
+  /* The destructive halo is a focus affordance, not a resting one: painting an
+     outline on an unfocused field doubles the border and reads as a second
+     error. Gated to match the :focus-visible rule above. */
+  [data-component="switch"]:where([aria-invalid="true"], :user-invalid):where(:focus-visible) {
+    outline-width: var(--focus-ring-width, 3px);
+    outline-style: var(--focus-ring-style, solid);
+    outline-color: var(--focus-ring-color, color-mix(in oklch, var(--destructive) 20%, transparent));
+    outline-offset: var(--focus-ring-offset, 0px);
   }
 
   /* ===================================================================
@@ -679,14 +727,20 @@
 
   :where(.field_with_errors) [data-component="input"],
   :where(.field_with_errors) [data-component="textarea"],
-  :where(.field_with_errors) [data-component="select"] {
+  :where(.field_with_errors) [data-component="select"],
+  :where(.field_with_errors) [data-component="checkbox"],
+  :where(.field_with_errors) [data-component="radio"],
+  :where(.field_with_errors) [data-component="switch"] {
     --focus-ring-color: color-mix(in oklch, var(--destructive) 20%, transparent);
     border-color: var(--destructive-border, var(--destructive));
   }
 
   :where(.field_with_errors) [data-component="input"]:where(:focus-visible),
   :where(.field_with_errors) [data-component="textarea"]:where(:focus-visible),
-  :where(.field_with_errors) [data-component="select"]:where(:focus-visible) {
+  :where(.field_with_errors) [data-component="select"]:where(:focus-visible),
+  :where(.field_with_errors) [data-component="checkbox"]:where(:focus-visible),
+  :where(.field_with_errors) [data-component="radio"]:where(:focus-visible),
+  :where(.field_with_errors) [data-component="switch"]:where(:focus-visible) {
     outline-width: var(--focus-ring-width, 3px);
     outline-style: var(--focus-ring-style, solid);
     outline-color: var(--focus-ring-color, color-mix(in oklch, var(--destructive) 20%, transparent));

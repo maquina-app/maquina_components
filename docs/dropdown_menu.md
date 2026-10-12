@@ -19,6 +19,37 @@
 <%% end %>
 ```
 
+### Using the Helper
+
+```erb
+<%%= dropdown_menu do |menu| %>
+  <%% menu.trigger { "Options" } %>
+  <%% menu.content align: :end, width: :md do |content| %>
+    <%% content.label "Actions" %>
+    <%% content.item href: edit_project_path(@project) do |item| %>
+      <%%= icon_for :pencil %>
+      Edit
+      <%% item.shortcut "⌘E" %>
+    <%% end %>
+    <%% content.separator %>
+    <%% content.item "Delete", href: project_path(@project), method: :delete, variant: :destructive %>
+  <%% end %>
+<%% end %>
+```
+
+For a flat, data-driven menu:
+
+```erb
+<%%= dropdown_menu_simple "Actions", items: [
+  { label: "Edit", href: edit_project_path(@project), icon: :pencil },
+  { separator: true },
+  { label: "Delete", href: project_path(@project), method: :delete, destructive: true }
+] %>
+```
+
+> `components/dropdown` is **not** an alias of this component. It is the panel
+> that pairs with `components/menu_button`; see [Menu Button](menu_button.md).
+
 ## Examples
 
 ### With Icons
@@ -106,6 +137,11 @@ controller, you can delete it — `bin/rails maquina:doctor` reports it as
 
 ### Dropdown Menu Trigger
 
+Without `as_child`, renders a `<button data-component="button">` with
+`aria-haspopup="menu"`, `aria-expanded="false"`, the controller wiring and a
+trailing chevron (`data-dropdown-menu-target="chevron"`). With `as_child: true`,
+only the block is rendered — none of that wiring is added.
+
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | variant | Symbol | :outline | Button variant when as_child is false |
@@ -126,12 +162,15 @@ controller, you can delete it — `bin/rails maquina:doctor` reports it as
 
 ### Dropdown Menu Item
 
+Renders `<a role="menuitem">` when `href` is present, otherwise
+`<button type="button" role="menuitem">`.
+
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | href | String | nil | URL, renders link if provided |
-| method | Symbol | nil | HTTP method (:delete, :post, etc.) |
+| method | Symbol | nil | Sets `data-turbo-method` (:delete, :post, etc.) |
 | variant | Symbol | :default | :default or :destructive |
-| disabled | Boolean | false | Whether disabled |
+| disabled | Boolean | false | Sets `aria-disabled="true"`, plus `disabled` on buttons. Disabled items are skipped by keyboard navigation |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -167,6 +206,81 @@ controller, you can delete it — `bin/rails maquina:doctor` reports it as
 | content | String | nil | HTML content via `capture`, or use block |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
+
+### Content Widths
+
+| Width | Size |
+|-------|------|
+| :default | `min-w-[8rem]` |
+| :sm | `w-40` |
+| :md | `w-56` |
+| :lg | `w-72` |
+
+### Helper Methods
+
+| Method | Description |
+|--------|-------------|
+| `dropdown_menu(css_classes: "", **html_options) { \|menu\| }` | Builder. Options (including `auto_close:`) go to the root partial |
+| `dropdown_menu_simple(trigger_text, items:, trigger_options: {}, content_options: {})` | Data-driven menu built on `dropdown_menu` |
+
+Builder methods:
+
+| Method | Description |
+|--------|-------------|
+| `menu.trigger(variant: :outline, size: :default, as_child: false, **options) { }` | Trigger; the block is its content |
+| `menu.content(align: :start, side: :bottom, width: :default, **options) { \|content\| }` | Content panel |
+| `content.item(label = nil, href: nil, method: nil, icon: nil, variant: :default, disabled: false, **options) { \|item\| }` | Item. Without a block, renders `icon` (via `icon_for`) and `label`; with a block, the block is the content and `label`/`icon` are ignored |
+| `item.shortcut(text)` | Appends a `dropdown_menu/shortcut` to the item (inside an item block) |
+| `content.label(text = nil, inset: false, **options)` | Label |
+| `content.separator(**options)` | Separator |
+| `content.group(**options) { \|group\| }` | Group; the block receives a builder with the same `item`/`label`/`separator`/`group` methods |
+
+`dropdown_menu_simple` item hashes accept `label`, `href`, `method`, `icon`,
+`destructive: true` (→ `variant: :destructive`), `disabled`, `action`, `data`,
+`separator: true` and `type`. Each hash renders as:
+
+| Hash | Renders |
+|------|---------|
+| `separator: true` or `type: :separator` | Separator |
+| `type: :label` | Label (heading); `href`/`action` are ignored |
+| `type: :item` | Item: an `<a>` with `href`, otherwise a `<button>` |
+| `href:` or `action:` (no `type`) | Item |
+| `label:` only (no `type`, `href` or `action`) | Label, for backwards compatibility |
+
+`action:` becomes the item's Stimulus `data-action`; `data:` is merged onto the item.
+
+```erb
+<%%= dropdown_menu_simple "Share", items: [
+  { label: "Share", type: :label },
+  { label: "Copy link", action: "click->clipboard#copy" },
+  { label: "Archive", type: :item, data: { turbo_frame: "modal" } }
+] %>
+```
+
+## Stimulus Controller
+
+The root renders `data-controller="dropdown-menu"`.
+
+| Target | Element |
+|--------|---------|
+| trigger | The trigger button (receives `aria-expanded` and focus on close) |
+| content | The menu panel |
+| chevron | The trigger's chevron icon (styled, not used by JS) |
+
+| Value | Type | Default | Description |
+|-------|------|---------|-------------|
+| open | Boolean | false | Current state |
+| autoClose | Boolean | false | Set by `auto_close: true` |
+
+| Action | Description |
+|--------|-------------|
+| toggle | Bound on the trigger as `dropdown-menu#toggle` |
+| open / close | Programmatic open and close |
+
+While open, the menu closes on outside click, <kbd>Escape</kbd> and <kbd>Tab</kbd>;
+<kbd>↑</kbd>/<kbd>↓</kbd>/<kbd>Home</kbd>/<kbd>End</kbd> move focus between enabled items.
+The controller writes `data-state` (`open` / `closing` / `closed`) to the root and
+content.
 
 ## Turbo Drive
 

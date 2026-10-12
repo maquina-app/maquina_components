@@ -76,8 +76,8 @@ module MaquinaComponents
     # @param extra_params [Hash] Additional params
     # @return [String] URL path
     def paginated_path(route_helper, pagy, page, extra_params = {})
-      page_param = pagy.vars[:page_param] || Pagy::DEFAULT[:page_param]
-      query_params = request.query_parameters.except(page_param.to_s).merge(extra_params)
+      page_param = pagy_page_param(pagy)
+      query_params = request.query_parameters.except(page_param).merge(extra_params)
       query_params[page_param] = page
 
       send(route_helper, query_params)
@@ -85,11 +85,33 @@ module MaquinaComponents
 
     private
 
+    # Pagy 43 renamed the API this helper reads; these keep both working.
+    #
+    #   Pagy <= 9:  pagy.vars[:page_param] (Symbol), Pagy::DEFAULT, pagy.prev,
+    #               public pagy.series
+    #   Pagy >= 43: pagy.options[:page_key] (String), pagy.previous, protected
+    #               pagy.series
+    def pagy_page_param(pagy)
+      options = pagy.respond_to?(:options) ? pagy.options : pagy.vars
+      key = options[:page_key] || options[:page_param]
+      key ||= Pagy::DEFAULT[:page_key] || Pagy::DEFAULT[:page_param] if defined?(Pagy::DEFAULT)
+
+      (key || :page).to_s
+    end
+
+    def pagy_previous(pagy)
+      pagy.respond_to?(:previous) ? pagy.previous : pagy.prev
+    end
+
+    def pagy_series(pagy)
+      pagy.send(:series)
+    end
+
     def pagination_previous_item(pagy, route_helper, params, turbo, show_label)
       render "components/pagination/item" do
-        if pagy.prev
+        if (previous_page = pagy_previous(pagy))
           render "components/pagination/previous",
-            href: paginated_path(route_helper, pagy, pagy.prev, params),
+            href: paginated_path(route_helper, pagy, previous_page, params),
             show_label: show_label,
             data: turbo_data(turbo)
         else
@@ -116,7 +138,7 @@ module MaquinaComponents
     end
 
     def pagination_page_items(pagy, route_helper, params, turbo)
-      pagy.series.map do |item|
+      pagy_series(pagy).map do |item|
         render "components/pagination/item" do
           case item
           when Integer

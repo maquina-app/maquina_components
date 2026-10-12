@@ -2,7 +2,7 @@
 <% merged_data = merge_component_data(html_options,
     drawer_part: :header
   ) %>
-<%= content_tag :div, class: css_classes, data: merged_data, **html_options do %>
+<%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
   <div data-drawer-part="header-content">
     <%= yield %>
   </div>

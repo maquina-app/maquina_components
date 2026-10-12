@@ -6,7 +6,7 @@
     sidebar_trigger_sidebar_outlet: "[data-outlet='sidebar']"
   ) %>
 
-<%= button_tag type: :button, class: css_classes, data: merged_data, **html_options do %>
+<%= button_tag type: :button, class: css_classes.presence, data: merged_data, **html_options do %>
   <%= icon_for(icon_name) %>
   <span class="sr-only">Toggle Sidebar</span>
 <% end %>

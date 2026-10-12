@@ -9,9 +9,10 @@ import { Controller } from "@hotwired/stimulus"
  * - Single selection with toggle
  * - Keyboard navigation
  * - Focus management
+ * - Form submission through a hidden input (rendered when `name:` is given)
  */
 export default class extends Controller {
-  static targets = ["trigger", "content", "input", "option", "empty", "label"]
+  static targets = ["trigger", "content", "input", "option", "empty", "label", "hiddenInput"]
 
   static values = {
     value: { type: String, default: "" },
@@ -171,6 +172,9 @@ export default class extends Controller {
 
     this.updateSelection()
     this.updateTriggerState()
+    // valueValueChanged runs later (attribute observer); write the input now so
+    // it is current when combobox:change fires
+    this.updateHiddenInput()
 
     // Close popover
     if (this.hasContentTarget) {
@@ -326,9 +330,20 @@ export default class extends Controller {
     }
   }
 
-  // Value change callback
+  // Value change callback: also covers a programmatic
+  // data-combobox-value-value write
   valueValueChanged() {
     this.updateSelection()
     this.updateTriggerState()
+    this.updateHiddenInput()
+  }
+
+  updateHiddenInput() {
+    if (!this.hasHiddenInputTarget) return
+    if (this.hiddenInputTarget.value === this.valueValue) return
+
+    this.hiddenInputTarget.value = this.valueValue
+    // Let form listeners (autosave, validation) see the new value
+    this.hiddenInputTarget.dispatchEvent(new Event("change", { bubbles: true }))
   }
 }

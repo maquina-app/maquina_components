@@ -3,8 +3,14 @@
 
 <%= content_tag :div, role: "row", class: css_classes.presence, data: merged_data, **html_options do %>
   <% days.each do |day| %>
+    <% is_outside = day.month != display_month %>
+    <%# A hidden outside day keeps its grid column, so the month's first day
+        still lands under the right weekday %>
+    <% if is_outside && !show_outside_days %>
+      <%= tag.span aria: {hidden: true}, data: {calendar_part: "outside-day"} %>
+      <% next %>
+    <% end %>
     <%
-      is_outside = day.month != display_month
       is_today = day == Date.current
       is_selected = selected_date && day == selected_date
       is_range_end = selected_end_date && day == selected_end_date
@@ -23,9 +29,6 @@
                   elsif is_selected
                     "selected"
                   end
-
-      # Skip rendering if outside day and not showing them
-      next if is_outside && !show_outside_days
 
       day_data = {
         "calendar-part": "day",

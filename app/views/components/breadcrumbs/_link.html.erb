@@ -3,6 +3,6 @@
     breadcrumb_part: :link
   ) %>
 
-<%= link_to href, class: css_classes, data: merged_data, **html_options do %>
+<%= link_to href, class: css_classes.presence, data: merged_data, **html_options do %>
   <%= yield %>
 <% end %>

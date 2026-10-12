@@ -4,14 +4,14 @@
     active: (active ? true : nil)
   ) %>
 
-<%= link_to url, class: css_classes, data: merged_data,
+<%= link_to url, class: css_classes.presence, data: merged_data,
       "aria-current": (active ? "page" : nil), **html_options do %>
   <% if icon.present? || text_icon.present? %>
     <div data-sidebar-part="menu-avatar">
       <% if icon.present? %>
-        <%= image_tag icon, class: icon_classes %>
+        <%= image_tag icon, class: icon_classes.presence %>
       <% elsif text_icon.present? %>
-        <span class="<%= icon_classes %>"><%= text_icon %></span>
+        <%= tag.span text_icon, class: icon_classes.presence %>
       <% end %>
     </div>
   <% end %>

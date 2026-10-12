@@ -54,6 +54,7 @@
   --elevation-control: var(--shadow-xs, 0 1px 2px 0 rgb(0 0 0 / 0.05));
   --elevation-raised:  var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
   --elevation-overlay: var(--shadow-md, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+  --elevation-none:    none;   /* ghost/link buttons, inset sidebar */
 
   /* Weight */
   --label-weight: 500;

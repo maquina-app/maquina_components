@@ -61,6 +61,19 @@
 <%% end %>
 ```
 
+### Helper
+
+For the common cases, the empty_state helper builds the header from
+title, description and icon, and wraps a block in the content part.
+
+```erb
+<%%= empty_state title: "No projects yet",
+  description: "Get started by creating your first project.",
+  icon: :folder do %>
+  <%%= link_to "Create project", "#", data: { component: "button", variant: "primary" } %>
+<%% end %>
+```
+
 ## API Reference
 
 ### Empty
@@ -83,8 +96,9 @@
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| icon | Symbol | nil | Icon name, or use block |
-| variant | Symbol | :icon | :icon or :avatar |
+| icon | Symbol | nil | Icon name rendered with icon_for |
+| content | String | nil | Captured HTML via capture (used when icon is nil), or use block |
+| variant | Symbol | :icon | :icon or :avatar (round, muted frame for an img) |
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
 
@@ -112,3 +126,11 @@
 |-----------|------|---------|-------------|
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes |
+
+### Helper Methods
+
+| Method | Description |
+|--------|-------------|
+| empty_state(title:, description: nil, icon: nil, variant: :default, size: :default, css_classes: "", **html_options, &block) | Renders the full empty state; the block becomes the content part |
+| empty_search_state(query: nil, reset_path: nil, size: :default) | "No results" state with a search icon and an optional "Clear search" link |
+| empty_list_state(resource_name:, new_path: nil, icon: :folder, size: :default) | "No {resource_name} yet" state with an optional "Create" link |

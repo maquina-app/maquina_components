@@ -4,12 +4,12 @@
     component: :breadcrumbs
   )
 
-  merged_data[:controller] = "breadcrumb" if responsive %>
+  merged_data[:controller] = "breadcrumb" if responsive
 
-<nav
-  aria-label="Breadcrumb"
-  class="<%= css_classes %>"
-  <%= tag.attributes(data: merged_data, **html_options) %>
->
+  # A caller's aria-label (either spelling) replaces the default one.
+  aria = (html_options.delete(:aria) || {}).symbolize_keys
+  aria[:label] = html_options.delete(:"aria-label") || aria[:label] || "Breadcrumb" %>
+
+<%= content_tag :nav, class: css_classes.presence, data: merged_data, aria: aria, **html_options do %>
   <%= yield %>
-</nav>
+<% end %>

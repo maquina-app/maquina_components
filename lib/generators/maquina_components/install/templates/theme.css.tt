@@ -155,6 +155,17 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  /* --info and --info-foreground are declared in the shape/state token block
+     the installer appends below this palette. */
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
   --color-input: var(--input);
   --color-border: var(--border);
   --color-ring: var(--ring);

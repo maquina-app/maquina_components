@@ -6,10 +6,10 @@ module MaquinaComponents
   # Provides convenient methods for creating empty state components.
   #
   # @example Simple empty state
-  #   <%= empty_state title: "No projects", description: "Get started by creating one.", icon: :folder_open %>
+  #   <%= empty_state title: "No projects", description: "Get started by creating one.", icon: :folder %>
   #
   # @example With action button
-  #   <%= empty_state title: "No projects", icon: :folder_open do %>
+  #   <%= empty_state title: "No projects", icon: :folder do %>
   #     <%= link_to "Create Project", new_project_path, data: { component: "button", variant: "primary" } %>
   #   <% end %>
   #
@@ -86,7 +86,7 @@ module MaquinaComponents
     # @param icon [Symbol] Icon to display
     # @param size [Symbol] Size variant
     # @return [String] Rendered HTML
-    def empty_list_state(resource_name:, new_path: nil, icon: :folder_open, size: :default)
+    def empty_list_state(resource_name:, new_path: nil, icon: :folder, size: :default)
       empty_state(
         title: "No #{resource_name} yet",
         description: "Get started by creating your first #{resource_name.singularize}.",

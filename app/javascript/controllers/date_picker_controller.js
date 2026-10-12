@@ -24,7 +24,10 @@ export default class extends Controller {
     selectedEnd: String,
     format: { type: String, default: "long" },
     placeholder: String,
-    placeholderRange: String
+    placeholderRange: String,
+    // I18n date data from date_picker_locale_data: strftime patterns and
+    // localized names, so the display matches the server-rendered text
+    locale: Object
   }
 
   connect() {
@@ -188,22 +191,54 @@ export default class extends Controller {
   }
 
   /**
-   * Format date for display
+   * Format date for display, mirroring the server's date_picker_format:
+   * the locale's strftime pattern when there is one, Intl otherwise.
    */
   formatDate(dateStr, format = "long") {
     if (!dateStr) return ""
 
-    try {
-      const date = new Date(dateStr + "T00:00:00")
-      const options = format === "short"
-        ? { month: "short", day: "numeric", year: "numeric" }
-        : { weekday: "long", month: "long", day: "numeric", year: "numeric" }
+    const date = new Date(dateStr + "T00:00:00")
+    if (isNaN(date)) return dateStr
 
-      const locale = document.documentElement.lang || undefined
-      return date.toLocaleDateString(locale, options)
-    } catch {
-      return dateStr
-    }
+    const pattern = this.localeValue.formats?.[format === "short" ? "short" : "long"]
+    if (pattern) return this.strftime(date, pattern)
+
+    const options = format === "short"
+      ? { month: "short", day: "numeric", year: "numeric" }
+      : { month: "long", day: "numeric", year: "numeric" }
+
+    return date.toLocaleDateString(document.documentElement.lang || undefined, options)
+  }
+
+  /**
+   * The strftime subset Rails locale date formats use. "%-d" drops padding.
+   */
+  strftime(date, pattern) {
+    const locale = this.localeValue
+    const pad = (number, width = 2) => String(number).padStart(width, "0")
+
+    return pattern.replace(/%(-?)([a-zA-Z%])/g, (match, noPad, directive) => {
+      const padded = (number) => noPad ? String(number) : pad(number)
+
+      switch (directive) {
+        case "Y": return String(date.getFullYear())
+        case "y": return pad(date.getFullYear() % 100)
+        case "m": return padded(date.getMonth() + 1)
+        case "d": return padded(date.getDate())
+        case "e": return noPad ? String(date.getDate()) : String(date.getDate()).padStart(2, " ")
+        case "j": {
+          const start = new Date(date.getFullYear(), 0, 1)
+          const day = Math.round((date - start) / 86400000) + 1
+          return noPad ? String(day) : pad(day, 3)
+        }
+        case "B": return locale.month_names?.[date.getMonth() + 1] ?? match
+        case "b": return locale.abbr_month_names?.[date.getMonth() + 1] ?? match
+        case "A": return locale.day_names?.[date.getDay()] ?? match
+        case "a": return locale.abbr_day_names?.[date.getDay()] ?? match
+        case "%": return "%"
+        default: return match
+      }
+    })
   }
 
   /**
@@ -237,19 +272,20 @@ export default class extends Controller {
    * Clear the selection
    */
   clear() {
+    const calendarController = this.hasCalendarTarget &&
+      this.application.getControllerForElementAndIdentifier(this.calendarTarget, "calendar")
+
+    // The calendar's own calendar:change runs handleChange, which updates the
+    // inputs and display and dispatches date-picker:change exactly once
+    if (calendarController) {
+      calendarController.clear()
+      return
+    }
+
     this.selectedValue = ""
     this.selectedEndValue = ""
     this.updateInputs()
     this.updateDisplay()
-
-    // Also clear the calendar
-    if (this.hasCalendarTarget) {
-      const calendarController = this.application.getControllerForElementAndIdentifier(
-        this.calendarTarget,
-        "calendar"
-      )
-      calendarController?.clear()
-    }
 
     this.dispatch("change", {
       detail: { selected: null, selectedEnd: null }

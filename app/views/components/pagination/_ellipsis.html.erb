@@ -1,12 +1,9 @@
 <%# locals: (css_classes: "", **html_options) %>
-<% sr_label = t("maquina_components.pagination.more_pages", default: "More pages") %>
+<% sr_label = t("maquina_components.pagination.more_pages", default: "More pages")
+  merged_data = merge_component_data(html_options, "pagination-part": "ellipsis") %>
 
-<span
-  class="<%= css_classes.presence %>"
-  data-pagination-part="ellipsis"
-  aria-hidden="true"
-  <%= tag.attributes(html_options.except(:data)) %>
->
+<%# Only the glyph is hidden from assistive tech, so the label is announced. %>
+<%= content_tag :span, class: css_classes.presence, data: merged_data, **html_options do %>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -25,4 +22,4 @@
   </svg>
 
   <span class="sr-only"><%= sr_label %></span>
-</span>
+<% end %>

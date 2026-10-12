@@ -5,7 +5,7 @@
     active: (active ? true : nil)
   ) %>
 
-<%= link_to url, class: css_classes, data: merged_data,
+<%= link_to url, class: css_classes.presence, data: merged_data,
       "aria-current": (active ? "page" : nil), **html_options do %>
   <% if icon_name.present? %>
     <%= icon_for(icon_name) %>

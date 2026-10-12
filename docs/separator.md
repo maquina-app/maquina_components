@@ -26,9 +26,17 @@ Use inside a flex row, for example between header actions.
 </div>
 ```
 
+### Spacing
+
+A horizontal separator spans the full width of its container and has no
+horizontal margin. Add vertical spacing with `css_classes:` (for example
+`"my-4"`), or an inset with a margin plus `"w-auto"` (for example
+`"mx-4 w-auto"`). A vertical separator keeps a small inline margin (`mx-2`)
+so the items it divides do not touch.
+
 ## API Reference
 
-### separator
+### Separator
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|

@@ -3,6 +3,6 @@
     breadcrumb_part: :list
   ) %>
 
-<%= content_tag :ol, class: css_classes, data: merged_data, **html_options do %>
+<%= content_tag :ol, class: css_classes.presence, data: merged_data, **html_options do %>
   <%= yield %>
 <% end %>

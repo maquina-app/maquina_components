@@ -5,8 +5,9 @@
   icon_classes = icon_classes.presence || icon_class
   value_classes = value_classes.presence || value_class
 
-  # Legacy string icon names map to built-in icons; symbols pass straight
-  # through; anything else renders as custom icon markup.
+  # Symbols resolve through icon_for (app icons first, then built-ins);
+  # legacy kebab-case strings map to built-in names; anything else renders
+  # as custom icon markup.
   legacy_icons = {
     "message-square" => :message_square,
     "arrow-up" => :arrow_up,
@@ -25,16 +26,16 @@
   <div data-stats-part="body">
     <div data-stats-part="text">
       <p data-stats-part="title"><%= title %></p>
-      <p data-stats-part="value" class="<%= value_classes.presence %>"><%= value %></p>
+      <%= tag.p value, class: value_classes.presence, data: {stats_part: "value"} %>
       <% if subtitle.present? %>
         <p data-stats-part="subtitle"><%= subtitle %></p>
       <% end %>
     </div>
 
     <% if icon.present? %>
-      <div data-stats-part="icon" class="<%= icon_classes.presence %>">
-        <%= icon_name ? builtin_icon_for(icon_name, class: "size-8") : icon %>
-      </div>
+      <%= tag.div class: icon_classes.presence, data: {stats_part: "icon"} do %>
+        <%= icon_name ? icon_for(icon_name, class: "size-8") : icon %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

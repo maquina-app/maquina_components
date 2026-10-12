@@ -111,6 +111,32 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  # The manual-install steps in docs/getting-started.md must give the same
+  # palette the generator writes, not a drifted copy of it.
+  test "manual install docs carry the theme template verbatim" do
+    root = File.expand_path("../..", __dir__)
+    template = File.read(File.join(root, "lib/generators/maquina_components/install/templates/theme.css.tt"))
+    docs = File.read(File.join(root, "docs/getting-started.md"))
+
+    assert_includes docs, "```css\n#{template.rstrip}\n```"
+  end
+
+  # bg-success, text-warning-foreground, bg-info... only exist as utilities
+  # when the @theme block binds them, and every bound variable must actually
+  # be declared by what the installer writes.
+  test "theme block binds the status colors the installer declares" do
+    run_generator
+
+    assert_file "app/assets/tailwind/application.css" do |content|
+      %w[success warning info].each do |status|
+        assert_match %r{--color-#{status}: var\(--#{status}\);}, content
+        assert_match %r{--color-#{status}-foreground: var\(--#{status}-foreground\);}, content
+        assert_match %r{^\s*--#{status}: }, content
+        assert_match %r{^\s*--#{status}-foreground: }, content
+      end
+    end
+  end
+
   test "does not duplicate theme variables if already present" do
     create_tailwind_css_file(<<~CSS)
       @import "tailwindcss";

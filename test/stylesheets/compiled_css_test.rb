@@ -22,7 +22,7 @@ class CompiledCssTest < ActiveSupport::TestCase
   ROLE_TOKENS = %w[
     --control-radius --surface-radius --mark-radius --pill-radius
     --focus-ring-width --focus-ring-offset --focus-ring-style
-    --elevation-control --elevation-raised --elevation-overlay
+    --elevation-control --elevation-raised --elevation-overlay --elevation-none
     --label-weight --value-weight
   ].freeze
 

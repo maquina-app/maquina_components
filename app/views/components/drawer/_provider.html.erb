@@ -18,6 +18,6 @@
     action: "keydown.meta+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard keydown.ctrl+#{keyboard_shortcut}@window->drawer#toggleWithKeyboard keydown.esc@window->drawer#closeOnEscape"
   )
 %>
-<%= content_tag :div, id: provider_id, class: css_classes, data: merged_data, **html_options do %>
+<%= content_tag :div, id: provider_id, class: css_classes.presence, data: merged_data, **html_options do %>
   <%= yield %>
 <% end %>
