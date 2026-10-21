@@ -1,0 +1,29 @@
+# demo.maquina.app — component preview harness.
+#
+# These pages are embedded in <iframe> previews on maquina.app, so the same
+# content is already published on the documentation site. Leaving this host
+# crawlable gave search engines a second, duplicate copy of the docs: Search
+# Console reported 43 "duplicate without user-selected canonical" URLs here,
+# plus soft 404s for previews that no longer exist.
+#
+# Previews exist for humans reading the docs, not for search results. The
+# docs at maquina.app remain fully indexed.
+#
+# How this works with ApplicationController's X-Robots-Tag: noindex, nofollow:
+#
+#   A URL blocked by robots.txt cannot be deindexed via noindex, because the
+#   crawler never fetches the page and never sees the header. So Googlebot is
+#   allowed through here: it fetches each preview once, sees the noindex
+#   header, and drops the URL from the index.
+#
+#   Every other crawler is blocked outright, which stops AI/scraper agents
+#   from consuming the preview host.
+#
+# Once Search Console shows these previews out of the index, tighten this to
+# "Disallow: /" for Googlebot as well, so the crawl budget is not spent on a
+# host that should not be in the index at all.
+User-agent: *
+Disallow: /
+
+User-agent: Googlebot
+Allow: /
