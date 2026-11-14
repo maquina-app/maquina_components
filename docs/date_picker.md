@@ -49,6 +49,23 @@
       placeholder: "Select within 30 days" %>
 ```
 
+### Required Date
+
+With `required: true`, a click on the selected day confirms it rather than
+clearing it: the date stays, the popover closes and no change event fires. In
+range mode, clicking the start date again makes a one-day range. Pass
+`deselectable: true` to allow clearing anyway, or `deselectable: false` to get
+this behavior without `required`.
+
+<!-- preview:required height:320 -->
+
+```erb
+<%%= render "components/date_picker",
+      required: true,
+      selected: @program.week_starts_on,
+      input_name: "program[week_starts_on]" %>
+```
+
 ### Disabled
 
 <!-- preview:disabled height:80 -->
@@ -125,7 +142,8 @@ so the arrows don't move under the pointer. The calendar root carries
 | input_name_end | String | nil | Renders a hidden input for the end date; range mode only |
 | id | String | nil | Wrapper id; defaults to date-picker-{input_name}, popover id is {id}-popover |
 | disabled | Boolean | false | Disables the trigger button |
-| required | Boolean | false | Adds required to the start date hidden input |
+| required | Boolean | false | Adds required to the start date hidden input, and makes the calendar non-deselectable unless deselectable is given |
+| deselectable | Boolean | nil | Whether a click on the selected day clears it; defaults to `!required`. See [calendar](calendar.md#required-dates) |
 | size | Symbol | :default | Trigger size: :sm, :default or :lg (data-size) |
 | full_width | Boolean | false | Stretches the wrapper and trigger to the container width (data-full-width) |
 | css_classes | String | "" | Additional CSS classes |
@@ -176,6 +194,7 @@ the trigger text and `aria-expanded` in sync with the calendar inside it.
 | Action | Description |
 |--------|-------------|
 | handleChange | Bound on the calendar as `calendar:change->date-picker#handleChange`; updates the inputs and text, closes the popover after one date (single) or both dates (range), and dispatches `date-picker:change` |
+| confirmSelection | Bound on the calendar as `click->date-picker#confirmSelection`; closes the popover when the clicked day stays selected (a non-deselectable calendar), so the click confirms the date |
 | handleNavigate | Bound on the calendar as `calendar:navigate->date-picker#handleNavigate`; re-dispatches it as `date-picker:navigate` |
 
 | Event | Detail | Description |

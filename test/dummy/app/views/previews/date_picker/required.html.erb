@@ -1,0 +1,6 @@
+<%= preview_container width: :md do %>
+  <%= render "components/date_picker",
+        required: true,
+        selected: Date.new(2026, 11, 20),
+        input_name: "week_starts_on" %>
+<% end %>

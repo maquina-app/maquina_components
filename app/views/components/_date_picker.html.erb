@@ -1,4 +1,4 @@
-<%# locals: (selected: nil, selected_end: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, week_starts_on: :sunday, caption_layout: :label, years: nil, placeholder: nil, input_name: nil, input_name_end: nil, id: nil, disabled: false, required: false, size: :default, full_width: false, css_classes: "", **html_options) %>
+<%# locals: (selected: nil, selected_end: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, week_starts_on: :sunday, caption_layout: :label, years: nil, placeholder: nil, input_name: nil, input_name_end: nil, id: nil, disabled: false, required: false, deselectable: nil, size: :default, full_width: false, css_classes: "", **html_options) %>
 <%
   # Deterministic ID for popover targeting: random ids break idiomorph
   # matching across Turbo morphs
@@ -83,9 +83,11 @@
           week_starts_on: week_starts_on,
           caption_layout: caption_layout,
           years: years,
+          # A required date can't be emptied by clicking it again
+          deselectable: deselectable.nil? ? !required : deselectable,
           data: {
             "date-picker-target": "calendar",
-            action: "calendar:change->date-picker#handleChange calendar:navigate->date-picker#handleNavigate"
+            action: "calendar:change->date-picker#handleChange calendar:navigate->date-picker#handleNavigate click->date-picker#confirmSelection"
           } %>
   </div>
 <% end %>

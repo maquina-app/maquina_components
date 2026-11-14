@@ -20,7 +20,9 @@
                     (max_date && day > max_date) ||
                     disabled_dates.include?(day)
 
-      day_state = if is_selected && mode == :range && selected_end_date
+      day_state = if is_selected && is_range_end
+                    "selected" # a one-day range
+                  elsif is_selected && mode == :range && selected_end_date
                     "range-start"
                   elsif is_range_end
                     "range-end"

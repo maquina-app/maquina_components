@@ -1,4 +1,4 @@
-<%# locals: (selected: nil, selected_end: nil, month: nil, year: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, week_starts_on: :sunday, caption_layout: :label, years: nil, cell_size: nil, input_name: nil, input_name_end: nil, css_classes: "", **html_options) %>
+<%# locals: (selected: nil, selected_end: nil, month: nil, year: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, week_starts_on: :sunday, caption_layout: :label, years: nil, deselectable: true, cell_size: nil, input_name: nil, input_name_end: nil, css_classes: "", **html_options) %>
 <%
   # Dates may arrive as Date, Time or ISO strings
   selected_date = calendar_to_date(selected)
@@ -61,6 +61,7 @@
     "calendar-week-starts-on-value": week_starts_on,
     "calendar-disabled-dates-value": disabled_dates_parsed.map(&:iso8601).presence,
     "calendar-show-outside-days-value": show_outside_days,
+    "calendar-deselectable-value": (false unless deselectable),
     "calendar-start-year-value": year_range&.first,
     "calendar-end-year-value": year_range&.last
   )

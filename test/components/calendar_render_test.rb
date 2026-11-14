@@ -76,4 +76,21 @@ class CalendarRenderTest < ActiveSupport::TestCase
     assert_nil view.calendar_to_date("")
     assert_nil view.calendar_to_date(nil)
   end
+
+  test "deselectable: false reaches the controller; the default renders nothing" do
+    html = view.render("components/calendar", month: 3, year: 2026, deselectable: false)
+    assert_includes html, %(data-calendar-deselectable-value="false")
+
+    refute_includes view.render("components/calendar", month: 3, year: 2026), "deselectable"
+  end
+
+  # A one-day range is both start and end: it renders as one fully rounded cell
+  test "a range whose start and end are the same day renders that day as selected" do
+    html = view.render("components/calendar", mode: :range,
+      selected: Date.new(2026, 3, 10), selected_end: Date.new(2026, 3, 10))
+
+    assert_match(/data-state="selected"[^>]*data-date="2026-03-10"|data-date="2026-03-10"[^>]*data-state="selected"/, html)
+    refute_includes html, "range-start"
+    refute_includes html, "range-end"
+  end
 end

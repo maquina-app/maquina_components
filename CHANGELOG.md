@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Clicking the selected day of a required date picker emptied it.** In single
+  mode the calendar works as a toggle, which suits an optional date but let a
+  click clear a required one. A `required: true` date picker now confirms
+  instead: the date stays, the popover closes and no change event fires.
+
+### Added
+
+- `deselectable:` on `calendar` (default `true`) and `date_picker` (default
+  `!required`).
+  - When false, a click on the selected day keeps it.
+  - In range mode, clicking the start date again makes a one-day range, which
+    couldn't be picked before.
+- A one-day range renders as a single `data-state="selected"` cell.
+
 ## [0.8.0] - 2026-11-14
 
 The calendar gets month and year dropdowns for jumping to distant dates, and a

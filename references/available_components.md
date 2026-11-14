@@ -399,6 +399,7 @@ Legacy aliases still accepted: `container_class` (for `css_classes`), `icon_clas
 | `week_starts_on` | `:sunday` | `:sunday`, `:monday` |
 | `caption_layout` | `:label` | `:dropdown` swaps the caption for month and year selects |
 | `years` | `nil` | Year select span; default 100 back to 10 ahead, min/max dates set the bounds |
+| `deselectable` | `true` | `false`: a click can't clear the selected day; range start clicked again → one-day range |
 | `cell_size` | `nil` | CSS length for `--cell-size` |
 | `input_name`, `input_name_end` | `nil` | Render hidden inputs for forms |
 | block | — | Optional; renders after the grid as `data-calendar-part="footer"` |
@@ -425,7 +426,8 @@ Inside a `[popover]`, the controller sets `data-side="top|bottom"` on the root (
 | `placeholder` | `nil` | Falls back to "Select date" / "Select date range" |
 | `input_name`, `input_name_end` | `nil` | Hidden inputs |
 | `id` | `nil` | → `"date-picker-#{input_name}"`; popover is `#{id}-popover` |
-| `disabled`, `required` | `false` | `required` goes on the start hidden input |
+| `disabled`, `required` | `false` | `required` goes on the start hidden input and makes the calendar non-deselectable |
+| `deselectable` | `nil` | → `!required`; explicit value wins |
 | `size` | `:default` | `:sm`, `:default`, `:lg` |
 | `full_width` | `false` | Stretch wrapper and trigger |
 
@@ -682,7 +684,7 @@ Thirteen controllers in `app/javascript/controllers/`. Partials attach them auto
 | Identifier | Attached by | Targets | Values | Events / API |
 |------------|-------------|---------|--------|--------------|
 | `breadcrumb` | `breadcrumbs` with `responsive: true` | `item`, `ellipsis`, `ellipsisSeparator` | none | Re-fits on resize, font load and `turbo:morph` |
-| `calendar` | `calendar` | `day`, `input`, `inputEnd`, `prevButton`, `nextButton`, `grid`, `caption`, `monthSelect`, `yearSelect` | `month`, `year`, `selected`, `selectedEnd`, `minDate`, `maxDate`, `mode`, `weekStartsOn`, `disabledDates`, `showOutsideDays`, `startYear`, `endYear` | `calendar:change`, `calendar:navigate`; `getValue()`, `select(date)`, `clear()` |
+| `calendar` | `calendar` | `day`, `input`, `inputEnd`, `prevButton`, `nextButton`, `grid`, `caption`, `monthSelect`, `yearSelect` | `month`, `year`, `selected`, `selectedEnd`, `minDate`, `maxDate`, `mode`, `weekStartsOn`, `disabledDates`, `showOutsideDays`, `startYear`, `endYear`, `deselectable` | `calendar:change`, `calendar:navigate`; `getValue()`, `select(date)`, `clear()` |
 | `combobox` | `combobox` | `trigger`, `content`, `input`, `option`, `empty`, `label`, `hiddenInput` | `value`, `name`, `placeholder` | `combobox:change` (`{ value, label }`) |
 | `date-picker` | `date_picker` | `trigger`, `popover`, `calendar`, `input`, `inputEnd`, `display` | `mode`, `selected`, `selectedEnd`, `format`, `placeholder`, `placeholderRange`, `locale` | `date-picker:change`, `date-picker:navigate`; `openPopover()`, `closePopover()`, `toggle()`, `clear()`, `getValue()`, `setValue(selected, selectedEnd)` |
 | `drawer` | `drawer/provider` | `drawer`, `backdrop`, `panel` | `open`, `defaultOpen`, `cookieName`, `cookieMaxAge`, `keyboardShortcut` | `drawer:stateChanged` (`{ open, state }`); actions `toggle`, `open`, `close`, `backdropClick`, `closeOnEscape`, `toggleWithKeyboard` |

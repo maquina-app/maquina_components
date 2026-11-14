@@ -14,6 +14,10 @@ export default class extends Controller {
     weekStartsOn: { type: String, default: "sunday" },
     disabledDates: Array,
     showOutsideDays: { type: Boolean, default: true },
+    // false: a click on the selected day keeps it (single mode), and the start
+    // clicked again makes a one-day range (range mode), so a required date
+    // can't be emptied by a click
+    deselectable: { type: Boolean, default: true },
     // Bounds of the caption's year select (caption_layout: :dropdown only)
     startYear: Number,
     endYear: Number
@@ -188,7 +192,10 @@ export default class extends Controller {
                          disabledDates.has(dateStr)
 
       let dayState = null
-      if (isSelected && this.modeValue === "range" && selectedEndStr) {
+      if (isSelected && isRangeEnd) {
+        // A one-day range
+        dayState = "selected"
+      } else if (isSelected && this.modeValue === "range" && selectedEndStr) {
         dayState = "range-start"
       } else if (isRangeEnd) {
         dayState = "range-end"
@@ -242,6 +249,8 @@ export default class extends Controller {
 
   handleSingleSelection(dateStr) {
     if (this.selectedValue === dateStr) {
+      // Nothing changes, so nothing is dispatched
+      if (!this.deselectableValue) return
       this.selectedValue = ""
     } else {
       this.selectedValue = dateStr
@@ -268,12 +277,13 @@ export default class extends Controller {
         // Clicked before start - swap
         this.selectedEndValue = this.selectedValue
         this.selectedValue = dateStr
-      } else if (dateStr === selectedStr) {
+      } else if (dateStr === selectedStr && this.deselectableValue) {
         // Clicked same date - clear
         this.selectedValue = ""
         this.selectedEndValue = ""
       } else {
-        // Clicked after start - set end
+        // Clicked after start, or the start again when not deselectable
+        // (a one-day range) - set end
         this.selectedEndValue = dateStr
       }
     }
@@ -358,7 +368,10 @@ export default class extends Controller {
       let state = null
 
       if (this.modeValue === "range" && selectedStr && selectedEndStr) {
-        if (dateStr === selectedStr) {
+        if (dateStr === selectedStr && dateStr === selectedEndStr) {
+          // A one-day range
+          state = "selected"
+        } else if (dateStr === selectedStr) {
           state = "range-start"
         } else if (dateStr === selectedEndStr) {
           state = "range-end"

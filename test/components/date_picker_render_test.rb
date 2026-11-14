@@ -62,4 +62,31 @@ class DatePickerRenderTest < ActiveSupport::TestCase
     assert_equal "March", locale["month_names"][3]
     assert_equal "Mar", locale["abbr_month_names"][3]
   end
+
+  def calendar_root(html)
+    html[/<div [^>]*data-component="calendar"[^>]*>/]
+  end
+
+  # Clicking the selected day of a required picker used to empty it
+  test "a required picker's calendar is not deselectable" do
+    calendar = calendar_root(view.render("components/date_picker", input_name: "week", required: true))
+
+    assert_includes calendar, %(data-calendar-deselectable-value="false")
+  end
+
+  test "an explicit deselectable wins over required, and optional pickers stay deselectable" do
+    explicit = calendar_root(view.render("components/date_picker", input_name: "week", required: true, deselectable: true))
+    optional = calendar_root(view.render("components/date_picker", input_name: "week"))
+
+    refute_includes explicit, "deselectable"
+    refute_includes optional, "deselectable"
+    assert_includes calendar_root(view.render("components/date_picker", input_name: "week", deselectable: false)),
+      %(data-calendar-deselectable-value="false")
+  end
+
+  test "a click on the calendar reaches confirmSelection" do
+    calendar = calendar_root(view.render("components/date_picker", input_name: "week"))
+
+    assert_includes calendar, "click-&gt;date-picker#confirmSelection"
+  end
 end
