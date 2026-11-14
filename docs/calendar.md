@@ -103,6 +103,23 @@ The year select lists 100 years back to 10 ahead of the current year.
 - The displayed year is always listed.
 - The arrows and keyboard navigation stop at the first and last listed year.
 
+### Required Dates
+
+By default, clicking the selected day clears it. That's right for an optional
+date but not for a required one, so `deselectable: false` turns it off:
+- **Single mode:** a click on the selected day keeps it and dispatches nothing.
+- **Range mode:** clicking the start date again makes a one-day range (start and
+  end on that day) instead of clearing.
+
+The [date picker](date_picker.md#required-date) sets this from `required:`.
+
+```erb
+<%%= render "components/calendar",
+      deselectable: false,
+      selected: @shift.date,
+      input_name: "shift[date]" %>
+```
+
 ### With a Footer
 
 A block renders below the grid as `data-calendar-part="footer"`, for actions such
@@ -139,6 +156,7 @@ as Clear and Done. The footer only adds spacing; style its contents yourself.
 | week_starts_on | Symbol | :sunday | :sunday or :monday |
 | caption_layout | Symbol | :label | :label (the month and year as text) or :dropdown (month and year selects) |
 | years | Range | nil | Years in the year select (dropdown only); defaults to 100 back and 10 ahead of the current year, and min_date/max_date set the bounds when given |
+| deselectable | Boolean | true | false: a click on the selected day keeps it (single), and the start clicked again makes a one-day range (range) |
 | cell_size | String | nil | CSS length written to --cell-size (default 2rem); combined with any style: you pass |
 | input_name | String | nil | Renders a hidden input for the start date |
 | input_name_end | String | nil | Renders a hidden input for the end date; range mode only |
@@ -242,6 +260,7 @@ every value from its locals.
 | weekStartsOn | String | "sunday" | sunday or monday |
 | disabledDates | Array | [] | ISO dates to disable, applied to every month the controller builds |
 | showOutsideDays | Boolean | true | Render days from adjacent months when rebuilding the grid |
+| deselectable | Boolean | true | When false, a click can't empty the selection; rendered only when false |
 | startYear | Number | — | First year in the year select; set only with caption_layout: :dropdown. Navigation stops at its January |
 | endYear | Number | — | Last year in the year select; set only with caption_layout: :dropdown. Navigation stops at its December |
 
@@ -261,7 +280,7 @@ every value from its locals.
 |--------|-------------|
 | previousMonth / nextMonth | Bound on the header buttons; rebuild the grid for the new month and dispatch `calendar:navigate`. Disabled at min_date/max_date and at the ends of the year select |
 | selectMonth / selectYear | Bound on the month and year selects (`change`); show that month and dispatch `calendar:navigate`. A year change keeps the month unless min_date/max_date rule it out that year, in which case it moves to the nearest allowed month |
-| selectDay | Bound on each day (`click`). Single mode toggles the day; range mode sets the start, then the end (a date before the start swaps them, the start again clears), and a third click starts a new range |
+| selectDay | Bound on each day (`click`). Single mode toggles the day, unless `deselectable` is false: then a click on the selected day does nothing. Range mode sets the start, then the end (a date before the start swaps them; the start again clears, or makes a one-day range when `deselectable` is false), and a third click starts a new range. A one-day range renders as `data-state="selected"` |
 | handleKeydown | Bound on each day (`keydown`). Arrow keys move by a day or a week, Home and End jump to the first and last day of the month; moving past the month navigates to the next or previous one. Disabled days are not focused |
 
 | Event | Detail | Description |

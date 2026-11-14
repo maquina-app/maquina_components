@@ -129,6 +129,19 @@ export default class extends Controller {
   }
 
   /**
+   * Close the popover when the selected day is clicked again and stays
+   * selected (a non-deselectable calendar): the click confirms the date.
+   * Bound on the calendar, so it runs after the day's own selectDay; a click
+   * that picks a new day has already closed the popover in handleChange.
+   */
+  confirmSelection(event) {
+    const day = event.target.closest("[data-calendar-part='day']")
+    if (day?.dataset.state === "selected" && this.popoverTarget.matches(":popover-open")) {
+      this.closePopover()
+    }
+  }
+
+  /**
    * Handle calendar navigate event
    * Can be used to fetch events for the new month
    */
