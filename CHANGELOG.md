@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-14
+
+The calendar gets month and year dropdowns for jumping to distant dates, and a
+date picker that opens above its trigger keeps the month arrows next to it.
+Nothing breaks; both are opt-in or automatic. See
+[upgrading](docs/upgrading.md#074--080).
+
+### Added
+
+- **Month and year dropdowns in the calendar caption.** `caption_layout:
+  :dropdown` on `calendar` and `date_picker` replaces the "June 1987" caption
+  with two native selects styled like the form select:
+  - A year can't be invalid.
+  - Typing "1987" with the year select focused jumps there.
+  - Phones show their native picker.
+
+  Month names are abbreviated so both selects fit a 7-cell header. The year
+  select lists 100 years back to 10 ahead:
+  - `min_date`/`max_date` set the bounds when given, and months wholly
+    outside them are disabled.
+  - `years:` sets an explicit span.
+  - The arrows and keyboard navigation stop at the first and last year.
+
+  New helpers back this: `calendar_year_range` and `calendar_month_options`.
+- **A calendar footer.** A block passed to `calendar` renders after the grid as
+  `data-calendar-part="footer"`, for actions such as Clear and Done.
+- **`data-side="top|bottom"` on a calendar inside a popover,** set by the
+  calendar controller. It compares the popover's position with its
+  `popovertarget` button each time the popover opens and after every month
+  change.
+
+### Fixed
+
+- **The month arrows jumped when the date picker opened above its trigger.**
+  A popover with no room below flips above the trigger, which pins its bottom
+  edge, and months take 4 to 6 rows. With the header on top, every arrow click
+  resized the popover and moved the arrows out from under the pointer.
+  - With `data-side="top"`, the header now moves to the bottom, next to the
+    trigger: weekdays, grid, footer, then header. It stays put while you
+    navigate.
+  - Only the visual order changes.
+  - The popover also animates in upward.
+  - Popovers built around the calendar with their own controller get this too.
+
 ## [0.7.4] - 2026-10-12
 
 A page refresh no longer closes an open sidebar or drawer, plus fixes for
@@ -752,7 +796,8 @@ Thanks to the contributors who made this release possible:
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.7.4...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/maquina-app/maquina_components/compare/v0.7.4...v0.8.0
 [0.7.4]: https://github.com/maquina-app/maquina_components/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/maquina-app/maquina_components/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/maquina-app/maquina_components/compare/v0.7.1...v0.7.2
