@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["day", "input", "inputEnd", "prevButton", "nextButton", "grid", "caption"]
+  static targets = ["day", "input", "inputEnd", "prevButton", "nextButton", "grid", "caption", "monthSelect", "yearSelect"]
 
   static values = {
     month: Number,
@@ -13,12 +13,43 @@ export default class extends Controller {
     mode: { type: String, default: "single" },
     weekStartsOn: { type: String, default: "sunday" },
     disabledDates: Array,
-    showOutsideDays: { type: Boolean, default: true }
+    showOutsideDays: { type: Boolean, default: true },
+    // Bounds of the caption's year select (caption_layout: :dropdown only)
+    startYear: Number,
+    endYear: Number
   }
 
   connect() {
     this.updateNavigationState()
     this.updateDayStates()
+
+    // Inside a popover (date picker or a caller's own), track which side of
+    // the trigger it opened on, so the header can sit next to the trigger
+    this.popover = this.element.closest("[popover]")
+    if (this.popover) {
+      this.boundUpdateSide = this.updateSide.bind(this)
+      this.popover.addEventListener("toggle", this.boundUpdateSide)
+    }
+  }
+
+  disconnect() {
+    this.popover?.removeEventListener("toggle", this.boundUpdateSide)
+  }
+
+  /**
+   * Sets data-side="top|bottom" when the popover is open. A popover flipped
+   * above its trigger is pinned at its bottom edge, so CSS moves the header
+   * there: month heights differ, and the arrows must not move under the cursor.
+   */
+  updateSide() {
+    if (!this.popover?.matches(":popover-open")) return
+
+    const trigger = this.popover.id &&
+      document.querySelector(`[popovertarget="${CSS.escape(this.popover.id)}"]`)
+    if (!trigger) return
+
+    const above = this.popover.getBoundingClientRect().top < trigger.getBoundingClientRect().top
+    this.element.dataset.side = above ? "top" : "bottom"
   }
 
   previousMonth() {
@@ -45,12 +76,38 @@ export default class extends Controller {
     this.navigateToMonth(newMonth, newYear)
   }
 
+  // Caption dropdowns (caption_layout: :dropdown)
+  selectMonth() {
+    this.navigateToMonth(Number(this.monthSelectTarget.value), this.yearValue)
+  }
+
+  selectYear() {
+    const year = Number(this.yearSelectTarget.value)
+    this.navigateToMonth(this.clampMonth(this.monthValue, year), year)
+  }
+
+  // A year change keeps the month, unless min/max date rule it out that year
+  clampMonth(month, year) {
+    const [minYear, minMonth] = (this.minDateValue || "").split("-").map(Number)
+    const [maxYear, maxMonth] = (this.maxDateValue || "").split("-").map(Number)
+
+    if (year === minYear && month < minMonth) return minMonth
+    if (year === maxYear && month > maxMonth) return maxMonth
+    return month
+  }
+
   navigateToMonth(month, year) {
+    // The year select lists only startYear..endYear; never show a month it can't
+    if ((this.hasStartYearValue && year < this.startYearValue) ||
+        (this.hasEndYearValue && year > this.endYearValue)) return
+
     this.monthValue = month
     this.yearValue = year
 
     this.rebuildCalendar()
+    this.syncDropdowns()
     this.updateNavigationState()
+    this.updateSide()
 
     this.dispatch("navigate", {
       detail: {
@@ -337,14 +394,40 @@ export default class extends Controller {
   }
 
   updateNavigationState() {
-    if (this.minDateValue && this.hasPrevButtonTarget) {
-      const firstOfMonth = this.formatDate(new Date(this.yearValue, this.monthValue - 1, 1))
-      this.prevButtonTarget.disabled = firstOfMonth <= this.minDateValue
+    const firstOfMonth = this.formatDate(new Date(this.yearValue, this.monthValue - 1, 1))
+    const lastOfMonth = this.formatDate(new Date(this.yearValue, this.monthValue, 0))
+
+    if (this.hasPrevButtonTarget) {
+      this.prevButtonTarget.disabled = Boolean(
+        (this.minDateValue && firstOfMonth <= this.minDateValue) ||
+        (this.hasStartYearValue && this.monthValue === 1 && this.yearValue <= this.startYearValue)
+      )
     }
 
-    if (this.maxDateValue && this.hasNextButtonTarget) {
-      const lastOfMonth = this.formatDate(new Date(this.yearValue, this.monthValue, 0))
-      this.nextButtonTarget.disabled = lastOfMonth >= this.maxDateValue
+    if (this.hasNextButtonTarget) {
+      this.nextButtonTarget.disabled = Boolean(
+        (this.maxDateValue && lastOfMonth >= this.maxDateValue) ||
+        (this.hasEndYearValue && this.monthValue === 12 && this.yearValue >= this.endYearValue)
+      )
+    }
+  }
+
+  // Mirrors calendar_month_options: a month wholly outside min/max is disabled
+  syncDropdowns() {
+    if (this.hasMonthSelectTarget) {
+      for (const option of this.monthSelectTarget.options) {
+        const month = Number(option.value)
+        const first = this.formatDate(new Date(this.yearValue, month - 1, 1))
+        const last = this.formatDate(new Date(this.yearValue, month, 0))
+
+        option.disabled = Boolean((this.minDateValue && last < this.minDateValue) ||
+          (this.maxDateValue && first > this.maxDateValue))
+      }
+      this.monthSelectTarget.value = String(this.monthValue)
+    }
+
+    if (this.hasYearSelectTarget) {
+      this.yearSelectTarget.value = String(this.yearValue)
     }
   }
 

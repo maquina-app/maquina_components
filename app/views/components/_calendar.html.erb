@@ -1,4 +1,4 @@
-<%# locals: (selected: nil, selected_end: nil, month: nil, year: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, week_starts_on: :sunday, cell_size: nil, input_name: nil, input_name_end: nil, css_classes: "", **html_options) %>
+<%# locals: (selected: nil, selected_end: nil, month: nil, year: nil, mode: :single, min_date: nil, max_date: nil, disabled_dates: [], show_outside_days: true, week_starts_on: :sunday, caption_layout: :label, years: nil, cell_size: nil, input_name: nil, input_name_end: nil, css_classes: "", **html_options) %>
 <%
   # Dates may arrive as Date, Time or ISO strings
   selected_date = calendar_to_date(selected)
@@ -36,6 +36,18 @@
     abbr_day_names.rotate(1) :
     abbr_day_names
 
+  # caption_layout: :dropdown swaps the caption for month and year selects.
+  # Their locals reach the header only then, so an app's own calendar/header
+  # override written for the caption keeps working.
+  dropdown = caption_layout.to_sym == :dropdown
+  year_range = calendar_year_range(display_year, min_date: min_date_parsed, max_date: max_date_parsed, years: years) if dropdown
+  header_locals = if dropdown
+    {caption_layout: :dropdown, years: year_range,
+     month_options: calendar_month_options(display_year, min_date: min_date_parsed, max_date: max_date_parsed)}
+  else
+    {}
+  end
+
   merged_data = merge_component_data(html_options,
     controller: "calendar",
     component: "calendar",
@@ -48,7 +60,9 @@
     "calendar-max-date-value": max_date_parsed&.iso8601,
     "calendar-week-starts-on-value": week_starts_on,
     "calendar-disabled-dates-value": disabled_dates_parsed.map(&:iso8601).presence,
-    "calendar-show-outside-days-value": show_outside_days
+    "calendar-show-outside-days-value": show_outside_days,
+    "calendar-start-year-value": year_range&.first,
+    "calendar-end-year-value": year_range&.last
   )
 
   # cell_size and a caller's style: both write the style attribute, so join them
@@ -80,7 +94,8 @@
   <%= render "components/calendar/header",
         month: display_month,
         year: display_year,
-        month_name: I18n.l(first_of_month, format: "%B %Y") %>
+        month_name: I18n.l(first_of_month, format: "%B %Y"),
+        **header_locals %>
 
   <%# Weekday headers %>
   <div data-calendar-part="weekdays">
@@ -104,4 +119,13 @@
             show_outside_days: show_outside_days %>
     <% end %>
   </div>
+
+  <%# Optional footer (actions such as Clear/Done); stays between the grid and
+      a header moved to the bottom when the calendar's popover opens above.
+      Without a caller block a partial's yield returns content_for(:layout),
+      which is the whole page when rendered from a layout, so that is no footer. %>
+  <% footer = capture { yield }.presence %>
+  <% if footer && footer != content_for(:layout) %>
+    <div data-calendar-part="footer"><%= footer %></div>
+  <% end %>
 <% end %>

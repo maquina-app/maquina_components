@@ -1,4 +1,4 @@
-<%# locals: (month:, year:, month_name:, css_classes: "", **html_options) %>
+<%# locals: (month:, year:, month_name:, caption_layout: :label, years: nil, month_options: nil, css_classes: "", **html_options) %>
 <% merged_data = merge_component_data(html_options, "calendar-part": "header") %>
 
 <%= content_tag :div, class: css_classes.presence, data: merged_data, **html_options do %>
@@ -9,9 +9,33 @@
     <%= builtin_icon_for :chevron_left, class: "size-4" %>
   </button>
 
-  <div data-calendar-part="caption">
-    <%= month_name %>
-  </div>
+  <% if caption_layout.to_sym == :dropdown %>
+    <div data-calendar-part="dropdowns">
+      <select data-component="select"
+              data-calendar-part="month-select"
+              data-calendar-target="monthSelect"
+              data-action="change->calendar#selectMonth"
+              aria-label="<%= t("maquina_components.calendar.month", default: "Month") %>">
+        <% month_options.each do |name, value, disabled| %>
+          <%= tag.option name, value: value, selected: value == month, disabled: disabled %>
+        <% end %>
+      </select>
+
+      <select data-component="select"
+              data-calendar-part="year-select"
+              data-calendar-target="yearSelect"
+              data-action="change->calendar#selectYear"
+              aria-label="<%= t("maquina_components.calendar.year", default: "Year") %>">
+        <% years.each do |value| %>
+          <%= tag.option value, value: value, selected: value == year %>
+        <% end %>
+      </select>
+    </div>
+  <% else %>
+    <div data-calendar-part="caption">
+      <%= month_name %>
+    </div>
+  <% end %>
 
   <button type="button"
           data-action="click->calendar#nextMonth"

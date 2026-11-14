@@ -1,0 +1,8 @@
+<%= preview_container width: :md do %>
+  <%= render "components/calendar", selected: Date.new(2026, 3, 12) do %>
+    <%= preview_row do %>
+      <button type="button" data-component="button" data-variant="outline" data-size="sm">Clear</button>
+      <button type="button" data-component="button" data-variant="primary" data-size="sm" class="ms-auto">Done</button>
+    <% end %>
+  <% end %>
+<% end %>

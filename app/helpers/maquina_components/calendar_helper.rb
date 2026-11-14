@@ -72,6 +72,43 @@ module MaquinaComponents
       end
     end
 
+    # Years offered by the caption's year select (caption_layout: :dropdown)
+    #
+    # min_date/max_date set the bounds when present; otherwise years applies,
+    # 100 years back to 10 ahead by default. Given both, the narrower bound
+    # wins. The displayed year is always included.
+    #
+    # @param display_year [Integer] Year the calendar shows
+    # @param min_date [Date, nil] Minimum selectable date
+    # @param max_date [Date, nil] Maximum selectable date
+    # @param years [Range, nil] Explicit span of years
+    # @return [Range]
+    def calendar_year_range(display_year, min_date: nil, max_date: nil, years: nil)
+      first, last = (years || ((Date.current.year - 100)..(Date.current.year + 10))).minmax
+      first = min_date.year if min_date && (years.nil? || min_date.year > first)
+      last = max_date.year if max_date && (years.nil? || max_date.year < last)
+
+      [first, display_year].min..[last, display_year].max
+    end
+
+    # Options for the caption's month select: abbreviated localized names
+    # (the full ones do not fit beside the year in a 7-cell header), with the
+    # months wholly outside min_date/max_date disabled for that year
+    #
+    # @param year [Integer] Year the months belong to
+    # @param min_date [Date, nil] Minimum selectable date
+    # @param max_date [Date, nil] Maximum selectable date
+    # @return [Array<Array(String, Integer, Boolean)>] [name, month, disabled]
+    def calendar_month_options(year, min_date: nil, max_date: nil)
+      I18n.t("date.abbr_month_names").drop(1).each_with_index.map do |name, index|
+        first_of_month = Date.new(year, index + 1, 1)
+        disabled = (min_date && first_of_month.end_of_month < min_date) ||
+          (max_date && first_of_month > max_date)
+
+        [name, index + 1, !!disabled]
+      end
+    end
+
     # Check if a date falls within a range
     #
     # @param date [Date] The date to check
