@@ -1,0 +1,7 @@
+<%= preview_container width: :md do %>
+  <%= render "components/date_picker",
+        caption_layout: :dropdown,
+        min_date: Date.current,
+        placeholder: "Pick a renewal date",
+        input_name: "renews_on" %>
+<% end %>

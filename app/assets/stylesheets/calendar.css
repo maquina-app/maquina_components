@@ -7,6 +7,8 @@
  * Structure:
  * - calendar (root container)
  *   - header (navigation)
+ *     - caption, or with caption_layout: :dropdown
+ *       dropdowns > month-select, year-select (native [data-component="select"])
  *   - weekdays (day name headers)
  *   - grid (day buttons grid)
  *     - week (row)
@@ -99,6 +101,26 @@
     @apply text-sm select-none;
     font-weight: var(--label-weight, 500);
     color: var(--foreground);
+  }
+
+  /* ===== Caption dropdowns =====
+     Month and year are native selects styled by form.css (colors, radius,
+     focus, chevron, dark mode). Here they only shrink to fit beside the
+     arrows in a 7-cell header: calendar.css loads after form.css, so these
+     0,1,0 rules win on source order. */
+  [data-calendar-part="dropdowns"] {
+    display: flex;
+    align-items: center;
+    @apply gap-1;
+  }
+
+  :where([data-calendar-part="dropdowns"]) [data-component="select"] {
+    width: auto;
+    height: var(--cell-size);
+    @apply pl-2 pr-6 py-0 text-sm;
+    font-weight: var(--label-weight, 500);
+    background-position: right 0.25rem center;
+    background-size: 1rem 1rem;
   }
 
   /* ===== Weekday Headers ===== */

@@ -397,6 +397,8 @@ Legacy aliases still accepted: `container_class` (for `css_classes`), `icon_clas
 | `min_date`, `max_date`, `disabled_dates` | `nil`, `nil`, `[]` | Constraints, kept across months |
 | `show_outside_days` | `true` | |
 | `week_starts_on` | `:sunday` | `:sunday`, `:monday` |
+| `caption_layout` | `:label` | `:dropdown` swaps the caption for month and year selects |
+| `years` | `nil` | Year select span; default 100 back to 10 ahead, min/max dates set the bounds |
 | `cell_size` | `nil` | CSS length for `--cell-size` |
 | `input_name`, `input_name_end` | `nil` | Render hidden inputs for forms |
 | block | — | Optional; renders after the grid as `data-calendar-part="footer"` |
@@ -419,7 +421,7 @@ Inside a `[popover]`, the controller sets `data-side="top|bottom"` on the root (
 
 | Local | Default | Notes |
 |-------|---------|-------|
-| `selected`, `selected_end`, `mode`, `min_date`, `max_date`, `disabled_dates`, `show_outside_days`, `week_starts_on` | as Calendar | Passed to the calendar |
+| `selected`, `selected_end`, `mode`, `min_date`, `max_date`, `disabled_dates`, `show_outside_days`, `week_starts_on`, `caption_layout`, `years` | as Calendar | Passed to the calendar |
 | `placeholder` | `nil` | Falls back to "Select date" / "Select date range" |
 | `input_name`, `input_name_end` | `nil` | Hidden inputs |
 | `id` | `nil` | → `"date-picker-#{input_name}"`; popover is `#{id}-popover` |
@@ -660,7 +662,7 @@ All modules live in `app/helpers/maquina_components/` and are available in host 
 | `IconsHelper` | `icon_for(name, options = {})` (host override first, then built-ins), `builtin_icon_for(name, options = {})` (built-ins only), `main_icon_svg_for(name)` (override in the host app to supply SVGs). Unknown names raise in dev/test when `MaquinaComponents.strict_icons` is on |
 | `ComponentsHelper` | `merge_component_data(html_options, **component_data)` (data merging used by every partial) |
 | `BreadcrumbsHelper` | `breadcrumbs(links = {}, current_page = nil, css_classes: "")`, `responsive_breadcrumbs(links = {}, current_page = nil, css_classes: "", collapse_after: nil)` |
-| `CalendarHelper` | `calendar_to_date(value)`, `calendar_month_data(date, week_starts_on = :sunday)`, `calendar_month_name(date, format = :long)`, `calendar_date_in_range?(date, start_date, end_date)`, `calendar_data_attrs(mode:, selected:, selected_end:, month:, year:)`, `calendar_weekday_names(week_starts_on = :sunday, format = :short)`, `date_picker_data_attrs(mode:, selected:, selected_end:)`, `date_picker_format(date, format = :long)`, `date_picker_format_range(start_date, end_date, format = :short)`, `date_picker_locale_data` |
+| `CalendarHelper` | `calendar_to_date(value)`, `calendar_month_data(date, week_starts_on = :sunday)`, `calendar_month_name(date, format = :long)`, `calendar_year_range(display_year, min_date:, max_date:, years:)`, `calendar_month_options(year, min_date:, max_date:)`, `calendar_date_in_range?(date, start_date, end_date)`, `calendar_data_attrs(mode:, selected:, selected_end:, month:, year:)`, `calendar_weekday_names(week_starts_on = :sunday, format = :short)`, `date_picker_data_attrs(mode:, selected:, selected_end:)`, `date_picker_format(date, format = :long)`, `date_picker_format_range(start_date, end_date, format = :short)`, `date_picker_locale_data` |
 | `ComboboxHelper` | `combobox(id: nil, name: nil, value: nil, placeholder: "Select...", css_classes: "", **html_options) { \|cb\| }` (builder: `cb.trigger`, `cb.content { \|c\| }`, `c.input`, `c.list { \|l\| }`, `c.empty`, `l.option`, `l.group`, `l.label`, `l.separator`), `combobox_simple(options:, placeholder: "Select...", search_placeholder: "Search...", empty_text: "No results found.", value: nil, name: nil, trigger_options: {}, content_options: {})` |
 | `DrawerHelper` | `drawer_state(cookie_name = "drawer_state")` → `:open` / `:closed`, `drawer_open?(cookie_name)`, `drawer_closed?(cookie_name)` |
 | `DropdownMenuHelper` | `dropdown_menu(css_classes: "", **html_options) { \|menu\| }` (builder: `menu.trigger`, `menu.content { \|c\| }`, `c.item { \|item\| item.shortcut }`, `c.label`, `c.separator`, `c.group`), `dropdown_menu_simple(trigger_text, items:, trigger_options: {}, content_options: {})` |
@@ -680,7 +682,7 @@ Thirteen controllers in `app/javascript/controllers/`. Partials attach them auto
 | Identifier | Attached by | Targets | Values | Events / API |
 |------------|-------------|---------|--------|--------------|
 | `breadcrumb` | `breadcrumbs` with `responsive: true` | `item`, `ellipsis`, `ellipsisSeparator` | none | Re-fits on resize, font load and `turbo:morph` |
-| `calendar` | `calendar` | `day`, `input`, `inputEnd`, `prevButton`, `nextButton`, `grid`, `caption` | `month`, `year`, `selected`, `selectedEnd`, `minDate`, `maxDate`, `mode`, `weekStartsOn`, `disabledDates`, `showOutsideDays` | `calendar:change`, `calendar:navigate`; `getValue()`, `select(date)`, `clear()` |
+| `calendar` | `calendar` | `day`, `input`, `inputEnd`, `prevButton`, `nextButton`, `grid`, `caption`, `monthSelect`, `yearSelect` | `month`, `year`, `selected`, `selectedEnd`, `minDate`, `maxDate`, `mode`, `weekStartsOn`, `disabledDates`, `showOutsideDays`, `startYear`, `endYear` | `calendar:change`, `calendar:navigate`; `getValue()`, `select(date)`, `clear()` |
 | `combobox` | `combobox` | `trigger`, `content`, `input`, `option`, `empty`, `label`, `hiddenInput` | `value`, `name`, `placeholder` | `combobox:change` (`{ value, label }`) |
 | `date-picker` | `date_picker` | `trigger`, `popover`, `calendar`, `input`, `inputEnd`, `display` | `mode`, `selected`, `selectedEnd`, `format`, `placeholder`, `placeholderRange`, `locale` | `date-picker:change`, `date-picker:navigate`; `openPopover()`, `closePopover()`, `toggle()`, `clear()`, `getValue()`, `setValue(selected, selectedEnd)` |
 | `drawer` | `drawer/provider` | `drawer`, `backdrop`, `panel` | `open`, `defaultOpen`, `cookieName`, `cookieMaxAge`, `keyboardShortcut` | `drawer:stateChanged` (`{ open, state }`); actions `toggle`, `open`, `close`, `backdropClick`, `closeOnEscape`, `toggleWithKeyboard` |
