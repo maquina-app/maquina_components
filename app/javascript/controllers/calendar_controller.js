@@ -19,6 +19,34 @@ export default class extends Controller {
   connect() {
     this.updateNavigationState()
     this.updateDayStates()
+
+    // Inside a popover (date picker or a caller's own), track which side of
+    // the trigger it opened on, so the header can sit next to the trigger
+    this.popover = this.element.closest("[popover]")
+    if (this.popover) {
+      this.boundUpdateSide = this.updateSide.bind(this)
+      this.popover.addEventListener("toggle", this.boundUpdateSide)
+    }
+  }
+
+  disconnect() {
+    this.popover?.removeEventListener("toggle", this.boundUpdateSide)
+  }
+
+  /**
+   * Sets data-side="top|bottom" when the popover is open. A popover flipped
+   * above its trigger is pinned at its bottom edge, so CSS moves the header
+   * there: month heights differ, and the arrows must not move under the cursor.
+   */
+  updateSide() {
+    if (!this.popover?.matches(":popover-open")) return
+
+    const trigger = this.popover.id &&
+      document.querySelector(`[popovertarget="${CSS.escape(this.popover.id)}"]`)
+    if (!trigger) return
+
+    const above = this.popover.getBoundingClientRect().top < trigger.getBoundingClientRect().top
+    this.element.dataset.side = above ? "top" : "bottom"
   }
 
   previousMonth() {
@@ -51,6 +79,7 @@ export default class extends Controller {
 
     this.rebuildCalendar()
     this.updateNavigationState()
+    this.updateSide()
 
     this.dispatch("navigate", {
       detail: {

@@ -1,0 +1,17 @@
+<%# Collision handling. The trigger is pinned to the bottom of the frame, so the
+    popover has no room below and flips above it. Above the trigger the popover
+    is pinned at its bottom edge, so the calendar moves the month header there:
+    February 2026 has 4 weeks, March 5, May 6, and the arrows stay put while
+    the height changes. The docs iframe is sized to make the flip happen -- see
+    the height on the preview tag in docs/date_picker.md. %>
+<div class="flex flex-col justify-end" style="min-height: 25rem;">
+  <p data-form-part="description" class="mb-2">
+    This trigger sits at the bottom of the frame, so the calendar opens above it,
+    with the month and arrows next to the trigger.
+  </p>
+
+  <%= render "components/date_picker",
+        mode: :single,
+        selected: Date.new(2026, 2, 10),
+        input_name: "renewal_date" %>
+</div>

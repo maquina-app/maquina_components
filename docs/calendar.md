@@ -77,6 +77,24 @@
       input_name_end: "booking[check_out]" %>
 ```
 
+### With a Footer
+
+A block renders below the grid as `data-calendar-part="footer"`, for actions such
+as Clear and Done. The footer only adds spacing; style its contents yourself.
+
+<!-- preview:with_footer height:390 -->
+
+```erb
+<%%= render "components/calendar", selected: @event.date do %>
+  <div class="flex">
+    <button type="button" data-component="button" data-variant="outline" data-size="sm"
+            data-action="event-date#clear">Clear</button>
+    <button type="button" class="ms-auto" data-component="button" data-variant="primary" data-size="sm"
+            data-action="event-date#done">Done</button>
+  </div>
+<%% end %>
+```
+
 ## API Reference
 
 ### Calendar
@@ -99,7 +117,23 @@
 | css_classes | String | "" | Additional CSS classes |
 | html_options | Hash | {} | Additional HTML attributes; data merges with the component's, style: is joined with cell_size |
 
+A block, when given, renders after the grid as `data-calendar-part="footer"`.
+
 Month navigation rebuilds the grid in the browser. The partial passes `data-calendar-disabled-dates-value` (ISO date array) and `data-calendar-show-outside-days-value` to the controller so every month renders with the same rules as the first one.
+
+### Inside a Popover
+
+When the calendar sits inside a `[popover]` element (the [date picker](date_picker.md),
+or your own popover opened by a `popovertarget` button), the controller sets
+`data-side="top"` or `data-side="bottom"` on the calendar root each time the popover
+opens and after every month change. It compares the popover's position with the
+button that opened it.
+
+A popover flipped above its trigger stays pinned at its bottom edge, and months
+take 4 to 6 rows. So with `data-side="top"` the header moves to the bottom
+(weekdays, grid, footer, then header). The month arrows stay next to the trigger
+and don't move while you navigate. The DOM order doesn't change; only the visual
+order does. A calendar outside a popover never gets `data-side`.
 
 ### Calendar Header
 
@@ -198,6 +232,9 @@ every value from its locals.
 | calendar:navigate | month, year, selected, selectedEnd | The visible month changed |
 
 Both events bubble and fire once per change.
+
+Inside a popover the controller also listens for the popover's `toggle` event and sets
+`data-side` (see [Inside a Popover](#inside-a-popover)).
 
 For programmatic use the controller also exposes `getValue()` (returns
 `{ selected, selectedEnd }`), `select(date)` (a Date or ISO string; follows the

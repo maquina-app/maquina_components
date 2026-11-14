@@ -71,6 +71,23 @@
 
 `size:` sets `data-size` (`:sm`, `:default`, `:lg`) and `full_width: true` sets `data-full-width`. Other HTML attributes and `data:` land on the wrapper.
 
+### Opening Above the Trigger
+
+The popover opens below the trigger and flips above it when there's no room below.
+Above the trigger, the calendar moves its month header to the bottom, next to the
+trigger. The popover stays pinned there while months of 4 to 6 rows change its height,
+so the arrows don't move under the pointer. The calendar root carries
+`data-side="top"` or `"bottom"` while open (see
+[calendar: Inside a Popover](calendar.md#inside-a-popover)).
+
+<!-- preview:opens_above height:448 -->
+
+```erb
+<%%= render "components/date_picker",
+      selected: @subscription.renews_on,
+      input_name: "subscription[renews_on]" %>
+```
+
 ## API Reference
 
 ### Date Picker

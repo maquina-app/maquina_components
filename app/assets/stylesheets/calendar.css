@@ -11,11 +11,18 @@
  *   - grid (day buttons grid)
  *     - week (row)
  *       - day (button)
+ *   - footer (optional, the partial's block)
+ *
+ * Inside a popover the controller sets data-side="top|bottom" on the root.
+ * Flipped above its trigger, a popover is pinned at its bottom edge while
+ * months change height (4-6 weeks), so [data-side="top"] moves the header
+ * last — next to the trigger, where the arrows stay put.
  *
  * Cascade order in this file (full contract documented in form.css):
  *   1. base      [data-component="calendar"], [data-calendar-part="…"]
  *   2. sizes     — none (cell metrics come from --cell-size)
- *   3. variants  [data-calendar-part="day"]:where([data-today], [data-state="…"], [data-outside])
+ *   3. variants  [data-calendar-part="day"]:where([data-today], [data-state="…"], [data-outside]),
+ *                [data-component="calendar"]:where([data-side="top"])
  *   4. states    […]:where(:hover, :focus-visible, :disabled)
  *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
  * Every rule is flattened to 0,1,0 with :where() and lives in
@@ -123,6 +130,11 @@
     grid-template-columns: repeat(7, var(--cell-size));
   }
 
+  /* ===== Footer ===== */
+  [data-calendar-part="footer"] {
+    @apply mt-4;
+  }
+
   /* ===== Day Button Base ===== */
   [data-calendar-part="day"] {
     display: inline-flex;
@@ -203,6 +215,19 @@
   [data-calendar-part="day"]:where([data-outside][data-state="range-middle"]) {
     color: var(--accent-foreground);
     @apply opacity-30;
+  }
+
+  /* ===== Popover side ===== */
+
+  /* Opened above the trigger: weekdays, grid, footer, then the header */
+  [data-component="calendar"]:where([data-side="top"]) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  :where([data-component="calendar"][data-side="top"]) [data-calendar-part="header"] {
+    order: 1;
+    @apply mt-4 mb-0;
   }
 
   /* ===== Day States ===== */

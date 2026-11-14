@@ -14,7 +14,8 @@
  *   2. sizes     :where([data-size="sm"|"lg"]) [data-date-picker-part="trigger"]
  *   3. variants  :where([data-full-width]) …
  *   4. states    […]:where(:hover, :focus-visible, :disabled, [aria-expanded],
- *                          :has(input:invalid))
+ *                          :has(input:invalid)); popover open/closed, and
+ *                          :has(calendar[data-side="top"]) for the animation
  *   5. dark      — none; dark-mode differences are tokens (see tokens.css)
  * Every rule is flattened to 0,1,0 with :where() and lives in
  * @layer components, so a caller's utility class wins and source order is
@@ -157,6 +158,17 @@
     [data-date-picker-part="popover"]:where(:popover-open) {
       opacity: 0;
       transform: translateY(-0.5rem) scale(0.95);
+    }
+  }
+
+  /* Opened above the trigger (the calendar's data-side): grow upward out of it */
+  [data-date-picker-part="popover"]:where(:not(:popover-open):has([data-component="calendar"][data-side="top"])) {
+    transform: translateY(0.5rem) scale(0.95);
+  }
+
+  @starting-style {
+    [data-date-picker-part="popover"]:where(:popover-open:has([data-component="calendar"][data-side="top"])) {
+      transform: translateY(0.5rem) scale(0.95);
     }
   }
 

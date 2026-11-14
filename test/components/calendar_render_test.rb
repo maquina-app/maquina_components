@@ -32,6 +32,28 @@ class CalendarRenderTest < ActiveSupport::TestCase
     refute_includes html, "data-outside"
   end
 
+  test "a block renders as the footer part, after the grid" do
+    html = view.render("components/calendar", month: 3, year: 2026) { "Done" }
+
+    assert_match(/data-calendar-part="grid".*<div data-calendar-part="footer">Done<\/div>/m, html)
+  end
+
+  test "no block, no footer part" do
+    html = view.render("components/calendar", month: 3, year: 2026)
+
+    refute_includes html, %(data-calendar-part="footer")
+  end
+
+  # Without a caller block a partial's yield returns content_for(:layout): from
+  # a layout that is the whole page, which must not become the footer.
+  test "rendered from a layout without a block, the page does not become the footer" do
+    view.view_flow.set(:layout, "<main>Page</main>".html_safe)
+    html = view.render("components/calendar", month: 3, year: 2026)
+
+    refute_includes html, %(data-calendar-part="footer")
+    refute_includes html, "Page"
+  end
+
   test "a caller style and cell_size both land on the style attribute" do
     html = view.render("components/calendar", cell_size: "2.5rem", style: "max-width: 20rem;")
 

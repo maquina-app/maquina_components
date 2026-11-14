@@ -104,4 +104,13 @@
             show_outside_days: show_outside_days %>
     <% end %>
   </div>
+
+  <%# Optional footer (actions such as Clear/Done); stays between the grid and
+      a header moved to the bottom when the calendar's popover opens above.
+      Without a caller block a partial's yield returns content_for(:layout),
+      which is the whole page when rendered from a layout, so that is no footer. %>
+  <% footer = capture { yield }.presence %>
+  <% if footer && footer != content_for(:layout) %>
+    <div data-calendar-part="footer"><%= footer %></div>
+  <% end %>
 <% end %>

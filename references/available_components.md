@@ -399,6 +399,9 @@ Legacy aliases still accepted: `container_class` (for `css_classes`), `icon_clas
 | `week_starts_on` | `:sunday` | `:sunday`, `:monday` |
 | `cell_size` | `nil` | CSS length for `--cell-size` |
 | `input_name`, `input_name_end` | `nil` | Render hidden inputs for forms |
+| block | — | Optional; renders after the grid as `data-calendar-part="footer"` |
+
+Inside a `[popover]`, the controller sets `data-side="top|bottom"` on the root (popover position relative to its `popovertarget` button). `data-side="top"` moves the header below the grid and footer, so it stays next to the trigger.
 
 ```erb
 <%= render "components/calendar", mode: :range,
