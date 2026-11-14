@@ -2,6 +2,30 @@
 
 > What breaks between releases, and what to do about it.
 
+## 0.7.4 → 0.8.0
+
+Nothing breaks. The month and year dropdowns are opt-in (`caption_layout: :dropdown`),
+and calendars without it render exactly as before.
+
+### If you override the calendar partials
+
+Apps can override `components/_calendar` or `components/calendar/_header`, for
+example to translate the aria-labels.
+- **Footer:** to use the footer block, add it after the grid in your `_calendar`
+  copy. Render the footer only when the caller passed a block: with no block, a
+  partial's `yield` returns the layout's content (see the engine's partial).
+- **Dropdowns:** to use them, copy the new `caption_layout`, `years` and
+  `month_options` locals and the dropdown branch into your `_header`.
+- **Otherwise:** the calendar passes those locals only in dropdown mode, so an
+  override with the old strict locals keeps working while it stays on the
+  caption.
+
+### A date picker opening above its trigger reorders the calendar
+
+When the popover flips above the trigger, the calendar gets `data-side="top"` and
+moves its header to the bottom. If your app styles the header by position (for
+example a border under it), check it in that state.
+
 ## 0.7.3 → 0.7.4
 
 ### Page refreshes no longer close an open sidebar or drawer
