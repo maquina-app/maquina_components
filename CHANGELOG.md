@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-11-14
+
+A required date picker no longer empties when its selected day is clicked.
+`deselectable:` controls this on any calendar. See
+[upgrading](docs/upgrading.md#080--081).
+
 ### Fixed
 
 - **Clicking the selected day of a required date picker emptied it.** In single
@@ -812,7 +818,8 @@ Thanks to the contributors who made this release possible:
 - Rails Engine structure
 - Basic TailwindCSS integration
 
-[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/maquina-app/maquina_components/compare/v0.8.1...HEAD
+[0.8.1]: https://github.com/maquina-app/maquina_components/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/maquina-app/maquina_components/compare/v0.7.4...v0.8.0
 [0.7.4]: https://github.com/maquina-app/maquina_components/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/maquina-app/maquina_components/compare/v0.7.2...v0.7.3

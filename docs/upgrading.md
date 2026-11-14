@@ -2,6 +2,28 @@
 
 > What breaks between releases, and what to do about it.
 
+## 0.8.0 → 0.8.1
+
+### A required date picker no longer clears on a click
+
+Clicking the selected day of a date picker used to clear it, whether or not the
+picker was required. A `required: true` picker now confirms instead: the date
+stays, the popover closes, and no `date-picker:change` fires. Optional pickers,
+and calendars outside a date picker, still clear as before.
+- **Clearing a required picker by click:** if your app relied on it, pass
+  `deselectable: true`.
+- **Your own picker around the calendar:** pass `deselectable: false` to the
+  calendar to get the same protection. A re-click then fires no
+  `calendar:change`, so close your popover yourself if that click should
+  confirm.
+
+### Range mode: the start clicked again can make a one-day range
+
+With `deselectable: false` (including a required range picker), clicking the
+start date a second time makes a one-day range instead of clearing the
+selection. Both hidden inputs then hold the same date, so check that your server
+accepts a range whose start and end are equal.
+
 ## 0.7.4 → 0.8.0
 
 Nothing breaks. The month and year dropdowns are opt-in (`caption_layout: :dropdown`),
